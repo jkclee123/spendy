@@ -3,6 +3,49 @@ import Google from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth";
 
 /**
+ * Sync user to Convex database after sign in
+ */
+async function syncUserToConvex(user: {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}) {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  const authSecret = process.env.CONVEX_AUTH_SECRET;
+
+  if (!convexUrl || !authSecret) {
+    console.error("Missing NEXT_PUBLIC_CONVEX_URL or CONVEX_AUTH_SECRET");
+    return;
+  }
+
+  // Convert Convex URL to HTTP endpoint URL
+  // e.g., https://xxx.convex.cloud -> https://xxx.convex.site
+  const httpUrl = convexUrl.replace(".convex.cloud", ".convex.site");
+
+  try {
+    const response = await fetch(`${httpUrl}/auth/sync-user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authSecret}`,
+      },
+      body: JSON.stringify({
+        name: user.name || "Unknown",
+        email: user.email,
+        image: user.image,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Failed to sync user to Convex:", error);
+    }
+  } catch (error) {
+    console.error("Error syncing user to Convex:", error);
+  }
+}
+
+/**
  * NextAuth.js v5 configuration with Google OAuth provider
  */
 export const authConfig: NextAuthConfig = {
@@ -14,6 +57,12 @@ export const authConfig: NextAuthConfig = {
   ],
   pages: {
     signIn: "/login",
+  },
+  events: {
+    // Sync user to Convex when they sign in
+    async signIn({ user }) {
+      await syncUserToConvex(user);
+    },
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
