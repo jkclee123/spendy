@@ -57,8 +57,8 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
   };
 
   // Custom legend formatter
-  const renderLegend = (value: string, entry: { payload?: { total?: number } }) => {
-    const total = entry.payload?.total ?? 0;
+  const renderLegend = (value: string, entry: { payload?: Record<string, unknown> }) => {
+    const total = (entry.payload?.total as number) ?? 0;
     return (
       <span className="text-sm text-gray-700">
         {value} <span className="text-gray-500">({formatCurrency(total)})</span>
@@ -83,7 +83,7 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
               outerRadius="70%"
               innerRadius="40%"
               paddingAngle={2}
-              label={({ percent }) => {
+              label={({ percent = 0 }) => {
                 return `${(percent * 100).toFixed(0)}%`;
               }}
               labelLine={false}
