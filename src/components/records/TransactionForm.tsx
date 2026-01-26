@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/Toast";
 
 interface FormErrors {
   amount?: string;
@@ -21,6 +22,7 @@ interface TransactionFormProps {
 
 export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
   const { data: session } = useSession();
+  const { showToast } = useToast();
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -33,7 +35,36 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
     session?.user?.email ? { email: session.user.email } : "skip"
   );
 
-  const createTransaction = useMutation(api.transactions.createFromWeb);
+  // Use mutation with optimistic update for instant UI feedback
+  const createTransaction = useMutation(
+    api.transactions.createFromWeb
+  ).withOptimisticUpdate((localStore, args) => {
+    // Create a temporary optimistic transaction
+    // The real ID will be assigned by the server
+    const optimisticTransaction = {
+      _id: `temp_${Date.now()}` as never, // Temporary ID
+      _creationTime: Date.now(),
+      userId: args.userId,
+      amount: args.amount,
+      category: args.category,
+      paymentMethod: args.paymentMethod,
+      createdAt: Date.now(),
+      source: "web" as const,
+    };
+
+    // Get current transactions from local store and add the optimistic one
+    const existingTransactions = localStore.getQuery(api.transactions.listByUser, {
+      userId: args.userId,
+    });
+
+    if (existingTransactions !== undefined) {
+      localStore.setQuery(
+        api.transactions.listByUser,
+        { userId: args.userId },
+        [optimisticTransaction, ...existingTransactions]
+      );
+    }
+  });
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
@@ -84,15 +115,16 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       setCategory("");
       setPaymentMethod("");
 
+      showToast("Transaction added successfully", "success");
       onSuccess?.();
     } catch (error) {
       console.error("Failed to create transaction:", error);
-      setErrors({
-        general:
-          error instanceof Error
-            ? error.message
-            : "Failed to create transaction. Please try again.",
-      });
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to create transaction. Please try again.";
+      setErrors({ general: errorMessage });
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }

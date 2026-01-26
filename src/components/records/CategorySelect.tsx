@@ -29,7 +29,7 @@ export const CategorySelect = forwardRef<
         ref={ref}
         id={selectId}
         className={`
-          w-full rounded-xl border px-4 py-3 text-base
+          min-h-[44px] w-full rounded-xl border px-4 py-3 text-base
           transition-colors duration-200
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
           disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500

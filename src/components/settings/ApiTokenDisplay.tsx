@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 import type { Id } from "../../../convex/_generated/dataModel";
 
 interface ApiTokenDisplayProps {
@@ -16,6 +17,7 @@ interface ApiTokenDisplayProps {
  * Includes copy-to-clipboard functionality and regenerate token with confirmation
  */
 export function ApiTokenDisplay({ userId, apiToken }: ApiTokenDisplayProps) {
+  const { showToast } = useToast();
   const [showToken, setShowToken] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showConfirmRegenerate, setShowConfirmRegenerate] = useState(false);
@@ -27,23 +29,27 @@ export function ApiTokenDisplay({ userId, apiToken }: ApiTokenDisplayProps) {
     try {
       await navigator.clipboard.writeText(apiToken);
       setCopied(true);
+      showToast("Token copied to clipboard", "success");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy token:", error);
+      showToast("Failed to copy token", "error");
     }
-  }, [apiToken]);
+  }, [apiToken, showToast]);
 
   const handleRegenerateToken = useCallback(async () => {
     setIsRegenerating(true);
     try {
       await regenerateApiToken({ userId });
       setShowConfirmRegenerate(false);
+      showToast("API token regenerated successfully", "success");
     } catch (error) {
       console.error("Failed to regenerate token:", error);
+      showToast("Failed to regenerate token", "error");
     } finally {
       setIsRegenerating(false);
     }
-  }, [regenerateApiToken, userId]);
+  }, [regenerateApiToken, userId, showToast]);
 
   const toggleShowToken = useCallback(() => {
     setShowToken((prev) => !prev);

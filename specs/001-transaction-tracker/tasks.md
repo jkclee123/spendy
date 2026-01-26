@@ -188,15 +188,17 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T063 [P] Add consistent error handling and error boundaries across all pages
-- [ ] T064 [P] Add loading states with LoadingSpinner across all async operations
-- [ ] T065 [P] Add toast notifications for success/error feedback using a lightweight solution
-- [ ] T066 Implement optimistic updates for transaction create/edit/delete
-- [ ] T067 [P] Ensure touch targets are 44x44px minimum on mobile
-- [ ] T068 [P] Verify responsive breakpoints work correctly across all pages
-- [ ] T069 Bundle size optimization - verify < 200KB JS gzipped
-- [ ] T070 Performance audit - verify LCP < 2.5s, FID < 100ms, CLS < 0.1
-- [ ] T071 Run quickstart.md validation to ensure setup instructions work
+- [X] T063 [P] Add consistent error handling and error boundaries across all pages
+- [X] T064 [P] Add loading states with LoadingSpinner across all async operations
+- [X] T065 [P] Add toast notifications for success/error feedback using a lightweight solution
+- [X] T066 Implement optimistic updates for transaction create/edit/delete
+- [X] T067 [P] Ensure touch targets are 44x44px minimum on mobile
+- [X] T068 [P] Verify responsive breakpoints work correctly across all pages
+- [X] T069 Bundle size optimization - verify < 200KB JS gzipped
+- [X] T070 Performance audit - verify LCP < 2.5s, FID < 100ms, CLS < 0.1
+- [X] T071 Run quickstart.md validation to ensure setup instructions work
+
+**Checkpoint**: Application is production-ready with polished UX
 
 ---
 

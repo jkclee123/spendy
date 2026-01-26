@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
+import { useToast } from "@/components/ui/Toast";
 import type { Transaction } from "@/types";
 import { formatDistanceToNow } from "date-fns";
 
@@ -30,6 +31,7 @@ export function TransactionDetail({
   onDeleted,
   onUpdated,
 }: TransactionDetailProps) {
+  const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,9 +45,53 @@ export function TransactionDetail({
     transaction.paymentMethod || ""
   );
 
-  // Convex mutations
-  const updateTransaction = useMutation(api.transactions.update);
-  const deleteTransaction = useMutation(api.transactions.remove);
+  // Convex mutations with optimistic updates
+  const updateTransaction = useMutation(
+    api.transactions.update
+  ).withOptimisticUpdate((localStore, args) => {
+    // Optimistically update the transaction in the list
+    const existingTransactions = localStore.getQuery(api.transactions.listByUser, {
+      userId: transaction.userId,
+    });
+
+    if (existingTransactions !== undefined) {
+      const updatedTransactions = existingTransactions.map((t) =>
+        t._id === args.transactionId
+          ? {
+              ...t,
+              ...(args.amount !== undefined && { amount: args.amount }),
+              ...(args.category !== undefined && { category: args.category }),
+              ...(args.paymentMethod !== undefined && { paymentMethod: args.paymentMethod }),
+            }
+          : t
+      );
+      localStore.setQuery(
+        api.transactions.listByUser,
+        { userId: transaction.userId },
+        updatedTransactions
+      );
+    }
+  });
+
+  const deleteTransaction = useMutation(
+    api.transactions.remove
+  ).withOptimisticUpdate((localStore, args) => {
+    // Optimistically remove the transaction from the list
+    const existingTransactions = localStore.getQuery(api.transactions.listByUser, {
+      userId: transaction.userId,
+    });
+
+    if (existingTransactions !== undefined) {
+      const filteredTransactions = existingTransactions.filter(
+        (t) => t._id !== args.transactionId
+      );
+      localStore.setQuery(
+        api.transactions.listByUser,
+        { userId: transaction.userId },
+        filteredTransactions
+      );
+    }
+  });
 
   // Reset form when transaction changes
   useEffect(() => {
@@ -118,15 +164,16 @@ export function TransactionDetail({
       });
 
       setIsEditing(false);
+      showToast("Transaction updated successfully", "success");
       onUpdated?.();
     } catch (error) {
       console.error("Failed to update transaction:", error);
-      setErrors({
-        general:
-          error instanceof Error
-            ? error.message
-            : "Failed to update transaction. Please try again.",
-      });
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to update transaction. Please try again.";
+      setErrors({ general: errorMessage });
+      showToast(errorMessage, "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -141,16 +188,17 @@ export function TransactionDetail({
         transactionId: transaction._id,
       });
 
+      showToast("Transaction deleted successfully", "success");
       onDeleted?.();
       onClose();
     } catch (error) {
       console.error("Failed to delete transaction:", error);
-      setErrors({
-        general:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete transaction. Please try again.",
-      });
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to delete transaction. Please try again.";
+      setErrors({ general: errorMessage });
+      showToast(errorMessage, "error");
       setShowDeleteConfirm(false);
     } finally {
       setIsDeleting(false);

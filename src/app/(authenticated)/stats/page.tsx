@@ -78,9 +78,9 @@ export default function StatsPage() {
   const hasData = categoryData && categoryData.length > 0;
   const hasMonthlyData = monthlyData && monthlyData.length > 0;
 
-  // Time period button styles
+  // Time period button styles - min 44px touch target for mobile
   const periodButtonClass = (period: TimePeriod) =>
-    `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+    `min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
       timePeriod === period
         ? "bg-blue-500 text-white"
         : "bg-gray-100 text-gray-700 hover:bg-gray-200"

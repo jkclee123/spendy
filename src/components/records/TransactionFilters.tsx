@@ -114,7 +114,7 @@ export function TransactionFilters({
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center justify-between text-left"
+        className="flex min-h-[44px] w-full items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
           <svg
@@ -169,7 +169,7 @@ export function TransactionFilters({
               id="filter-category"
               value={filters.category || ""}
               onChange={handleCategoryChange}
-              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All categories</option>
               {DEFAULT_CATEGORIES.map((category) => (
@@ -194,7 +194,7 @@ export function TransactionFilters({
                 id="filter-start-date"
                 value={startDateValue}
                 onChange={handleStartDateChange}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -209,7 +209,7 @@ export function TransactionFilters({
                 id="filter-end-date"
                 value={endDateValue}
                 onChange={handleEndDateChange}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -235,7 +235,7 @@ export function TransactionFilters({
                   value={filters.minAmount ?? ""}
                   onChange={handleMinAmountChange}
                   placeholder="0.00"
-                  className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -258,7 +258,7 @@ export function TransactionFilters({
                   value={filters.maxAmount ?? ""}
                   onChange={handleMaxAmountChange}
                   placeholder="0.00"
-                  className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>

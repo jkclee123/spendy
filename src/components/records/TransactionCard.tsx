@@ -52,7 +52,7 @@ export function TransactionCard({
       onClick={onClick ? handleClick : undefined}
       onKeyDown={onClick ? handleKeyDown : undefined}
       className={`
-        flex items-center justify-between rounded-xl border border-gray-100 bg-white p-4
+        flex min-h-[72px] items-center justify-between rounded-xl border border-gray-100 bg-white p-4
         transition-all duration-200
         ${
           onClick
