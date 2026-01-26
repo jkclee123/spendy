@@ -41,25 +41,25 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Create Convex schema with users and transactions tables in convex/schema.ts (per data-model.md)
-- [ ] T008 [P] Create user queries/mutations in convex/users.ts (getByEmail, getByApiToken, create)
-- [ ] T009 [P] Create shared TypeScript types in src/types/index.ts (Transaction, User, CreateTransactionRequest, etc.)
-- [ ] T010 Configure NextAuth with Google OAuth provider in src/lib/auth.ts
-- [ ] T011 Create NextAuth API route handlers in src/app/api/auth/[...nextauth]/route.ts
-- [ ] T012 Set up Convex client provider in src/lib/convex.ts
-- [ ] T013 Create root layout with Convex and auth providers in src/app/layout.tsx
-- [ ] T014 [P] Create login page with Google OAuth button in src/app/login/page.tsx
-- [ ] T015 [P] Create redirect logic in src/app/page.tsx (redirect to /records or /login based on auth)
-- [ ] T016 Create authenticated route group layout with session check in src/app/(authenticated)/layout.tsx
-- [ ] T017 [P] Create Button component in src/components/ui/Button.tsx
-- [ ] T018 [P] Create Card component in src/components/ui/Card.tsx
-- [ ] T019 [P] Create Header component with "Spendy" title in src/components/ui/Header.tsx
-- [ ] T020 [P] Create LoadingSpinner component in src/components/ui/LoadingSpinner.tsx
-- [ ] T021 Create responsive NavigationBar component (bottom on mobile, side on desktop) in src/components/navigation/NavigationBar.tsx
-- [ ] T022 Add NavigationBar to authenticated layout in src/app/(authenticated)/layout.tsx
-- [ ] T023 [P] Create PWA manifest in public/manifest.json
-- [ ] T024 [P] Create PWA icons in public/icons/ (192x192, 512x512)
-- [ ] T025 Configure next-pwa in next.config.js
+- [X] T007 Create Convex schema with users and transactions tables in convex/schema.ts (per data-model.md)
+- [X] T008 [P] Create user queries/mutations in convex/users.ts (getByEmail, getByApiToken, create)
+- [X] T009 [P] Create shared TypeScript types in src/types/index.ts (Transaction, User, CreateTransactionRequest, etc.)
+- [X] T010 Configure NextAuth with Google OAuth provider in src/lib/auth.ts
+- [X] T011 Create NextAuth API route handlers in src/app/api/auth/[...nextauth]/route.ts
+- [X] T012 Set up Convex client provider in src/lib/convex.ts
+- [X] T013 Create root layout with Convex and auth providers in src/app/layout.tsx
+- [X] T014 [P] Create login page with Google OAuth button in src/app/login/page.tsx
+- [X] T015 [P] Create redirect logic in src/app/page.tsx (redirect to /records or /login based on auth)
+- [X] T016 Create authenticated route group layout with session check in src/app/(authenticated)/layout.tsx
+- [X] T017 [P] Create Button component in src/components/ui/Button.tsx
+- [X] T018 [P] Create Card component in src/components/ui/Card.tsx
+- [X] T019 [P] Create Header component with "Spendy" title in src/components/ui/Header.tsx
+- [X] T020 [P] Create LoadingSpinner component in src/components/ui/LoadingSpinner.tsx
+- [X] T021 Create responsive NavigationBar component (bottom on mobile, side on desktop) in src/components/navigation/NavigationBar.tsx
+- [X] T022 Add NavigationBar to authenticated layout in src/app/(authenticated)/layout.tsx
+- [X] T023 [P] Create PWA manifest in public/manifest.json
+- [X] T024 [P] Create PWA icons in public/icons/ (192x192, 512x512)
+- [X] T025 Configure next-pwa in next.config.js
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
