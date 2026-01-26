@@ -168,3 +168,97 @@ export const remove = mutation({
     return args.transactionId;
   },
 });
+
+/**
+ * Aggregate transactions by category for a user within a date range
+ * Returns category totals for pie chart visualization
+ */
+export const aggregateByCategory = query({
+  args: {
+    userId: v.id("users"),
+    startDate: v.number(),
+    endDate: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    // Filter by date range
+    const filteredTransactions = transactions.filter(
+      (t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate
+    );
+
+    // Aggregate by category
+    const categoryMap = new Map<string, { total: number; count: number }>();
+
+    for (const transaction of filteredTransactions) {
+      const category = transaction.category || "Uncategorized";
+      const existing = categoryMap.get(category) || { total: 0, count: 0 };
+      categoryMap.set(category, {
+        total: existing.total + transaction.amount,
+        count: existing.count + 1,
+      });
+    }
+
+    // Convert to array format
+    return Array.from(categoryMap.entries()).map(([category, data]) => ({
+      category,
+      total: data.total,
+      count: data.count,
+    }));
+  },
+});
+
+/**
+ * Aggregate transactions by month for a user
+ * Returns monthly totals for histogram visualization
+ */
+export const aggregateByMonth = query({
+  args: {
+    userId: v.id("users"),
+    monthsBack: v.number(), // Number of months to look back
+  },
+  handler: async (ctx, args) => {
+    // Calculate the start date (beginning of N months ago)
+    const now = new Date();
+    const startDate = new Date(
+      now.getFullYear(),
+      now.getMonth() - args.monthsBack + 1,
+      1
+    ).getTime();
+
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    // Filter to transactions within the time range
+    const filteredTransactions = transactions.filter(
+      (t) => t.createdAt >= startDate
+    );
+
+    // Aggregate by month
+    const monthMap = new Map<string, { total: number; count: number }>();
+
+    for (const transaction of filteredTransactions) {
+      const date = new Date(transaction.createdAt);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      const existing = monthMap.get(monthKey) || { total: 0, count: 0 };
+      monthMap.set(monthKey, {
+        total: existing.total + transaction.amount,
+        count: existing.count + 1,
+      });
+    }
+
+    // Convert to sorted array format
+    return Array.from(monthMap.entries())
+      .map(([month, data]) => ({
+        month,
+        total: data.total,
+        count: data.count,
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month));
+  },
+});

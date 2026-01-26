@@ -94,14 +94,14 @@
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Create Convex query for transactions by date range in convex/transactions.ts (getByUserAndDateRange)
-- [ ] T031 [US2] Create Convex query for category aggregation in convex/transactions.ts (aggregateByCategory)
-- [ ] T032 [US2] Create Convex query for monthly aggregation in convex/transactions.ts (aggregateByMonth)
-- [ ] T033 [P] [US2] Create CategoryPieChart component using recharts in src/components/stats/CategoryPieChart.tsx
-- [ ] T034 [P] [US2] Create MonthlyHistogram component using recharts in src/components/stats/MonthlyHistogram.tsx
-- [ ] T035 [US2] Create stats page with time period selector (week, month, year) in src/app/(authenticated)/stats/page.tsx
-- [ ] T036 [US2] Add empty state with guidance when no transactions in src/app/(authenticated)/stats/page.tsx
-- [ ] T037 [US2] Implement real-time chart updates using Convex subscriptions in stats page
+- [X] T030 [US2] Create Convex query for transactions by date range in convex/transactions.ts (getByUserAndDateRange)
+- [X] T031 [US2] Create Convex query for category aggregation in convex/transactions.ts (aggregateByCategory)
+- [X] T032 [US2] Create Convex query for monthly aggregation in convex/transactions.ts (aggregateByMonth)
+- [X] T033 [P] [US2] Create CategoryPieChart component using recharts in src/components/stats/CategoryPieChart.tsx
+- [X] T034 [P] [US2] Create MonthlyHistogram component using recharts in src/components/stats/MonthlyHistogram.tsx
+- [X] T035 [US2] Create stats page with time period selector (week, month, year) in src/app/(authenticated)/stats/page.tsx
+- [X] T036 [US2] Add empty state with guidance when no transactions in src/app/(authenticated)/stats/page.tsx
+- [X] T037 [US2] Implement real-time chart updates using Convex subscriptions in stats page
 
 **Checkpoint**: Users can view their spending patterns through interactive charts
 
