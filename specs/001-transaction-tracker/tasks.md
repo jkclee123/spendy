@@ -73,14 +73,14 @@
 
 ### Implementation for User Story 1
 
-- [ ] T026 [US1] Create transaction mutations in convex/transactions.ts (createFromApi with apiToken lookup)
-- [ ] T027 [US1] Create transaction API endpoint in src/app/api/transaction/route.ts implementing:
+- [X] T026 [US1] Create transaction mutations in convex/transactions.ts (createFromApi with apiToken lookup)
+- [X] T027 [US1] Create transaction API endpoint in src/app/api/transaction/route.ts implementing:
   - Request body parsing and validation per contracts/transaction-api.yaml
   - apiToken authentication via Convex user lookup
   - Call Convex mutation to create transaction with source="api"
   - Return 201 on success, 400 for validation errors, 401 for auth failures
-- [ ] T028 [US1] Add request logging for audit purposes in src/app/api/transaction/route.ts
-- [ ] T029 [US1] Add rate limiting middleware (basic implementation) in src/app/api/transaction/route.ts
+- [X] T028 [US1] Add request logging for audit purposes in src/app/api/transaction/route.ts
+- [X] T029 [US1] Add rate limiting middleware (basic implementation) in src/app/api/transaction/route.ts
 
 **Checkpoint**: External systems can now send transactions via API
 
