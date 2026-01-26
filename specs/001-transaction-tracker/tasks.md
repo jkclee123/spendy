@@ -174,11 +174,11 @@
 
 ### Implementation for Settings
 
-- [ ] T058 Create settings page in src/app/(authenticated)/settings/page.tsx
-- [ ] T059 [P] Create ApiTokenDisplay component with copy-to-clipboard in src/components/settings/ApiTokenDisplay.tsx
-- [ ] T060 Create Convex mutation for regenerating API token in convex/users.ts (regenerateApiToken)
-- [ ] T061 Add regenerate token button with confirmation in src/components/settings/ApiTokenDisplay.tsx
-- [ ] T062 Display user profile info (name, email, avatar) in settings page
+- [X] T058 Create settings page in src/app/(authenticated)/settings/page.tsx
+- [X] T059 [P] Create ApiTokenDisplay component with copy-to-clipboard in src/components/settings/ApiTokenDisplay.tsx
+- [X] T060 Create Convex mutation for regenerating API token in convex/users.ts (regenerateApiToken)
+- [X] T061 Add regenerate token button with confirmation in src/components/settings/ApiTokenDisplay.tsx
+- [X] T062 Display user profile info (name, email, avatar) in settings page
 
 **Checkpoint**: Users can manage their API tokens for external integrations
 

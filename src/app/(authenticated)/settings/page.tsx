@@ -1,15 +1,49 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
 
+  // Get the user from Convex by email to access API token
+  const user = useQuery(
+    api.users.getByEmail,
+    session?.user?.email ? { email: session.user.email } : "skip"
+  );
+
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/login" });
   };
+
+  // Loading state while fetching user
+  if (user === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  // User not found state
+  if (user === null) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <span className="text-2xl">⚠️</span>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900">User not found</h3>
+        <p className="mt-2 max-w-sm text-sm text-gray-500">
+          Please try logging out and logging back in.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -31,23 +65,23 @@ export default function SettingsPage() {
             )}
             <div>
               <p className="text-lg font-medium text-gray-900">
-                {session?.user?.name}
+                {session?.user?.name || user.name}
               </p>
-              <p className="text-sm text-gray-500">{session?.user?.email}</p>
+              <p className="text-sm text-gray-500">
+                {session?.user?.email || user.email}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* API Token Card - Placeholder for T059 */}
+      {/* API Token Card */}
       <Card>
         <CardHeader>
           <CardTitle>API Token</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">
-            Your API token will be displayed here for integrating with external services.
-          </p>
+          <ApiTokenDisplay userId={user._id} apiToken={user.apiToken} />
         </CardContent>
       </Card>
 
