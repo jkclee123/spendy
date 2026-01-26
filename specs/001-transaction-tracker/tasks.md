@@ -154,13 +154,13 @@
 
 ### Implementation for User Story 5
 
-- [ ] T051 [US5] Create Convex mutation for updating transactions in convex/transactions.ts (update)
-- [ ] T052 [US5] Create Convex mutation for deleting transactions in convex/transactions.ts (remove)
-- [ ] T053 [US5] Create transaction detail view/modal in src/components/records/TransactionDetail.tsx
-- [ ] T054 [US5] Add edit mode to transaction detail with editable fields in src/components/records/TransactionDetail.tsx
-- [ ] T055 [US5] Add delete button with confirmation dialog in src/components/records/TransactionDetail.tsx
-- [ ] T056 [US5] Integrate edit/delete with Convex mutations in src/components/records/TransactionDetail.tsx
-- [ ] T057 [US5] Wire up TransactionCard click to open TransactionDetail in src/components/records/TransactionCard.tsx
+- [X] T051 [US5] Create Convex mutation for updating transactions in convex/transactions.ts (update)
+- [X] T052 [US5] Create Convex mutation for deleting transactions in convex/transactions.ts (remove)
+- [X] T053 [US5] Create transaction detail view/modal in src/components/records/TransactionDetail.tsx
+- [X] T054 [US5] Add edit mode to transaction detail with editable fields in src/components/records/TransactionDetail.tsx
+- [X] T055 [US5] Add delete button with confirmation dialog in src/components/records/TransactionDetail.tsx
+- [X] T056 [US5] Integrate edit/delete with Convex mutations in src/components/records/TransactionDetail.tsx
+- [X] T057 [US5] Wire up TransactionCard click to open TransactionDetail in src/components/records/TransactionCard.tsx
 
 **Checkpoint**: Users have full control over their transaction data
 

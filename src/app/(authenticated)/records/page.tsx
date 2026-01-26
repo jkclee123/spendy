@@ -13,12 +13,15 @@ import {
   TransactionFilters,
   TransactionFiltersState,
 } from "@/components/records/TransactionFilters";
+import { TransactionDetail } from "@/components/records/TransactionDetail";
 import type { Transaction } from "@/types";
 
 export default function RecordsPage() {
   const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState<TransactionFiltersState>({});
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<Transaction | null>(null);
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -34,17 +37,23 @@ export default function RecordsPage() {
     setShowForm(false);
   }, []);
 
-  const handleFiltersChange = useCallback((newFilters: TransactionFiltersState) => {
-    setFilters(newFilters);
-  }, []);
+  const handleFiltersChange = useCallback(
+    (newFilters: TransactionFiltersState) => {
+      setFilters(newFilters);
+    },
+    []
+  );
 
   const handleClearFilters = useCallback(() => {
     setFilters({});
   }, []);
 
   const handleTransactionClick = useCallback((transaction: Transaction) => {
-    // Will be implemented in Phase 7 for edit/delete functionality
-    console.log("Transaction clicked:", transaction._id);
+    setSelectedTransaction(transaction);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedTransaction(null);
   }, []);
 
   // Loading state while fetching user
@@ -132,6 +141,16 @@ export default function RecordsPage() {
             + Add Transaction
           </Button>
         </div>
+      )}
+
+      {/* Transaction Detail Modal */}
+      {selectedTransaction && (
+        <TransactionDetail
+          transaction={selectedTransaction}
+          onClose={handleCloseDetail}
+          onDeleted={handleCloseDetail}
+          onUpdated={handleCloseDetail}
+        />
       )}
     </div>
   );
