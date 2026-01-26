@@ -115,12 +115,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Create Convex mutation for web-created transactions in convex/transactions.ts (createFromWeb)
-- [ ] T039 [US3] Create transaction form component with amount, description, date, category fields in src/components/records/TransactionForm.tsx
-- [ ] T040 [US3] Add category selector with default categories (Food & Dining, Transport, Shopping, Entertainment, Bills & Utilities, Health, Other) in src/components/records/CategorySelect.tsx
-- [ ] T041 [US3] Add client-side validation with clear error messages in src/components/records/TransactionForm.tsx
-- [ ] T042 [US3] Add "Add Transaction" button to records page that opens form/modal in src/app/(authenticated)/records/page.tsx
-- [ ] T043 [US3] Integrate TransactionForm with Convex mutation in src/components/records/TransactionForm.tsx
+- [X] T038 [US3] Create Convex mutation for web-created transactions in convex/transactions.ts (createFromWeb)
+- [X] T039 [US3] Create transaction form component with amount, description, date, category fields in src/components/records/TransactionForm.tsx
+- [X] T040 [US3] Add category selector with default categories (Food & Dining, Transport, Shopping, Entertainment, Bills & Utilities, Health, Other) in src/components/records/CategorySelect.tsx
+- [X] T041 [US3] Add client-side validation with clear error messages in src/components/records/TransactionForm.tsx
+- [X] T042 [US3] Add "Add Transaction" button to records page that opens form/modal in src/app/(authenticated)/records/page.tsx
+- [X] T043 [US3] Integrate TransactionForm with Convex mutation in src/components/records/TransactionForm.tsx
 
 **Checkpoint**: Users can manually add transactions through the web interface
 
