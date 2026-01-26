@@ -83,9 +83,8 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
               outerRadius="70%"
               innerRadius="40%"
               paddingAngle={2}
-              label={({ total }) => {
-                const percent = ((total / totalAmount) * 100).toFixed(0);
-                return `${percent}%`;
+              label={({ percent }) => {
+                return `${(percent * 100).toFixed(0)}%`;
               }}
               labelLine={false}
             >
