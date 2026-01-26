@@ -26,12 +26,12 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create Next.js 14 project with TypeScript, Tailwind, ESLint, App Router, and src directory using Bun
-- [ ] T002 Install core dependencies (convex, next-auth@beta, @auth/core, recharts, lucide-react, next-pwa)
-- [ ] T003 Install dev dependencies (@types/node, vitest, @testing-library/react, @playwright/test)
-- [ ] T004 [P] Create .env.example with required environment variables (CONVEX_DEPLOYMENT, NEXT_PUBLIC_CONVEX_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
-- [ ] T005 [P] Configure ESLint and Prettier for TypeScript strict mode
-- [ ] T006 Initialize Convex project with `bunx convex dev`
+- [X] T001 Create Next.js 14 project with TypeScript, Tailwind, ESLint, App Router, and src directory using Bun
+- [X] T002 Install core dependencies (convex, next-auth@beta, @auth/core, recharts, lucide-react, next-pwa)
+- [X] T003 Install dev dependencies (@types/node, vitest, @testing-library/react, @playwright/test)
+- [X] T004 [P] Create .env.example with required environment variables (CONVEX_DEPLOYMENT, NEXT_PUBLIC_CONVEX_URL, NEXTAUTH_URL, NEXTAUTH_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
+- [X] T005 [P] Configure ESLint and Prettier for TypeScript strict mode
+- [X] T006 Initialize Convex project with `bunx convex dev`
 
 ---
 
