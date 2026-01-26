@@ -15,17 +15,6 @@ export function Header() {
           </div>
           <h1 className="text-xl font-bold text-gray-900">Spendy</h1>
         </div>
-
-        {/* User Avatar */}
-        {session?.user?.image && (
-          <div className="flex items-center gap-2">
-            <img
-              src={session.user.image}
-              alt={session.user.name || "User"}
-              className="h-8 w-8 rounded-full"
-            />
-          </div>
-        )}
       </div>
     </header>
   );

@@ -14,6 +14,7 @@ async function syncUserToConvex(user: {
   const authSecret = process.env.CONVEX_AUTH_SECRET;
 
   if (!convexUrl || !authSecret) {
+    // eslint-disable-next-line no-console
     console.error("Missing NEXT_PUBLIC_CONVEX_URL or CONVEX_AUTH_SECRET");
     return;
   }
@@ -38,9 +39,11 @@ async function syncUserToConvex(user: {
 
     if (!response.ok) {
       const error = await response.text();
+      // eslint-disable-next-line no-console
       console.error("Failed to sync user to Convex:", error);
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error syncing user to Convex:", error);
   }
 }
