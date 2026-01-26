@@ -167,6 +167,7 @@ export function TransactionDetail({
       showToast("Transaction updated successfully", "success");
       onUpdated?.();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to update transaction:", error);
       const errorMessage =
         error instanceof Error
@@ -192,6 +193,7 @@ export function TransactionDetail({
       onDeleted?.();
       onClose();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to delete transaction:", error);
       const errorMessage =
         error instanceof Error
@@ -205,13 +207,13 @@ export function TransactionDetail({
     }
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setAmount(transaction.amount.toString());
     setCategory(transaction.category || "");
     setPaymentMethod(transaction.paymentMethod || "");
     setIsEditing(false);
     setErrors({});
-  };
+  }, [transaction.amount, transaction.category, transaction.paymentMethod]);
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -236,7 +238,7 @@ export function TransactionDetail({
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [showDeleteConfirm, isEditing, onClose]);
+  }, [showDeleteConfirm, isEditing, onClose, handleCancelEdit]);
 
   return (
     <div

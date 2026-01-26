@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from "next-auth/react";
 import { useQuery } from "convex/react";
+import Image from "next/image";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -57,9 +58,11 @@ export default function SettingsPage() {
         <CardContent>
           <div className="flex items-center gap-4">
             {session?.user?.image && (
-              <img
+              <Image
                 src={session.user.image}
                 alt={session.user.name || "User"}
+                width={64}
+                height={64}
                 className="h-16 w-16 rounded-full"
               />
             )}

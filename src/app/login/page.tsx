@@ -11,6 +11,7 @@ export default function LoginPage() {
     try {
       await signIn("google", { callbackUrl: "/records" });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Sign in error:", error);
       setIsLoading(false);
     }

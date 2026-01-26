@@ -32,6 +32,7 @@ export function ApiTokenDisplay({ userId, apiToken }: ApiTokenDisplayProps) {
       showToast("Token copied to clipboard", "success");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to copy token:", error);
       showToast("Failed to copy token", "error");
     }
@@ -44,6 +45,7 @@ export function ApiTokenDisplay({ userId, apiToken }: ApiTokenDisplayProps) {
       setShowConfirmRegenerate(false);
       showToast("API token regenerated successfully", "success");
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to regenerate token:", error);
       showToast("Failed to regenerate token", "error");
     } finally {

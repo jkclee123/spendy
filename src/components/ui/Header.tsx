@@ -1,9 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-
 export function Header() {
-  const { data: session } = useSession();
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/80 backdrop-blur-sm md:pl-20">

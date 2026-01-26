@@ -118,6 +118,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       showToast("Transaction added successfully", "success");
       onSuccess?.();
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to create transaction:", error);
       const errorMessage =
         error instanceof Error

@@ -99,8 +99,10 @@ function logRequest(entry: LogEntry): void {
   };
 
   if (entry.status >= 400) {
+    // eslint-disable-next-line no-console
     console.error("[Transaction API]", JSON.stringify(logData));
   } else {
+    // eslint-disable-next-line no-console
     console.log("[Transaction API]", JSON.stringify(logData));
   }
 }
