@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 
 /**
  * Create a transaction from the external API
@@ -90,6 +91,61 @@ export const listByUser = query({
       .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
       .order("desc")
       .collect();
+  },
+});
+
+/**
+ * Get paginated transactions for a user with optional filters
+ * Supports cursor-based pagination for infinite scroll
+ */
+export const listByUserPaginated = query({
+  args: {
+    userId: v.id("users"),
+    paginationOpts: paginationOptsValidator,
+    // Optional filters
+    category: v.optional(v.string()),
+    startDate: v.optional(v.number()),
+    endDate: v.optional(v.number()),
+    minAmount: v.optional(v.number()),
+    maxAmount: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    // Start with base query
+    let query = ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .order("desc");
+
+    // Apply pagination first to get the page
+    const results = await query.paginate(args.paginationOpts);
+
+    // Apply filters in application code (Convex doesn't support complex filtering in indexes)
+    let filteredPage = results.page;
+
+    if (args.category) {
+      filteredPage = filteredPage.filter((t) => t.category === args.category);
+    }
+
+    if (args.startDate !== undefined) {
+      filteredPage = filteredPage.filter((t) => t.createdAt >= args.startDate!);
+    }
+
+    if (args.endDate !== undefined) {
+      filteredPage = filteredPage.filter((t) => t.createdAt <= args.endDate!);
+    }
+
+    if (args.minAmount !== undefined) {
+      filteredPage = filteredPage.filter((t) => t.amount >= args.minAmount!);
+    }
+
+    if (args.maxAmount !== undefined) {
+      filteredPage = filteredPage.filter((t) => t.amount <= args.maxAmount!);
+    }
+
+    return {
+      ...results,
+      page: filteredPage,
+    };
   },
 });
 

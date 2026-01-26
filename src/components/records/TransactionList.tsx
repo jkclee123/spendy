@@ -1,0 +1,150 @@
+"use client";
+
+import { useEffect, useRef, useCallback } from "react";
+import { usePaginatedQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+import type { Transaction } from "@/types";
+import { TransactionCard } from "./TransactionCard";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import type { TransactionFiltersState } from "./TransactionFilters";
+
+interface TransactionListProps {
+  userId: Id<"users">;
+  filters: TransactionFiltersState;
+  onTransactionClick?: (transaction: Transaction) => void;
+}
+
+const PAGE_SIZE = 20;
+
+/**
+ * Displays a paginated list of transactions with infinite scroll
+ * Supports filtering by category, date range, and amount
+ */
+export function TransactionList({
+  userId,
+  filters,
+  onTransactionClick,
+}: TransactionListProps) {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Use paginated query with filters
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.transactions.listByUserPaginated,
+    {
+      userId,
+      category: filters.category,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      minAmount: filters.minAmount,
+      maxAmount: filters.maxAmount,
+    },
+    { initialNumItems: PAGE_SIZE }
+  );
+
+  // Set up intersection observer for infinite scroll
+  const handleObserver = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && status === "CanLoadMore") {
+        loadMore(PAGE_SIZE);
+      }
+    },
+    [status, loadMore]
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    observerRef.current = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "100px",
+      threshold: 0,
+    });
+
+    observerRef.current.observe(element);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleObserver]);
+
+  // Loading state for initial load
+  if (status === "LoadingFirstPage") {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  // Empty state
+  if (results.length === 0) {
+    return <EmptyState hasFilters={hasActiveFilters(filters)} />;
+  }
+
+  return (
+    <div className="space-y-3">
+      {/* Transaction list */}
+      {results.map((transaction) => (
+        <TransactionCard
+          key={transaction._id}
+          transaction={transaction as Transaction}
+          onClick={onTransactionClick}
+        />
+      ))}
+
+      {/* Load more trigger element */}
+      <div ref={loadMoreRef} className="py-4">
+        {status === "LoadingMore" && (
+          <div className="flex items-center justify-center">
+            <LoadingSpinner size="md" />
+          </div>
+        )}
+        {status === "Exhausted" && results.length > 0 && (
+          <p className="text-center text-sm text-gray-500">
+            No more transactions to load
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Check if any filters are active
+ */
+function hasActiveFilters(filters: TransactionFiltersState): boolean {
+  return !!(
+    filters.category ||
+    filters.startDate ||
+    filters.endDate ||
+    filters.minAmount !== undefined ||
+    filters.maxAmount !== undefined
+  );
+}
+
+/**
+ * Empty state component
+ */
+function EmptyState({ hasFilters }: { hasFilters: boolean }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+        <span className="text-2xl">{hasFilters ? "🔍" : "📝"}</span>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900">
+        {hasFilters ? "No matching transactions" : "No transactions yet"}
+      </h3>
+      <p className="mt-2 max-w-sm text-sm text-gray-500">
+        {hasFilters
+          ? "Try adjusting your filters to see more transactions."
+          : "Your transactions will appear here once you start tracking your spending."}
+      </p>
+    </div>
+  );
+}

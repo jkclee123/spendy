@@ -134,13 +134,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] Create Convex query for paginated transactions in convex/transactions.ts (listByUser with cursor pagination)
-- [ ] T045 [US4] Create TransactionList component displaying amount, description, category, date, source in src/components/records/TransactionList.tsx
-- [ ] T046 [US4] Create TransactionCard component for individual transaction display in src/components/records/TransactionCard.tsx
-- [ ] T047 [US4] Create records page with transaction list in src/app/(authenticated)/records/page.tsx
-- [ ] T048 [US4] Add filter controls (date range, category, amount range) in src/components/records/TransactionFilters.tsx
-- [ ] T049 [US4] Implement lazy loading/infinite scroll for transaction list in src/components/records/TransactionList.tsx
-- [ ] T050 [US4] Add empty state when no transactions match filters in src/app/(authenticated)/records/page.tsx
+- [X] T044 [US4] Create Convex query for paginated transactions in convex/transactions.ts (listByUser with cursor pagination)
+- [X] T045 [US4] Create TransactionList component displaying amount, description, category, date, source in src/components/records/TransactionList.tsx
+- [X] T046 [US4] Create TransactionCard component for individual transaction display in src/components/records/TransactionCard.tsx
+- [X] T047 [US4] Create records page with transaction list in src/app/(authenticated)/records/page.tsx
+- [X] T048 [US4] Add filter controls (date range, category, amount range) in src/components/records/TransactionFilters.tsx
+- [X] T049 [US4] Implement lazy loading/infinite scroll for transaction list in src/components/records/TransactionList.tsx
+- [X] T050 [US4] Add empty state when no transactions match filters in src/app/(authenticated)/records/page.tsx
 
 **Checkpoint**: Users can browse and filter their complete transaction history
 

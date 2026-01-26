@@ -1,23 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "convex/react";
+import { useSession } from "next-auth/react";
+import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { TransactionForm } from "@/components/records/TransactionForm";
+import { TransactionList } from "@/components/records/TransactionList";
+import {
+  TransactionFilters,
+  TransactionFiltersState,
+} from "@/components/records/TransactionFilters";
+import type { Transaction } from "@/types";
 
 export default function RecordsPage() {
+  const { data: session } = useSession();
   const [showForm, setShowForm] = useState(false);
+  const [filters, setFilters] = useState<TransactionFiltersState>({});
 
-  const handleSuccess = () => {
-    setShowForm(false);
-  };
+  // Get the user from Convex by email
+  const user = useQuery(
+    api.users.getByEmail,
+    session?.user?.email ? { email: session.user.email } : "skip"
+  );
 
-  const handleCancel = () => {
+  const handleSuccess = useCallback(() => {
     setShowForm(false);
-  };
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    setShowForm(false);
+  }, []);
+
+  const handleFiltersChange = useCallback((newFilters: TransactionFiltersState) => {
+    setFilters(newFilters);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setFilters({});
+  }, []);
+
+  const handleTransactionClick = useCallback((transaction: Transaction) => {
+    // Will be implemented in Phase 7 for edit/delete functionality
+    console.log("Transaction clicked:", transaction._id);
+  }, []);
+
+  // Loading state while fetching user
+  if (user === undefined) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  // User not found state
+  if (user === null) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <span className="text-2xl">⚠️</span>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900">User not found</h3>
+        <p className="mt-2 max-w-sm text-sm text-gray-500">
+          Please try logging out and logging back in.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Records</h2>
         {!showForm && (
@@ -43,35 +99,40 @@ export default function RecordsPage() {
         </Card>
       )}
 
+      {/* Filters */}
+      <TransactionFilters
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={handleClearFilters}
+      />
+
       {/* Transaction List */}
-      <Card>
-        <CardHeader>
+      <Card padding="sm">
+        <CardHeader className="px-3 pt-2">
           <CardTitle>Your Transactions</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <span className="text-2xl">📝</span>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900">
-              No transactions yet
-            </h3>
-            <p className="mt-2 max-w-sm text-sm text-gray-500">
-              Your transactions will appear here once you start tracking your spending.
-            </p>
-            {!showForm && (
-              <Button
-                onClick={() => setShowForm(true)}
-                variant="primary"
-                size="md"
-                className="mt-4"
-              >
-                Add Your First Transaction
-              </Button>
-            )}
-          </div>
+        <CardContent className="px-1">
+          <TransactionList
+            userId={user._id}
+            filters={filters}
+            onTransactionClick={handleTransactionClick}
+          />
         </CardContent>
       </Card>
+
+      {/* Add first transaction CTA when no form is shown */}
+      {!showForm && (
+        <div className="fixed bottom-20 left-0 right-0 px-4 pb-4 md:hidden">
+          <Button
+            onClick={() => setShowForm(true)}
+            variant="primary"
+            size="lg"
+            className="w-full shadow-lg"
+          >
+            + Add Transaction
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
