@@ -1,0 +1,161 @@
+openapi: 3.1.0
+info:
+  title: Spendy Transaction API
+  description: External API for recording transactions from external sources
+  version: 1.0.0
+  
+servers:
+  - url: https://spendy.app
+    description: Production
+  - url: http://localhost:3000
+    description: Development
+
+paths:
+  /api/transaction:
+    post:
+      summary: Create a new transaction
+      description: |
+        Records a new transaction for the user identified by the apiToken.
+        This endpoint is designed for external integrations (e.g., iOS Shortcuts, 
+        Zapier, bank webhooks) to send transaction data.
+      operationId: createTransaction
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+            examples:
+              basic:
+                summary: Basic transaction
+                value:
+                  amount: 25.50
+                  apiToken: "550e8400-e29b-41d4-a716-446655440000"
+              complete:
+                summary: Transaction with all fields
+                value:
+                  category: "Food & Dining"
+                  amount: 42.99
+                  paymentMethod: "Credit Card"
+                  apiToken: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransactionResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingAmount:
+                  summary: Missing required field
+                  value:
+                    error: "Validation failed"
+                    message: "amount is required"
+                invalidAmount:
+                  summary: Invalid amount value
+                  value:
+                    error: "Validation failed"
+                    message: "amount must be a positive number"
+        '401':
+          description: Authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidToken:
+                  summary: Invalid API token
+                  value:
+                    error: "Unauthorized"
+                    message: "Invalid or missing API token"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateTransactionRequest:
+      type: object
+      required:
+        - amount
+        - apiToken
+      properties:
+        category:
+          type: string
+          description: Transaction category (e.g., "Food & Dining", "Transport")
+          example: "Food & Dining"
+          nullable: true
+        amount:
+          type: number
+          format: float
+          description: Transaction amount (must be positive)
+          example: 25.50
+          minimum: 0.01
+        paymentMethod:
+          type: string
+          description: Payment method used (e.g., "Credit Card", "Cash", "Debit")
+          example: "Credit Card"
+          nullable: true
+        apiToken:
+          type: string
+          format: uuid
+          description: User's unique API token for authentication
+          example: "550e8400-e29b-41d4-a716-446655440000"
+          
+    CreateTransactionResponse:
+      type: object
+      required:
+        - success
+        - transactionId
+      properties:
+        success:
+          type: boolean
+          example: true
+        transactionId:
+          type: string
+          description: Unique identifier of the created transaction
+          example: "jh7x8k9m2n4p5q6r"
+        message:
+          type: string
+          example: "Transaction recorded successfully"
+          
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error type
+          example: "Validation failed"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "amount must be a positive number"
+        details:
+          type: object
+          description: Additional error details (optional)
+          additionalProperties: true
+
+  securitySchemes:
+    apiToken:
+      type: apiKey
+      in: body
+      name: apiToken
+      description: User's unique API token passed in request body
+
+tags:
+  - name: Transactions
+    description: Transaction management endpoints
