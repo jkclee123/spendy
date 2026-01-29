@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
 import { TransactionCard } from "./TransactionCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { useToast } from "@/components/ui/Toast";
 import type { TransactionFiltersState } from "./TransactionFilters";
 
 interface TransactionListProps {
@@ -28,6 +29,7 @@ export function TransactionList({
 }: TransactionListProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast();
 
   // Use paginated query with filters
   const { results, status, loadMore } = usePaginatedQuery(
@@ -39,6 +41,28 @@ export function TransactionList({
       endDate: filters.endDate,
     },
     { initialNumItems: PAGE_SIZE }
+  );
+
+  // Delete mutation
+  const deleteTransaction = useMutation(api.transactions.remove);
+
+  const handleDelete = useCallback(
+    async (transaction: Transaction) => {
+      try {
+        await deleteTransaction({
+          transactionId: transaction._id,
+        });
+        showToast("Transaction deleted successfully", "success");
+      } catch (error) {
+        console.error("Failed to delete transaction:", error);
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to delete transaction. Please try again.";
+        showToast(errorMessage, "error");
+      }
+    },
+    [deleteTransaction, showToast]
   );
 
   // Set up intersection observer for infinite scroll
@@ -93,6 +117,7 @@ export function TransactionList({
           key={transaction._id}
           transaction={transaction as Transaction}
           onClick={onTransactionClick}
+          onDelete={handleDelete}
         />
       ))}
 
