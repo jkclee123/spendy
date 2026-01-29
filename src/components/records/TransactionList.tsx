@@ -37,8 +37,6 @@ export function TransactionList({
       category: filters.category,
       startDate: filters.startDate,
       endDate: filters.endDate,
-      minAmount: filters.minAmount,
-      maxAmount: filters.maxAmount,
     },
     { initialNumItems: PAGE_SIZE }
   );
@@ -105,11 +103,6 @@ export function TransactionList({
             <LoadingSpinner size="md" />
           </div>
         )}
-        {status === "Exhausted" && results.length > 0 && (
-          <p className="text-center text-sm text-gray-500">
-            No more transactions to load
-          </p>
-        )}
       </div>
     </div>
   );
@@ -122,9 +115,7 @@ function hasActiveFilters(filters: TransactionFiltersState): boolean {
   return !!(
     filters.category ||
     filters.startDate ||
-    filters.endDate ||
-    filters.minAmount !== undefined ||
-    filters.maxAmount !== undefined
+    filters.endDate
   );
 }
 

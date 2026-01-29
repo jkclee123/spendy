@@ -8,8 +8,6 @@ export interface TransactionFiltersState {
   category?: string;
   startDate?: number;
   endDate?: number;
-  minAmount?: number;
-  maxAmount?: number;
 }
 
 interface TransactionFiltersProps {
@@ -35,8 +33,6 @@ export function TransactionFilters({
     if (filters.category) count++;
     if (filters.startDate) count++;
     if (filters.endDate) count++;
-    if (filters.minAmount !== undefined) count++;
-    if (filters.maxAmount !== undefined) count++;
     return count;
   }, [filters]);
 
@@ -78,27 +74,7 @@ export function TransactionFilters({
     [filters, onFiltersChange]
   );
 
-  const handleMinAmountChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      onFiltersChange({
-        ...filters,
-        minAmount: value ? parseFloat(value) : undefined,
-      });
-    },
-    [filters, onFiltersChange]
-  );
 
-  const handleMaxAmountChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      onFiltersChange({
-        ...filters,
-        maxAmount: value ? parseFloat(value) : undefined,
-      });
-    },
-    [filters, onFiltersChange]
-  );
 
   // Convert timestamps back to date strings for input values
   const startDateValue = filters.startDate
@@ -169,9 +145,9 @@ export function TransactionFilters({
               id="filter-category"
               value={filters.category || ""}
               onChange={handleCategoryChange}
-              className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">All categories</option>
+              <option value="" className="text-gray-600">All categories</option>
               {DEFAULT_CATEGORIES.map((category) => (
                 <option key={category} value={category}>
                   {category}
@@ -194,7 +170,8 @@ export function TransactionFilters({
                 id="filter-start-date"
                 value={startDateValue}
                 onChange={handleStartDateChange}
-                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Select start date"
+                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
@@ -209,58 +186,9 @@ export function TransactionFilters({
                 id="filter-end-date"
                 value={endDateValue}
                 onChange={handleEndDateChange}
-                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Select end date"
+                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
-
-          {/* Amount range filter */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label
-                htmlFor="filter-min-amount"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
-              >
-                Min Amount
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  $
-                </span>
-                <input
-                  type="number"
-                  id="filter-min-amount"
-                  min="0"
-                  step="0.01"
-                  value={filters.minAmount ?? ""}
-                  onChange={handleMinAmountChange}
-                  placeholder="0.00"
-                  className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="filter-max-amount"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
-              >
-                Max Amount
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  $
-                </span>
-                <input
-                  type="number"
-                  id="filter-max-amount"
-                  min="0"
-                  step="0.01"
-                  value={filters.maxAmount ?? ""}
-                  onChange={handleMaxAmountChange}
-                  placeholder="0.00"
-                  className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-7 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
             </div>
           </div>
 
