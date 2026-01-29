@@ -10,6 +10,7 @@ interface TransactionCardProps {
 }
 
 const SWIPE_THRESHOLD = 80;
+const SWIPE_START_THRESHOLD = 10;
 
 /**
  * Displays a single transaction in a card format
@@ -25,6 +26,7 @@ export function TransactionCard({
   const [isSwiping, setIsSwiping] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const currentOffset = useRef(0);
+  const hasSwipedRef = useRef(false);
 
   const formattedAmount = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -34,16 +36,22 @@ export function TransactionCard({
   const date = new Date(transaction.createdAt);
   const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+  // Shared drag handler functions
+  const handleDragStart = useCallback((clientX: number) => {
+    touchStartX.current = clientX;
     setIsSwiping(true);
+    hasSwipedRef.current = false;
   }, []);
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+  const handleDragMove = useCallback((clientX: number) => {
     if (touchStartX.current === null) return;
 
-    const currentX = e.touches[0].clientX;
-    const diff = currentX - touchStartX.current;
+    const diff = clientX - touchStartX.current;
+
+    // Track if user has actually swiped (moved past threshold)
+    if (Math.abs(diff) > SWIPE_START_THRESHOLD) {
+      hasSwipedRef.current = true;
+    }
 
     // Only allow swiping left (negative values)
     const newOffset = Math.min(0, Math.max(-150, diff));
@@ -51,7 +59,7 @@ export function TransactionCard({
     setSwipeOffset(newOffset);
   }, []);
 
-  const handleTouchEnd = useCallback(() => {
+  const handleDragEnd = useCallback(() => {
     setIsSwiping(false);
     touchStartX.current = null;
 
@@ -70,8 +78,45 @@ export function TransactionCard({
     currentOffset.current = 0;
   }, [onDelete, transaction, formattedAmount]);
 
+  // Touch event handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    handleDragStart(e.touches[0].clientX);
+  }, [handleDragStart]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    handleDragMove(e.touches[0].clientX);
+  }, [handleDragMove]);
+
+  const handleTouchEnd = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  // Mouse event handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    handleDragStart(e.clientX);
+  }, [handleDragStart]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    handleDragMove(e.clientX);
+  }, [handleDragMove]);
+
+  const handleMouseUp = useCallback(() => {
+    handleDragEnd();
+  }, [handleDragEnd]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (isSwiping) {
+      handleDragEnd();
+    }
+  }, [isSwiping, handleDragEnd]);
+
   const handleClick = () => {
-    // Prevent click when swiping
+    // Prevent click if we just performed a swipe
+    if (hasSwipedRef.current) {
+      hasSwipedRef.current = false;
+      return;
+    }
+
     if (!isSwiping && swipeOffset === 0) {
       onClick?.(transaction);
     }
@@ -128,17 +173,22 @@ export function TransactionCard({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
         style={{
           transform: `translateX(${swipeOffset}px)`,
           transition: isSwiping ? "none" : "transform 0.3s ease-out",
         }}
         className={`
-          relative flex min-h-[72px] items-center justify-between rounded-xl 
+          relative flex min-h-[72px] select-none items-center justify-between rounded-xl 
           border border-gray-100 bg-white p-4
           ${onClick && swipeOffset === 0
             ? "cursor-pointer hover:border-gray-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             : ""
           }
+          ${isSwiping ? "cursor-grabbing" : ""}
         `}
       >
         {/* Left side: Category icon and details */}
