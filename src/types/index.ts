@@ -57,13 +57,17 @@ export interface ErrorResponse {
  * Default transaction categories
  */
 export const DEFAULT_CATEGORIES = [
-  "Food & Dining",
-  "Transport",
-  "Shopping",
-  "Entertainment",
-  "Bills & Utilities",
-  "Health",
-  "Other",
+  "🍽️ Restaurants & Bars",
+  "🥤 Drinks",
+  "🚌 Transport",
+  "🎢 Entertainment",
+  "👨🏼‍🍳 Groceries",
+  "🏨 Accommodation",
+  "💊 Healthcare",
+  "📜 Insurance",
+  "🏡 Rent & Charges",
+  "🛍️ Shopping",
+  "❓ Other",
 ] as const;
 
 export type DefaultCategory = (typeof DEFAULT_CATEGORIES)[number];

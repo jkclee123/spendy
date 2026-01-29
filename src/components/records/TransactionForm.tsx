@@ -11,7 +11,6 @@ import { useToast } from "@/components/ui/Toast";
 interface FormErrors {
   amount?: string;
   category?: string;
-  paymentMethod?: string;
   general?: string;
 }
 
@@ -25,7 +24,6 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
   const { showToast } = useToast();
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -83,9 +81,14 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       }
     }
 
+    // Category validation
+    if (!category.trim()) {
+      newErrors.category = "Category is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [amount]);
+  }, [amount, category]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -106,14 +109,12 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       await createTransaction({
         userId: user._id,
         amount: parseFloat(amount),
-        category: category || undefined,
-        paymentMethod: paymentMethod || undefined,
+        category: category,
       });
 
       // Reset form
       setAmount("");
       setCategory("");
-      setPaymentMethod("");
 
       showToast("Transaction added successfully", "success");
       onSuccess?.();
@@ -167,7 +168,8 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
             placeholder="0.00"
             disabled={isSubmitting}
             className={`
-              w-full rounded-xl border py-3 pl-8 pr-4 text-base
+              w-full rounded-xl border bg-white py-3 pl-8 pr-4 text-base text-gray-900
+              placeholder:text-gray-400
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
@@ -187,36 +189,17 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       {/* Category Field */}
       <CategorySelect
         label="Category"
+        required
         value={category}
-        onChange={(e) => setCategory(e.target.value)}
+        onChange={(e) => {
+          setCategory(e.target.value);
+          if (errors.category) {
+            setErrors((prev) => ({ ...prev, category: undefined }));
+          }
+        }}
         disabled={isSubmitting}
         error={errors.category}
       />
-
-      {/* Payment Method Field */}
-      <div>
-        <label
-          htmlFor="paymentMethod"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
-        >
-          Payment Method
-        </label>
-        <input
-          type="text"
-          id="paymentMethod"
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-          placeholder="e.g., Credit Card, Cash"
-          disabled={isSubmitting}
-          className={`
-            w-full rounded-xl border border-gray-300 px-4 py-3 text-base
-            transition-colors duration-200
-            hover:border-gray-400
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-          `}
-        />
-      </div>
 
       {/* Form Actions */}
       <div className="flex gap-3 pt-2">
