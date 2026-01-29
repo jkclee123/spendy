@@ -91,7 +91,7 @@ export default function SettingsPage() {
       {/* Sign Out */}
       <Card>
         <CardContent>
-          <Button variant="outline" onClick={handleSignOut} className="w-full">
+          <Button variant="outline" onClick={handleSignOut} className="w-full text-red-600 hover:bg-red-50 hover:text-red-700">
             Sign Out
           </Button>
         </CardContent>
