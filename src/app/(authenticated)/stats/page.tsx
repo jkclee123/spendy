@@ -191,7 +191,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle>Spending by Category</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-80">
             <CategoryPieChart data={categoryData} />
           </CardContent>
         </Card>
@@ -205,7 +205,7 @@ export default function StatsPage() {
               {timePeriod === "year" ? "Monthly Spending (12 months)" : "Recent Spending"}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="h-80">
             <MonthlyHistogram data={monthlyData} />
           </CardContent>
         </Card>

@@ -72,7 +72,7 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
   return (
     <div className={`w-full ${className}`}>
       <div className="h-64 sm:h-80">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} aspect={undefined}>
           <PieChart>
             <Pie
               data={sortedData}

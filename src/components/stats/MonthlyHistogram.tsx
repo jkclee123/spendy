@@ -95,7 +95,7 @@ export function MonthlyHistogram({ data, className = "" }: MonthlyHistogramProps
   return (
     <div className={`w-full ${className}`}>
       <div className="h-64 sm:h-80">
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} aspect={undefined}>
           <BarChart
             data={chartData}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
@@ -126,22 +126,6 @@ export function MonthlyHistogram({ data, className = "" }: MonthlyHistogramProps
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Summary Stats */}
-      <div className="mt-4 grid grid-cols-2 gap-4 text-center">
-        <div>
-          <p className="text-lg font-semibold text-gray-900">
-            {formatCurrency(averageAmount)}
-          </p>
-          <p className="text-xs text-gray-500">Monthly average</p>
-        </div>
-        <div>
-          <p className="text-lg font-semibold text-gray-900">
-            {formatCurrency(totalAmount)}
-          </p>
-          <p className="text-xs text-gray-500">Total ({data.length} months)</p>
-        </div>
       </div>
     </div>
   );
