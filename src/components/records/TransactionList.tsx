@@ -54,7 +54,6 @@ export function TransactionList({
         });
         showToast("Transaction deleted successfully", "success");
       } catch (error) {
-        console.error("Failed to delete transaction:", error);
         const errorMessage =
           error instanceof Error
             ? error.message
@@ -98,8 +97,9 @@ export function TransactionList({
   // Loading state for initial load
   if (status === "LoadingFirstPage") {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <LoadingSpinner size="lg" />
+        <p className="text-sm text-gray-500">Loading...</p>
       </div>
     );
   }

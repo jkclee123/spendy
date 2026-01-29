@@ -53,10 +53,10 @@ export default function StatsPage() {
     api.transactions.aggregateByCategory,
     user?._id
       ? {
-          userId: user._id,
-          startDate: dateRange.startDate,
-          endDate: dateRange.endDate,
-        }
+        userId: user._id,
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      }
       : "skip"
   );
 
@@ -65,9 +65,9 @@ export default function StatsPage() {
     api.transactions.aggregateByMonth,
     user?._id
       ? {
-          userId: user._id,
-          monthsBack: timePeriod === "year" ? 12 : timePeriod === "month" ? 3 : 1,
-        }
+        userId: user._id,
+        monthsBack: timePeriod === "year" ? 12 : timePeriod === "month" ? 3 : 1,
+      }
       : "skip"
   );
 
@@ -80,10 +80,9 @@ export default function StatsPage() {
 
   // Time period button styles - min 44px touch target for mobile
   const periodButtonClass = (period: TimePeriod) =>
-    `min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-      timePeriod === period
-        ? "bg-blue-500 text-white"
-        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+    `min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium rounded-lg transition-colors ${timePeriod === period
+      ? "bg-blue-500 text-white"
+      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
     }`;
 
   // Get period label for display
@@ -136,8 +135,9 @@ export default function StatsPage() {
       {isLoading && (
         <Card>
           <CardContent>
-            <div className="flex items-center justify-center py-12">
+            <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
               <LoadingSpinner size="lg" />
+              <p className="text-sm text-gray-500">Loading...</p>
             </div>
           </CardContent>
         </Card>

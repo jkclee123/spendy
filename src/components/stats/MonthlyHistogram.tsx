@@ -95,7 +95,7 @@ export function MonthlyHistogram({ data, className = "" }: MonthlyHistogramProps
   return (
     <div className={`w-full ${className}`}>
       <div className="h-64 sm:h-80">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <BarChart
             data={chartData}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
