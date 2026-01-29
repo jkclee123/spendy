@@ -28,6 +28,7 @@ test-results/
 # IDE
 .idea/
 .vscode/
+.opencode
 *.swp
 *.swo
 .DS_Store

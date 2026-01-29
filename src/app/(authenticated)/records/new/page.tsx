@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useQuery } from "convex/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "../../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TransactionForm } from "@/components/records/TransactionForm";
@@ -13,11 +13,28 @@ import { ArrowLeft } from "lucide-react";
 export default function NewTransactionPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read latitude and longitude from query parameters
+  const latitude = searchParams.get("latitude");
+  const longitude = searchParams.get("longitude");
 
   // Get the user from Convex by email
   const user = useQuery(
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
+  );
+
+  // Query nearby location histories if both latitude and longitude are provided
+  const nearbyLocations = useQuery(
+    api.locationHistories.findNearby,
+    latitude && longitude && user?._id
+      ? {
+          userId: user._id,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+        }
+      : "skip"
   );
 
   // Loading state while fetching user
@@ -52,6 +69,15 @@ export default function NewTransactionPage() {
     router.push("/records");
   };
 
+  // Prepare initial location history data if nearby locations exist
+  const initialLocationHistory =
+    nearbyLocations && nearbyLocations.length > 0
+      ? {
+          amount: nearbyLocations[0].amount,
+          category: nearbyLocations[0].category || "",
+        }
+      : undefined;
+
   return (
     <div className="space-y-4">
       {/* Header with back link */}
@@ -73,6 +99,9 @@ export default function NewTransactionPage() {
         <CardContent>
           <TransactionForm
             userId={user._id}
+            latitude={latitude ? parseFloat(latitude) : undefined}
+            longitude={longitude ? parseFloat(longitude) : undefined}
+            initialLocationHistory={initialLocationHistory}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />

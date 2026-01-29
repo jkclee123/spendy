@@ -16,9 +16,17 @@ interface FormErrors {
   general?: string;
 }
 
+interface LocationHistoryData {
+  amount: number;
+  category: string;
+}
+
 interface TransactionFormProps {
   userId: Id<"users">;
   initialData?: Transaction;
+  latitude?: number;
+  longitude?: number;
+  initialLocationHistory?: LocationHistoryData;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -26,6 +34,9 @@ interface TransactionFormProps {
 export function TransactionForm({
   userId,
   initialData,
+  latitude,
+  longitude,
+  initialLocationHistory,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
@@ -35,23 +46,32 @@ export function TransactionForm({
   const isEditMode = !!initialData;
 
   const [amount, setAmount] = useState(
-    initialData ? initialData.amount.toString() : ""
+    initialData
+      ? initialData.amount.toString()
+      : initialLocationHistory
+        ? initialLocationHistory.amount.toString()
+        : ""
   );
-  const [category, setCategory] = useState(initialData?.category || "");
+  const [category, setCategory] = useState(
+    initialData?.category ?? initialLocationHistory?.category ?? ""
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Reset form when initialData changes (e.g., when navigating between edits)
+  // Reset form when initialData or initialLocationHistory changes
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount.toString());
       setCategory(initialData.category || "");
+    } else if (initialLocationHistory) {
+      setAmount(initialLocationHistory.amount.toString());
+      setCategory(initialLocationHistory.category);
     } else {
       setAmount("");
       setCategory("");
     }
     setErrors({});
-  }, [initialData]);
+  }, [initialData, initialLocationHistory]);
 
   // Use mutation with optimistic update for instant UI feedback
   const createTransaction = useMutation(
@@ -86,6 +106,9 @@ export function TransactionForm({
 
   // Update mutation
   const updateTransaction = useMutation(api.transactions.update);
+
+  // Location history mutation
+  const upsertLocationHistory = useMutation(api.locationHistories.upsertNearby);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
@@ -145,6 +168,17 @@ export function TransactionForm({
           amount: parseFloat(amount),
           category: category,
         });
+
+        // Update or create location history if coordinates are provided
+        if (latitude !== undefined && longitude !== undefined) {
+          await upsertLocationHistory({
+            userId: userId,
+            latitude: latitude,
+            longitude: longitude,
+            amount: parseFloat(amount),
+            category: category,
+          });
+        }
 
         // Reset form
         setAmount("");

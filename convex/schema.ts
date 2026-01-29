@@ -30,6 +30,7 @@ export default defineSchema({
     longitude: v.number(),
     amount: v.number(),
     category: v.optional(v.string()),
+    count: v.number(),
     createdAt: v.number(),
   })
     .index("by_userId", ["userId"])
