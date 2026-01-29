@@ -1,6 +1,5 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
 import type { Transaction } from "@/types";
 
 interface TransactionCardProps {
@@ -21,18 +20,8 @@ export function TransactionCard({
     currency: "USD",
   }).format(transaction.amount);
 
-  const formattedDate = formatDistanceToNow(new Date(transaction.createdAt), {
-    addSuffix: true,
-  });
-
-  const absoluteDate = new Date(transaction.createdAt).toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }
-  );
+  const date = new Date(transaction.createdAt);
+  const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
   const handleClick = () => {
     onClick?.(transaction);
@@ -54,10 +43,9 @@ export function TransactionCard({
       className={`
         flex min-h-[72px] items-center justify-between rounded-xl border border-gray-100 bg-white p-4
         transition-all duration-200
-        ${
-          onClick
-            ? "cursor-pointer hover:border-gray-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            : ""
+        ${onClick
+          ? "cursor-pointer hover:border-gray-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          : ""
         }
       `}
     >
@@ -74,7 +62,7 @@ export function TransactionCard({
             {transaction.category || "Uncategorized"}
           </span>
           <div className="flex items-center gap-2 text-sm text-gray-500">
-            <time dateTime={new Date(transaction.createdAt).toISOString()} title={absoluteDate}>
+            <time dateTime={new Date(transaction.createdAt).toISOString()}>
               {formattedDate}
             </time>
             {transaction.paymentMethod && (
@@ -92,7 +80,6 @@ export function TransactionCard({
         <span className="text-lg font-semibold text-gray-900">
           {formattedAmount}
         </span>
-        <SourceBadge source={transaction.source} />
       </div>
     </div>
   );
@@ -103,13 +90,17 @@ export function TransactionCard({
  */
 function CategoryIcon({ category }: { category?: string }) {
   const iconMap: Record<string, string> = {
-    "Food & Dining": "🍔",
-    Transport: "🚗",
+    "Restaurants & Bars": "🍽️",
+    Drinks: "🥤",
+    Transport: "🚌",
+    Entertainment: "🎢",
+    Groceries: "👨🏼‍🍳",
+    Accommodation: "🏨",
+    Healthcare: "💊",
+    Insurance: "📜",
+    "Rent & Charges": "🏡",
     Shopping: "🛍️",
-    Entertainment: "🎬",
-    "Bills & Utilities": "💡",
-    Health: "💊",
-    Other: "📦",
+    Other: "❓",
   };
 
   const icon = category ? iconMap[category] || "💰" : "💰";
@@ -117,24 +108,4 @@ function CategoryIcon({ category }: { category?: string }) {
   return <span className="text-lg">{icon}</span>;
 }
 
-/**
- * Badge showing transaction source (API or Web)
- */
-function SourceBadge({ source }: { source: "api" | "web" }) {
-  const isApi = source === "api";
 
-  return (
-    <span
-      className={`
-        mt-1 rounded-full px-2 py-0.5 text-xs font-medium
-        ${
-          isApi
-            ? "bg-purple-100 text-purple-700"
-            : "bg-blue-100 text-blue-700"
-        }
-      `}
-    >
-      {isApi ? "API" : "Web"}
-    </span>
-  );
-}

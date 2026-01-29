@@ -58,11 +58,11 @@ export function TransactionDetail({
       const updatedTransactions = existingTransactions.map((t) =>
         t._id === args.transactionId
           ? {
-              ...t,
-              ...(args.amount !== undefined && { amount: args.amount }),
-              ...(args.category !== undefined && { category: args.category }),
-              ...(args.paymentMethod !== undefined && { paymentMethod: args.paymentMethod }),
-            }
+            ...t,
+            ...(args.amount !== undefined && { amount: args.amount }),
+            ...(args.category !== undefined && { category: args.category }),
+            ...(args.paymentMethod !== undefined && { paymentMethod: args.paymentMethod }),
+          }
           : t
       );
       localStore.setQuery(
@@ -321,10 +321,9 @@ export function TransactionDetail({
                       transition-colors duration-200
                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                       disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-                      ${
-                        errors.amount
-                          ? "border-red-500 focus:ring-red-500"
-                          : "border-gray-300 hover:border-gray-400"
+                      ${errors.amount
+                        ? "border-red-500 focus:ring-red-500"
+                        : "border-gray-300 hover:border-gray-400"
                       }
                     `}
                   />
@@ -481,10 +480,9 @@ export function TransactionDetail({
                     <span
                       className={`
                         rounded-full px-2 py-0.5 text-xs font-medium
-                        ${
-                          transaction.source === "api"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-blue-100 text-blue-700"
+                        ${transaction.source === "api"
+                          ? "bg-purple-100 text-purple-700"
+                          : "bg-blue-100 text-blue-700"
                         }
                       `}
                     >
@@ -551,13 +549,17 @@ function DetailRow({
  */
 function getCategoryIcon(category?: string): string {
   const iconMap: Record<string, string> = {
-    "Food & Dining": "🍔",
-    Transport: "🚗",
+    "Restaurants & Bars": "🍽️",
+    Drinks: "🥤",
+    Transport: "🚌",
+    Entertainment: "🎢",
+    Groceries: "👨🏼‍🍳",
+    Accommodation: "🏨",
+    Healthcare: "💊",
+    Insurance: "📜",
+    "Rent & Charges": "🏡",
     Shopping: "🛍️",
-    Entertainment: "🎬",
-    "Bills & Utilities": "💡",
-    Health: "💊",
-    Other: "📦",
+    Other: "❓",
   };
 
   return category ? iconMap[category] || "💰" : "💰";
