@@ -57,13 +57,6 @@ export function NavigationBar() {
 
       {/* Desktop Side Navigation */}
       <nav className="fixed left-0 top-0 z-50 hidden h-full w-20 flex-col border-r border-gray-200 bg-white md:flex">
-        {/* Logo */}
-        <div className="flex h-14 items-center justify-center border-b border-gray-200">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500">
-            <span className="text-lg font-bold text-white">$</span>
-          </div>
-        </div>
-
         {/* Nav Items */}
         <div className="flex flex-1 flex-col items-center gap-2 py-4">
           {navItems.map((item) => {

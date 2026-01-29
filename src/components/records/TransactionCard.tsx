@@ -183,9 +183,9 @@ export function TransactionCard({
         }}
         className={`
           relative flex min-h-[72px] select-none items-center justify-between rounded-xl 
-          border border-gray-100 bg-white p-4
+          border border-gray-200 bg-gray-50 p-4
           ${onClick && swipeOffset === 0
-            ? "cursor-pointer hover:border-gray-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            ? "cursor-pointer hover:border-gray-400 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             : ""
           }
           ${isSwiping ? "cursor-grabbing" : ""}
@@ -194,7 +194,7 @@ export function TransactionCard({
         {/* Left side: Category icon and details */}
         <div className="flex items-center gap-3">
           {/* Category indicator */}
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+          <div className="flex items-center justify-center">
             <CategoryIcon category={transaction.category} />
           </div>
 
@@ -248,5 +248,5 @@ function CategoryIcon({ category }: { category?: string }) {
 
   const icon = category ? iconMap[category] || "💰" : "💰";
 
-  return <span className="text-lg">{icon}</span>;
+  return <span className="text-2xl">{icon}</span>;
 }

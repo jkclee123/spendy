@@ -85,7 +85,7 @@ export function TransactionFilters({
     : "";
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+    <div className="rounded-xl border border-gray-200 bg-gray-100 p-4">
       {/* Filter toggle button */}
       <button
         type="button"
@@ -114,9 +114,8 @@ export function TransactionFilters({
           )}
         </div>
         <svg
-          className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
-            isExpanded ? "rotate-180" : ""
-          }`}
+          className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+            }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

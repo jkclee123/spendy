@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useState, FormEvent, useCallback, useEffect, useMemo } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -73,36 +73,41 @@ export function TransactionForm({
     setErrors({});
   }, [initialData, initialLocationHistory]);
 
-  // Use mutation with optimistic update for instant UI feedback
-  const createTransaction = useMutation(
-    api.transactions.createFromWeb
-  ).withOptimisticUpdate((localStore, args) => {
-    // Create a temporary optimistic transaction
-    // The real ID will be assigned by the server
-    const optimisticTransaction = {
-      _id: `temp_${Date.now()}` as never, // Temporary ID
-      _creationTime: Date.now(),
-      userId: args.userId,
-      amount: args.amount,
-      category: args.category,
-      paymentMethod: args.paymentMethod,
-      createdAt: Date.now(),
-      source: "web" as const,
-    };
+  // Get the base mutation hook (following rules of hooks - must be at top level)
+  const createTransactionBase = useMutation(api.transactions.createFromWeb);
 
-    // Get current transactions from local store and add the optimistic one
-    const existingTransactions = localStore.getQuery(api.transactions.listByUser, {
-      userId: args.userId,
+  // Memoize the mutation with optimistic update to prevent expensive re-creation
+  // on every keystroke. The .withOptimisticUpdate() creates a new function each time
+  // it's called, so we need to memoize the result.
+  const createTransaction = useMemo(() => {
+    return createTransactionBase.withOptimisticUpdate((localStore, args) => {
+      // Create a temporary optimistic transaction
+      // The real ID will be assigned by the server
+      const optimisticTransaction = {
+        _id: `temp_${Date.now()}` as never, // Temporary ID
+        _creationTime: Date.now(),
+        userId: args.userId,
+        amount: args.amount,
+        category: args.category,
+        paymentMethod: args.paymentMethod,
+        createdAt: Date.now(),
+        source: "web" as const,
+      };
+
+      // Get current transactions from local store and add the optimistic one
+      const existingTransactions = localStore.getQuery(api.transactions.listByUser, {
+        userId: args.userId,
+      });
+
+      if (existingTransactions !== undefined) {
+        localStore.setQuery(
+          api.transactions.listByUser,
+          { userId: args.userId },
+          [optimisticTransaction, ...existingTransactions]
+        );
+      }
     });
-
-    if (existingTransactions !== undefined) {
-      localStore.setQuery(
-        api.transactions.listByUser,
-        { userId: args.userId },
-        [optimisticTransaction, ...existingTransactions]
-      );
-    }
-  });
+  }, [createTransactionBase]);
 
   // Update mutation
   const updateTransaction = useMutation(api.transactions.update);

@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,9 +23,14 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo and Title */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500 shadow-lg">
-            <span className="text-2xl font-bold text-white">$</span>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Spendy"
+            width={64}
+            height={64}
+            className="mx-auto mb-4 rounded-2xl shadow-lg"
+            priority
+          />
           <h1 className="text-3xl font-bold text-gray-900">Spendy</h1>
           <p className="mt-2 text-gray-600">Track your spending with ease</p>
         </div>
