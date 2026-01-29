@@ -26,20 +26,16 @@ export default function LoginPage() {
           <Image
             src="/logo.png"
             alt="Spendy"
-            width={64}
-            height={64}
-            className="mx-auto mb-4 rounded-2xl shadow-lg"
+            width={128}
+            height={128}
+            className="mx-auto mb-4"
             priority
           />
           <h1 className="text-3xl font-bold text-gray-900">Spendy</h1>
-          <p className="mt-2 text-gray-600">Track your spending with ease</p>
         </div>
 
         {/* Login Card */}
-        <div className="rounded-2xl bg-white p-6 shadow-xl">
-          <h2 className="mb-6 text-center text-xl font-semibold text-gray-800">
-            Welcome
-          </h2>
+        <div >
 
           <button
             onClick={handleGoogleSignIn}

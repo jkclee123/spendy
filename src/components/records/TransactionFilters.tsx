@@ -85,7 +85,7 @@ export function TransactionFilters({
     : "";
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-100 p-4">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 hover:border-gray-200">
       {/* Filter toggle button */}
       <button
         type="button"
