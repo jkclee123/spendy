@@ -3,11 +3,10 @@
 import { useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { TransactionForm } from "@/components/records/TransactionForm";
 import { TransactionList } from "@/components/records/TransactionList";
 import {
   TransactionFilters,
@@ -18,7 +17,6 @@ import type { Transaction } from "@/types";
 
 export default function RecordsPage() {
   const { data: session } = useSession();
-  const [showForm, setShowForm] = useState(false);
   const [filters, setFilters] = useState<TransactionFiltersState>({});
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
@@ -28,14 +26,6 @@ export default function RecordsPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
-
-  const handleSuccess = useCallback(() => {
-    setShowForm(false);
-  }, []);
-
-  const handleCancel = useCallback(() => {
-    setShowForm(false);
-  }, []);
 
   const handleFiltersChange = useCallback(
     (newFilters: TransactionFiltersState) => {
@@ -85,28 +75,13 @@ export default function RecordsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Records</h2>
-        {!showForm && (
-          <Button
-            onClick={() => setShowForm(true)}
-            variant="primary"
-            size="md"
-          >
-            + Add Transaction
-          </Button>
-        )}
+        <Link
+          href="/records/new"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm transition-all duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px]"
+        >
+          + Add Transaction
+        </Link>
       </div>
-
-      {/* Add Transaction Form */}
-      {showForm && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Add New Transaction</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TransactionForm onSuccess={handleSuccess} onCancel={handleCancel} />
-          </CardContent>
-        </Card>
-      )}
 
       {/* Filters */}
       <TransactionFilters
@@ -128,20 +103,6 @@ export default function RecordsPage() {
           />
         </CardContent>
       </Card>
-
-      {/* Add first transaction CTA when no form is shown */}
-      {!showForm && (
-        <div className="fixed bottom-20 left-0 right-0 px-4 pb-4 md:hidden">
-          <Button
-            onClick={() => setShowForm(true)}
-            variant="primary"
-            size="lg"
-            className="w-full shadow-lg"
-          >
-            + Add Transaction
-          </Button>
-        </div>
-      )}
 
       {/* Transaction Detail Modal */}
       {selectedTransaction && (
