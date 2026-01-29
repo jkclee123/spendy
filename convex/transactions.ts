@@ -81,6 +81,16 @@ export const createFromWeb = mutation({
 });
 
 /**
+ * Get a single transaction by ID
+ */
+export const getById = query({
+  args: { transactionId: v.id("transactions") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.transactionId);
+  },
+});
+
+/**
  * Get all transactions for a user, sorted by date descending
  */
 export const listByUser = query({

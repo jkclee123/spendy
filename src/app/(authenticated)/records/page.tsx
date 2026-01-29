@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -12,14 +13,12 @@ import {
   TransactionFilters,
   TransactionFiltersState,
 } from "@/components/records/TransactionFilters";
-import { TransactionDetail } from "@/components/records/TransactionDetail";
 import type { Transaction } from "@/types";
 
 export default function RecordsPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [filters, setFilters] = useState<TransactionFiltersState>({});
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<Transaction | null>(null);
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -39,12 +38,8 @@ export default function RecordsPage() {
   }, []);
 
   const handleTransactionClick = useCallback((transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-  }, []);
-
-  const handleCloseDetail = useCallback(() => {
-    setSelectedTransaction(null);
-  }, []);
+    router.push(`/records/edit/${transaction._id}`);
+  }, [router]);
 
   // Loading state while fetching user
   if (user === undefined) {
@@ -103,16 +98,6 @@ export default function RecordsPage() {
           />
         </CardContent>
       </Card>
-
-      {/* Transaction Detail Modal */}
-      {selectedTransaction && (
-        <TransactionDetail
-          transaction={selectedTransaction}
-          onClose={handleCloseDetail}
-          onDeleted={handleCloseDetail}
-          onUpdated={handleCloseDetail}
-        />
-      )}
     </div>
   );
 }

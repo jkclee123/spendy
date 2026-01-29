@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, FormEvent, useCallback } from "react";
-import { useMutation, useQuery } from "convex/react";
+import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+import type { Transaction } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
 import { useSession } from "next-auth/react";
@@ -15,23 +17,41 @@ interface FormErrors {
 }
 
 interface TransactionFormProps {
+  userId: Id<"users">;
+  initialData?: Transaction;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
 
-export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
+export function TransactionForm({
+  userId,
+  initialData,
+  onSuccess,
+  onCancel,
+}: TransactionFormProps) {
   const { data: session } = useSession();
   const { showToast } = useToast();
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
+
+  const isEditMode = !!initialData;
+
+  const [amount, setAmount] = useState(
+    initialData ? initialData.amount.toString() : ""
+  );
+  const [category, setCategory] = useState(initialData?.category || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Get the user from Convex by email
-  const user = useQuery(
-    api.users.getByEmail,
-    session?.user?.email ? { email: session.user.email } : "skip"
-  );
+  // Reset form when initialData changes (e.g., when navigating between edits)
+  useEffect(() => {
+    if (initialData) {
+      setAmount(initialData.amount.toString());
+      setCategory(initialData.category || "");
+    } else {
+      setAmount("");
+      setCategory("");
+    }
+    setErrors({});
+  }, [initialData]);
 
   // Use mutation with optimistic update for instant UI feedback
   const createTransaction = useMutation(
@@ -63,6 +83,9 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       );
     }
   });
+
+  // Update mutation
+  const updateTransaction = useMutation(api.transactions.update);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
@@ -97,7 +120,7 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
       return;
     }
 
-    if (!user?._id) {
+    if (!userId) {
       setErrors({ general: "User not found. Please try logging in again." });
       return;
     }
@@ -106,25 +129,43 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
     setErrors({});
 
     try {
-      await createTransaction({
-        userId: user._id,
-        amount: parseFloat(amount),
-        category: category,
-      });
+      if (isEditMode && initialData) {
+        // Update existing transaction
+        await updateTransaction({
+          transactionId: initialData._id,
+          amount: parseFloat(amount),
+          category: category,
+        });
 
-      // Reset form
-      setAmount("");
-      setCategory("");
+        showToast("Transaction updated successfully", "success");
+      } else {
+        // Create new transaction
+        await createTransaction({
+          userId: userId,
+          amount: parseFloat(amount),
+          category: category,
+        });
 
-      showToast("Transaction added successfully", "success");
+        // Reset form
+        setAmount("");
+        setCategory("");
+
+        showToast("Transaction added successfully", "success");
+      }
+
       onSuccess?.();
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error("Failed to create transaction:", error);
+      console.error(
+        isEditMode ? "Failed to update transaction:" : "Failed to create transaction:",
+        error
+      );
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to create transaction. Please try again.";
+          : isEditMode
+            ? "Failed to update transaction. Please try again."
+            : "Failed to create transaction. Please try again.";
       setErrors({ general: errorMessage });
       showToast(errorMessage, "error");
     } finally {
@@ -218,10 +259,16 @@ export function TransactionForm({ onSuccess, onCancel }: TransactionFormProps) {
           type="submit"
           variant="primary"
           isLoading={isSubmitting}
-          disabled={isSubmitting || !user}
+          disabled={isSubmitting || !session?.user}
           className="flex-1"
         >
-          {isSubmitting ? "Adding..." : "Add Transaction"}
+          {isSubmitting
+            ? isEditMode
+              ? "Saving..."
+              : "Adding..."
+            : isEditMode
+              ? "Save Changes"
+              : "Add Transaction"}
         </Button>
       </div>
     </form>
