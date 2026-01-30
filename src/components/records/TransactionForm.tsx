@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 interface FormErrors {
   amount?: string;
@@ -65,6 +66,7 @@ export function TransactionForm({
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [rememberTransaction, setRememberTransaction] = useState(false);
 
   // Reset form when initialData or initialLocationHistory changes
   useEffect(() => {
@@ -89,6 +91,15 @@ export function TransactionForm({
     }
     setErrors({});
   }, [initialData, initialLocationHistory]);
+
+  // Pre-check "Remember transaction" if latitude and longitude exist in query params
+  useEffect(() => {
+    if (latitude !== undefined && longitude !== undefined) {
+      setRememberTransaction(true);
+    } else {
+      setRememberTransaction(false);
+    }
+  }, [latitude, longitude]);
 
   // Get the base mutation hook (following rules of hooks - must be at top level)
   const createTransactionBase = useMutation(api.transactions.createFromWeb);
@@ -199,8 +210,8 @@ export function TransactionForm({
           paymentMethod: paymentMethod,
         });
 
-        // Update or create location history if coordinates are provided
-        if (latitude !== undefined && longitude !== undefined) {
+        // Update or create location history if checkbox is checked and coordinates exist
+        if (rememberTransaction && latitude !== undefined && longitude !== undefined) {
           await upsertLocationHistory({
             userId: userId,
             latitude: latitude,
@@ -422,6 +433,19 @@ export function TransactionForm({
           <p className="mt-1.5 text-sm text-red-500">{errors.merchant}</p>
         )}
       </div>
+
+      {/* Remember Transaction Checkbox - Only on create page with coordinates */}
+      {!isEditMode && latitude !== undefined && longitude !== undefined && (
+        <div className="pt-2">
+          <Checkbox
+            id="rememberTransaction"
+            checked={rememberTransaction}
+            onChange={(e) => setRememberTransaction(e.target.checked)}
+            label="Remember transaction"
+            disabled={isSubmitting}
+          />
+        </div>
+      )}
 
       {/* Form Actions */}
       <div className="flex gap-3 pt-2">

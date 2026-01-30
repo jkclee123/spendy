@@ -17,17 +17,17 @@ Agentic coding guide for the Spendy transaction tracking application.
 
 ```bash
 # Development
-npm run dev              # Start Next.js dev server
+bun run dev              # Start Next.js dev server
 
 # Build & Deploy
-npm run build            # Production build
-npm start                # Start production server
+bun run build            # Production build
+bun start                # Start production server
 
 # Code Quality
-npm run lint             # Run ESLint
-npm run test             # Run all Vitest tests
-npm run test -- src/components/ui/Button.test.tsx   # Run single test file
-npm run test:e2e         # Run Playwright e2e tests
+bun run lint             # Run ESLint
+bun run test             # Run all Vitest tests
+bun run test src/components/ui/Button.test.tsx   # Run single test file
+bun run test:e2e         # Run Playwright e2e tests
 ```
 
 ## Code Style Guidelines
@@ -200,13 +200,13 @@ convex/                  # Backend functions
 
 Located in `.cursor/rules/specify-rules.mdc`:
 - Follow TypeScript strict mode conventions
-- Run `npm test && npm run lint` before committing
-- Last updated: 2026-01-26
+- Run `bun test && bun run lint` before committing
+- Last updated: 2026-01-30
 
 ## Important Notes
 
 - **No explicit any allowed**: Always define proper types
-- **Run lint after changes**: `npm run lint` is required
+- **Run lint after changes**: `bun run lint` is required
 - **PWA enabled**: App uses next-pwa for offline support
 - **Convex generated files**: Located in `convex/_generated/`, do not edit manually
 - **Auth protected routes**: Use `(authenticated)` route group

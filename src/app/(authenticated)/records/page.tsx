@@ -38,7 +38,7 @@ export default function RecordsPage() {
   }, []);
 
   const handleTransactionClick = useCallback((transaction: Transaction) => {
-    router.push(`/records/edit/${transaction._id}`);
+    router.push(`/records/update/${transaction._id}`);
   }, [router]);
 
   // Loading state
@@ -78,7 +78,7 @@ export default function RecordsPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Records</h2>
             <Link
-              href="/records/new"
+              href="/records/create"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm transition-all duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px]"
             >
               + New Transaction
