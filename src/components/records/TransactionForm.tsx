@@ -20,17 +20,15 @@ interface FormErrors {
   general?: string;
 }
 
-interface LocationHistoryData {
-  amount: number;
-  category: string;
-}
-
 interface TransactionFormProps {
   userId: Id<"users">;
   initialData?: Transaction;
   latitude?: number;
   longitude?: number;
-  initialLocationHistory?: LocationHistoryData;
+  initialAmount?: number;
+  initialCategory?: string;
+  initialPaymentMethod?: string;
+  initialMerchant?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -40,7 +38,10 @@ export function TransactionForm({
   initialData,
   latitude,
   longitude,
-  initialLocationHistory,
+  initialAmount,
+  initialCategory,
+  initialPaymentMethod,
+  initialMerchant,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
@@ -52,23 +53,25 @@ export function TransactionForm({
   const [amount, setAmount] = useState(
     initialData
       ? initialData.amount.toString()
-      : initialLocationHistory
-        ? initialLocationHistory.amount.toString()
+      : initialAmount !== undefined
+        ? initialAmount.toString()
         : ""
   );
   const [name, setName] = useState(initialData?.name ?? "");
-  const [merchant, setMerchant] = useState(initialData?.merchant ?? "");
+  const [merchant, setMerchant] = useState(
+    initialData?.merchant ?? initialMerchant ?? ""
+  );
   const [category, setCategory] = useState(
-    initialData?.category ?? initialLocationHistory?.category ?? ""
+    initialData?.category ?? initialCategory ?? ""
   );
   const [paymentMethod, setPaymentMethod] = useState(
-    initialData?.paymentMethod ?? ""
+    initialData?.paymentMethod ?? initialPaymentMethod ?? ""
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
 
-  // Reset form when initialData or initialLocationHistory changes
+  // Reset form when initial values change
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount.toString());
@@ -76,21 +79,21 @@ export function TransactionForm({
       setMerchant(initialData.merchant || "");
       setCategory(initialData.category || "");
       setPaymentMethod(initialData.paymentMethod || "");
-    } else if (initialLocationHistory) {
-      setAmount(initialLocationHistory.amount.toString());
-      setName("");
-      setMerchant("");
-      setCategory(initialLocationHistory.category);
-      setPaymentMethod("");
     } else {
-      setAmount("");
+      setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName("");
-      setMerchant("");
-      setCategory("");
-      setPaymentMethod("");
+      setMerchant(initialMerchant ?? "");
+      setCategory(initialCategory ?? "");
+      setPaymentMethod(initialPaymentMethod ?? "");
     }
     setErrors({});
-  }, [initialData, initialLocationHistory]);
+  }, [
+    initialData,
+    initialAmount,
+    initialCategory,
+    initialPaymentMethod,
+    initialMerchant,
+  ]);
 
   // Pre-check "Remember transaction" if latitude and longitude exist in query params
   useEffect(() => {

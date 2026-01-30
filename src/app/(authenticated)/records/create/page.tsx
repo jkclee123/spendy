@@ -15,9 +15,14 @@ export default function NewTransactionPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Read latitude and longitude from query parameters
+  // Read query parameters
   const latitude = searchParams.get("latitude");
   const longitude = searchParams.get("longitude");
+  const amount = searchParams.get("amount");
+  const paymentMethod = searchParams.get("paymentMethod");
+  const merchant = searchParams.get("merchant");
+  // isMobile is accepted but not used (reserved for future use)
+  searchParams.get("isMobile");
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -69,14 +74,26 @@ export default function NewTransactionPage() {
     router.push("/records");
   };
 
-  // Prepare initial location history data if nearby locations exist
-  const initialLocationHistory =
+  // Prepare initial values
+  // Amount: query param (if not empty) > locationHistory > undefined
+  const initialAmount =
+    amount && amount.trim() !== ""
+      ? parseFloat(amount)
+      : nearbyLocations && nearbyLocations.length > 0
+        ? nearbyLocations[0].amount
+        : undefined;
+
+  // Category from locationHistory if available
+  const initialCategory =
     nearbyLocations && nearbyLocations.length > 0
-      ? {
-          amount: nearbyLocations[0].amount,
-          category: nearbyLocations[0].category || "",
-        }
-      : undefined;
+      ? nearbyLocations[0].category || ""
+      : "";
+
+  // Payment method and merchant from query params (if not empty)
+  const initialPaymentMethod =
+    paymentMethod && paymentMethod.trim() !== "" ? paymentMethod : undefined;
+  const initialMerchant =
+    merchant && merchant.trim() !== "" ? merchant : undefined;
 
   return (
     <div className="space-y-4">
@@ -101,7 +118,10 @@ export default function NewTransactionPage() {
             userId={user._id}
             latitude={latitude ? parseFloat(latitude) : undefined}
             longitude={longitude ? parseFloat(longitude) : undefined}
-            initialLocationHistory={initialLocationHistory}
+            initialAmount={initialAmount}
+            initialCategory={initialCategory}
+            initialPaymentMethod={initialPaymentMethod}
+            initialMerchant={initialMerchant}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />
