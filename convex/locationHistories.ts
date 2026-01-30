@@ -89,6 +89,7 @@ export const upsertNearby = mutation({
     longitude: v.number(),
     amount: v.number(),
     category: v.optional(v.string()),
+    name: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const radius = 100;
@@ -147,6 +148,7 @@ export const upsertNearby = mutation({
         longitude: newLong,
         amount: args.amount,
         category: args.category,
+        name: args.name,
         count: newCount,
       });
       
@@ -159,6 +161,7 @@ export const upsertNearby = mutation({
         longitude: args.longitude,
         amount: args.amount,
         category: args.category,
+        name: args.name,
         count: 1,
         createdAt: Date.now(),
       });

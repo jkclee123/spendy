@@ -74,20 +74,22 @@ export default function NewTransactionPage() {
     router.push("/records");
   };
 
+  // Check if we have nearby location history data
+  const hasNearbyLocation = nearbyLocations && nearbyLocations.length > 0;
+  const nearbyLocation = hasNearbyLocation ? nearbyLocations[0] : null;
+
   // Prepare initial values
   // Amount: query param (if not empty) > locationHistory > undefined
   const initialAmount =
     amount && amount.trim() !== ""
       ? parseFloat(amount)
-      : nearbyLocations && nearbyLocations.length > 0
-        ? nearbyLocations[0].amount
-        : undefined;
+      : nearbyLocation?.amount;
 
   // Category from locationHistory if available
-  const initialCategory =
-    nearbyLocations && nearbyLocations.length > 0
-      ? nearbyLocations[0].category || ""
-      : "";
+  const initialCategory = nearbyLocation?.category || "";
+
+  // Name from locationHistory if available
+  const initialName = nearbyLocation?.name || "";
 
   // Payment method and merchant from query params (if not empty)
   const initialPaymentMethod =
@@ -120,6 +122,7 @@ export default function NewTransactionPage() {
             longitude={longitude ? parseFloat(longitude) : undefined}
             initialAmount={initialAmount}
             initialCategory={initialCategory}
+            initialName={initialName}
             initialPaymentMethod={initialPaymentMethod}
             initialMerchant={initialMerchant}
             onSuccess={handleSuccess}

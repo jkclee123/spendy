@@ -27,6 +27,7 @@ interface TransactionFormProps {
   longitude?: number;
   initialAmount?: number;
   initialCategory?: string;
+  initialName?: string;
   initialPaymentMethod?: string;
   initialMerchant?: string;
   onSuccess?: () => void;
@@ -40,6 +41,7 @@ export function TransactionForm({
   longitude,
   initialAmount,
   initialCategory,
+  initialName,
   initialPaymentMethod,
   initialMerchant,
   onSuccess,
@@ -57,7 +59,9 @@ export function TransactionForm({
         ? initialAmount.toString()
         : ""
   );
-  const [name, setName] = useState(initialData?.name ?? "");
+  const [name, setName] = useState(
+    initialData?.name ?? initialName ?? ""
+  );
   const [merchant, setMerchant] = useState(
     initialData?.merchant ?? initialMerchant ?? ""
   );
@@ -81,7 +85,7 @@ export function TransactionForm({
       setPaymentMethod(initialData.paymentMethod || "");
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
-      setName("");
+      setName(initialName ?? "");
       setMerchant(initialMerchant ?? "");
       setCategory(initialCategory ?? "");
       setPaymentMethod(initialPaymentMethod ?? "");
@@ -91,6 +95,7 @@ export function TransactionForm({
     initialData,
     initialAmount,
     initialCategory,
+    initialName,
     initialPaymentMethod,
     initialMerchant,
   ]);
@@ -221,6 +226,7 @@ export function TransactionForm({
             longitude: longitude,
             amount: parseFloat(amount),
             category: category,
+            name: name,
           });
         }
 
