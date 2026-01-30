@@ -10,6 +10,8 @@ export const createFromApi = mutation({
   args: {
     apiToken: v.string(),
     amount: v.number(),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
     paymentMethod: v.optional(v.string()),
   },
@@ -32,6 +34,8 @@ export const createFromApi = mutation({
     // Create the transaction
     const transactionId = await ctx.db.insert("transactions", {
       userId: user._id,
+      name: args.name,
+      merchant: args.merchant,
       amount: args.amount,
       category: args.category,
       paymentMethod: args.paymentMethod,
@@ -51,6 +55,8 @@ export const createFromWeb = mutation({
   args: {
     userId: v.id("users"),
     amount: v.number(),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
     paymentMethod: v.optional(v.string()),
   },
@@ -69,6 +75,8 @@ export const createFromWeb = mutation({
     // Create the transaction
     const transactionId = await ctx.db.insert("transactions", {
       userId: args.userId,
+      name: args.name,
+      merchant: args.merchant,
       amount: args.amount,
       category: args.category,
       paymentMethod: args.paymentMethod,
@@ -188,6 +196,8 @@ export const update = mutation({
   args: {
     transactionId: v.id("transactions"),
     amount: v.optional(v.number()),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
     paymentMethod: v.optional(v.string()),
   },
@@ -208,6 +218,8 @@ export const update = mutation({
     // Apply updates (only include defined values)
     const patchData: Record<string, unknown> = {};
     if (updates.amount !== undefined) patchData.amount = updates.amount;
+    if (updates.name !== undefined) patchData.name = updates.name;
+    if (updates.merchant !== undefined) patchData.merchant = updates.merchant;
     if (updates.category !== undefined) patchData.category = updates.category;
     if (updates.paymentMethod !== undefined)
       patchData.paymentMethod = updates.paymentMethod;

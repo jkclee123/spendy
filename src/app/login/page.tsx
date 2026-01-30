@@ -26,9 +26,9 @@ export default function LoginPage() {
           <Image
             src="/logo.png"
             alt="Spendy"
-            width={128}
-            height={128}
-            className="mx-auto mb-4"
+            width={192}
+            height={192}
+            className="mx-auto"
             priority
           />
           <h1 className="text-3xl font-bold text-gray-900">Spendy</h1>

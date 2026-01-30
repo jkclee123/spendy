@@ -77,8 +77,6 @@ export function MonthlyHistogram({ data, className = "" }: MonthlyHistogramProps
   };
 
   // Calculate stats
-  const totalAmount = data.reduce((sum, item) => sum + item.total, 0);
-  const averageAmount = data.length > 0 ? totalAmount / data.length : 0;
   const maxMonth = data.reduce(
     (max, item) => (item.total > max.total ? item : max),
     data[0] || { month: "", total: 0, count: 0 }

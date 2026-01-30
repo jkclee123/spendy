@@ -18,6 +18,8 @@ export interface User {
 export interface Transaction {
   _id: Id<"transactions">;
   userId: Id<"users">;
+  name?: string;
+  merchant?: string;
   category?: string;
   amount: number;
   paymentMethod?: string;

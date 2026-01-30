@@ -12,7 +12,10 @@ import { useToast } from "@/components/ui/Toast";
 
 interface FormErrors {
   amount?: string;
+  name?: string;
+  merchant?: string;
   category?: string;
+  paymentMethod?: string;
   general?: string;
 }
 
@@ -52,8 +55,13 @@ export function TransactionForm({
         ? initialLocationHistory.amount.toString()
         : ""
   );
+  const [name, setName] = useState(initialData?.name ?? "");
+  const [merchant, setMerchant] = useState(initialData?.merchant ?? "");
   const [category, setCategory] = useState(
     initialData?.category ?? initialLocationHistory?.category ?? ""
+  );
+  const [paymentMethod, setPaymentMethod] = useState(
+    initialData?.paymentMethod ?? ""
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -62,13 +70,22 @@ export function TransactionForm({
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount.toString());
+      setName(initialData.name || "");
+      setMerchant(initialData.merchant || "");
       setCategory(initialData.category || "");
+      setPaymentMethod(initialData.paymentMethod || "");
     } else if (initialLocationHistory) {
       setAmount(initialLocationHistory.amount.toString());
+      setName("");
+      setMerchant("");
       setCategory(initialLocationHistory.category);
+      setPaymentMethod("");
     } else {
       setAmount("");
+      setName("");
+      setMerchant("");
       setCategory("");
+      setPaymentMethod("");
     }
     setErrors({});
   }, [initialData, initialLocationHistory]);
@@ -87,6 +104,8 @@ export function TransactionForm({
         _id: `temp_${Date.now()}` as never, // Temporary ID
         _creationTime: Date.now(),
         userId: args.userId,
+        name: args.name,
+        merchant: args.merchant,
         amount: args.amount,
         category: args.category,
         paymentMethod: args.paymentMethod,
@@ -162,7 +181,10 @@ export function TransactionForm({
         await updateTransaction({
           transactionId: initialData._id,
           amount: parseFloat(amount),
+          name: name,
+          merchant: merchant,
           category: category,
+          paymentMethod: paymentMethod,
         });
 
         showToast("Transaction updated successfully", "success");
@@ -171,7 +193,10 @@ export function TransactionForm({
         await createTransaction({
           userId: userId,
           amount: parseFloat(amount),
+          name: name,
+          merchant: merchant,
           category: category,
+          paymentMethod: paymentMethod,
         });
 
         // Update or create location history if coordinates are provided
@@ -187,7 +212,10 @@ export function TransactionForm({
 
         // Reset form
         setAmount("");
+        setName("");
+        setMerchant("");
         setCategory("");
+        setPaymentMethod("");
 
         showToast("Transaction added successfully", "success");
       }
@@ -280,6 +308,120 @@ export function TransactionForm({
         disabled={isSubmitting}
         error={errors.category}
       />
+
+      {/* Name Field */}
+      <div>
+        <label
+          htmlFor="name"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
+          Name
+        </label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (errors.name) {
+              setErrors((prev) => ({ ...prev, name: undefined }));
+            }
+          }}
+          placeholder="e.g., Lunch at Starbucks"
+          disabled={isSubmitting}
+          className={`
+            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+            placeholder:text-gray-400
+            transition-colors duration-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+            ${
+              errors.name
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 hover:border-gray-400"
+            }
+          `}
+        />
+        {errors.name && (
+          <p className="mt-1.5 text-sm text-red-500">{errors.name}</p>
+        )}
+      </div>
+
+      {/* Payment Method Field */}
+      <div>
+        <label
+          htmlFor="paymentMethod"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
+          Payment Method
+        </label>
+        <input
+          type="text"
+          id="paymentMethod"
+          value={paymentMethod}
+          onChange={(e) => {
+            setPaymentMethod(e.target.value);
+            if (errors.paymentMethod) {
+              setErrors((prev) => ({ ...prev, paymentMethod: undefined }));
+            }
+          }}
+          placeholder="e.g., Credit Card, Cash"
+          disabled={isSubmitting}
+          className={`
+            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+            placeholder:text-gray-400
+            transition-colors duration-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+            ${
+              errors.paymentMethod
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 hover:border-gray-400"
+            }
+          `}
+        />
+        {errors.paymentMethod && (
+          <p className="mt-1.5 text-sm text-red-500">{errors.paymentMethod}</p>
+        )}
+      </div>
+
+      {/* Merchant Field */}
+      <div>
+        <label
+          htmlFor="merchant"
+          className="mb-1.5 block text-sm font-medium text-gray-700"
+        >
+          Merchant
+        </label>
+        <input
+          type="text"
+          id="merchant"
+          value={merchant}
+          onChange={(e) => {
+            setMerchant(e.target.value);
+            if (errors.merchant) {
+              setErrors((prev) => ({ ...prev, merchant: undefined }));
+            }
+          }}
+          placeholder="e.g., Starbucks, Amazon"
+          disabled={isSubmitting}
+          className={`
+            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+            placeholder:text-gray-400
+            transition-colors duration-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+            ${
+              errors.merchant
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 hover:border-gray-400"
+            }
+          `}
+        />
+        {errors.merchant && (
+          <p className="mt-1.5 text-sm text-red-500">{errors.merchant}</p>
+        )}
+      </div>
 
       {/* Form Actions */}
       <div className="flex gap-3 pt-2">
