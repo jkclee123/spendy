@@ -115,7 +115,8 @@ export const upsertNearby = mutation({
     for (const history of allHistories) {
       if (history.latitude < minLat || history.latitude > maxLat) continue;
       if (history.longitude < minLong || history.longitude > maxLong) continue;
-      
+      if (history.category?.toLowerCase() !== args.category?.toLowerCase()) continue;
+
       const distance = calculateDistance(
         args.latitude,
         args.longitude,
