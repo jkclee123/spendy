@@ -21,7 +21,7 @@ export default async function AuthenticatedLayout({
       <Header />
 
       {/* Main content area with bottom padding for mobile nav */}
-      <main className="flex-1 pb-20 pt-4 md:pb-4 md:pl-20">
+      <main className="flex-1 pb-20 pt-4 md:pl-20">
         <div className="mx-auto max-w-4xl px-4">
           <ErrorBoundary>{children}</ErrorBoundary>
         </div>

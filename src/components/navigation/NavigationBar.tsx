@@ -58,7 +58,7 @@ export function NavigationBar() {
       </nav>
 
       {/* Desktop Side Navigation */}
-      <nav className="fixed left-0 top-0 z-50 hidden h-full w-20 flex-col border-r border-gray-200 bg-white md:flex">
+      <nav className="fixed left-0 top-14 z-50 hidden h-[calc(100vh-3.5rem)] w-20 flex-col border-r border-t border-gray-200 bg-white md:flex">
         {/* Nav Items */}
         <div className="flex flex-1 flex-col items-center gap-2 py-4">
           {navItems.map((item) => {
