@@ -22,7 +22,6 @@ export interface Transaction {
   merchant?: string;
   category?: string;
   amount: number;
-  paymentMethod?: string;
   createdAt: number;
   source: "api" | "web";
 }
@@ -33,7 +32,6 @@ export interface Transaction {
 export interface CreateTransactionRequest {
   category?: string;
   amount: number;
-  paymentMethod?: string;
   apiToken: string;
 }
 

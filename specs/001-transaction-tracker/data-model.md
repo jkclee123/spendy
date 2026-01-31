@@ -6,26 +6,14 @@
 
 ```
 ┌─────────────────────┐
-│       User          │
+│   Transaction       │
 ├─────────────────────┤
-│ _id: Id<"users">    │
-│ name: string        │
-│ email: string       │
-│ image?: string      │
-│ apiToken: string    │◀──────────┐
-│ createdAt: number   │           │
-└─────────────────────┘           │
-         │                        │
-         │ 1:N                    │ Lookup by apiToken
-         ▼                        │
-┌─────────────────────┐           │
-│   Transaction       │           │
-├─────────────────────┤           │
-│ _id: Id<"trans..."> │           │
-│ userId: Id<"users"> │───────────┘
+│ _id: Id<"trans..."> │
+│ userId: Id<"users"> │
+│ name?: string       │
+│ merchant?: string   │
 │ category?: string   │
 │ amount: number      │
-│ paymentMethod?: str │
 │ createdAt: number   │
 │ source: "api"|"web" │
 └─────────────────────┘
@@ -65,9 +53,10 @@ Represents a single financial transaction record.
 |-------|------|----------|-------------|
 | _id | Id<"transactions"> | Yes (auto) | Convex-generated unique identifier |
 | userId | Id<"users"> | Yes | Reference to owning user |
+| name | string | No | Transaction name/description |
+| merchant | string | No | Merchant name |
 | category | string | No | Transaction category (e.g., "Food", "Transport") |
 | amount | number | Yes | Transaction amount (positive float) |
-| paymentMethod | string | No | Payment method (e.g., "Credit Card", "Cash") |
 | createdAt | number | Yes | Unix timestamp when transaction was recorded |
 | source | "api" \| "web" | Yes | Whether created via external API or web interface |
 
@@ -79,7 +68,6 @@ Represents a single financial transaction record.
 **Validation Rules**:
 - `amount`: Must be a positive number
 - `category`: If provided, non-empty string
-- `paymentMethod`: If provided, non-empty string
 - `userId`: Must reference existing user
 
 **State Transitions**: Created → (optionally Edited) → (optionally Deleted)
@@ -104,9 +92,10 @@ export default defineSchema({
 
   transactions: defineTable({
     userId: v.id("users"),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
     amount: v.number(),
-    paymentMethod: v.optional(v.string()),
     createdAt: v.number(),
     source: v.union(v.literal("api"), v.literal("web")),
   })
@@ -185,22 +174,24 @@ mutation({
   args: {
     apiToken: v.string(),
     amount: v.number(),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
-    paymentMethod: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query("users")
       .withIndex("by_apiToken", (q) => q.eq("apiToken", args.apiToken))
       .unique();
-    
+
     if (!user) throw new Error("Invalid API token");
-    
+
     return await ctx.db.insert("transactions", {
       userId: user._id,
+      name: args.name,
+      merchant: args.merchant,
       amount: args.amount,
       category: args.category,
-      paymentMethod: args.paymentMethod,
       createdAt: Date.now(),
       source: "api",
     });

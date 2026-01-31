@@ -17,7 +17,6 @@ export default function NewTransactionPage() {
   const latitude = searchParams.get("latitude");
   const longitude = searchParams.get("longitude");
   const amount = searchParams.get("amount");
-  const paymentMethod = searchParams.get("paymentMethod");
   const merchant = searchParams.get("merchant");
   // isMobile is accepted but not used (reserved for future use)
   searchParams.get("isMobile");
@@ -89,9 +88,7 @@ export default function NewTransactionPage() {
   // Name from locationHistory if available
   const initialName = nearbyLocation?.name || "";
 
-  // Payment method and merchant from query params (if not empty)
-  const initialPaymentMethod =
-    paymentMethod && paymentMethod.trim() !== "" ? paymentMethod : undefined;
+  // Merchant from query params (if not empty)
   const initialMerchant =
     merchant && merchant.trim() !== "" ? merchant : undefined;
 
@@ -110,7 +107,6 @@ export default function NewTransactionPage() {
             initialAmount={initialAmount}
             initialCategory={initialCategory}
             initialName={initialName}
-            initialPaymentMethod={initialPaymentMethod}
             initialMerchant={initialMerchant}
             onSuccess={handleSuccess}
             onCancel={handleCancel}

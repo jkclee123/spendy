@@ -41,9 +41,6 @@ export function TransactionDetail({
   // Form state
   const [amount, setAmount] = useState(transaction.amount.toString());
   const [category, setCategory] = useState(transaction.category || "");
-  const [paymentMethod, setPaymentMethod] = useState(
-    transaction.paymentMethod || ""
-  );
 
   // Convex mutations with optimistic updates
   const updateTransaction = useMutation(
@@ -61,7 +58,6 @@ export function TransactionDetail({
             ...t,
             ...(args.amount !== undefined && { amount: args.amount }),
             ...(args.category !== undefined && { category: args.category }),
-            ...(args.paymentMethod !== undefined && { paymentMethod: args.paymentMethod }),
           }
           : t
       );
@@ -97,7 +93,6 @@ export function TransactionDetail({
   useEffect(() => {
     setAmount(transaction.amount.toString());
     setCategory(transaction.category || "");
-    setPaymentMethod(transaction.paymentMethod || "");
     setIsEditing(false);
     setShowDeleteConfirm(false);
     setErrors({});
@@ -160,7 +155,6 @@ export function TransactionDetail({
         transactionId: transaction._id,
         amount: parseFloat(amount),
         category: category || undefined,
-        paymentMethod: paymentMethod || undefined,
       });
 
       setIsEditing(false);
@@ -210,10 +204,9 @@ export function TransactionDetail({
   const handleCancelEdit = useCallback(() => {
     setAmount(transaction.amount.toString());
     setCategory(transaction.category || "");
-    setPaymentMethod(transaction.paymentMethod || "");
     setIsEditing(false);
     setErrors({});
-  }, [transaction.amount, transaction.category, transaction.paymentMethod]);
+  }, [transaction.amount, transaction.category]);
 
   // Handle backdrop click
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -341,31 +334,6 @@ export function TransactionDetail({
                 disabled={isSubmitting}
               />
 
-              {/* Payment Method Field */}
-              <div>
-                <label
-                  htmlFor="edit-paymentMethod"
-                  className="mb-1.5 block text-sm font-medium text-gray-700"
-                >
-                  Payment Method
-                </label>
-                <input
-                  type="text"
-                  id="edit-paymentMethod"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  placeholder="e.g., Credit Card, Cash"
-                  disabled={isSubmitting}
-                  className={`
-                    w-full rounded-xl border border-gray-300 px-4 py-3 text-base
-                    transition-colors duration-200
-                    hover:border-gray-400
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-                    disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-                  `}
-                />
-              </div>
-
               {/* Form Actions */}
               <div className="flex gap-3 pt-2">
                 <Button
@@ -458,10 +426,6 @@ export function TransactionDetail({
                   label="Category"
                   value={transaction.category || "Uncategorized"}
                   icon={getCategoryIcon(transaction.category)}
-                />
-                <DetailRow
-                  label="Payment Method"
-                  value={transaction.paymentMethod || "Not specified"}
                 />
                 <DetailRow
                   label="Date"

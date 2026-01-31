@@ -62,7 +62,6 @@ interface FormErrors {
   amount?: string;
   name?: string;
   category?: string;
-  paymentMethod?: string;
   general?: string;
 }
 
@@ -74,7 +73,6 @@ interface TransactionFormProps {
   initialAmount?: number;
   initialCategory?: string;
   initialName?: string;
-  initialPaymentMethod?: string;
   initialMerchant?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
@@ -88,7 +86,6 @@ export function TransactionForm({
   initialAmount,
   initialCategory,
   initialName,
-  initialPaymentMethod,
   initialMerchant,
   onSuccess,
   onCancel,
@@ -114,9 +111,6 @@ export function TransactionForm({
   const [category, setCategory] = useState(
     initialData?.category ?? initialCategory ?? ""
   );
-  const [paymentMethod, setPaymentMethod] = useState(
-    initialData?.paymentMethod ?? initialPaymentMethod ?? ""
-  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
@@ -129,13 +123,11 @@ export function TransactionForm({
       setName(initialData.name || "");
       setMerchant(initialData.merchant || "");
       setCategory(initialData.category || "");
-      setPaymentMethod(initialData.paymentMethod || "");
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
       setMerchant(initialMerchant ?? "");
       setCategory(initialCategory ?? "");
-      setPaymentMethod(initialPaymentMethod ?? "");
     }
     setErrors({});
   }, [
@@ -143,7 +135,6 @@ export function TransactionForm({
     initialAmount,
     initialCategory,
     initialName,
-    initialPaymentMethod,
     initialMerchant,
   ]);
 
@@ -174,7 +165,6 @@ export function TransactionForm({
         merchant: args.merchant,
         amount: args.amount,
         category: args.category,
-        paymentMethod: args.paymentMethod,
         createdAt: Date.now(),
         source: "web" as const,
       };
@@ -259,7 +249,6 @@ export function TransactionForm({
           name: name,
           merchant: merchant,
           category: category,
-          paymentMethod: paymentMethod,
         });
 
         showToast("Transaction updated successfully", "success");
@@ -271,7 +260,6 @@ export function TransactionForm({
           name: name,
           merchant: merchant,
           category: category,
-          paymentMethod: paymentMethod,
         });
 
         // Update or create location history if checkbox is checked and coordinates exist
@@ -291,7 +279,6 @@ export function TransactionForm({
         setName("");
         setMerchant("");
         setCategory("");
-        setPaymentMethod("");
 
         showToast("Transaction added successfully", "success");
       }
@@ -561,49 +548,11 @@ export function TransactionForm({
         )}
       </div>
 
-      {/* Payment Method Field */}
-      <div>
-        <label
-          htmlFor="paymentMethod"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
-        >
-          Payment Method
-        </label>
-        <input
-          type="text"
-          id="paymentMethod"
-          value={paymentMethod}
-          onChange={(e) => {
-            setPaymentMethod(e.target.value);
-            if (errors.paymentMethod) {
-              setErrors((prev) => ({ ...prev, paymentMethod: undefined }));
-            }
-          }}
-          placeholder="e.g., Credit Card, Cash"
-          disabled={isSubmitting}
-          className={`
-            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
-            placeholder:text-gray-400
-            transition-colors duration-200
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-            ${errors.paymentMethod
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 hover:border-gray-400"
-            }
-          `}
-        />
-        {errors.paymentMethod && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.paymentMethod}</p>
-        )}
-      </div>
-
       {/* Remember Transaction Checkbox - Only on create page with coordinates */}
       {!isEditMode && latitude !== undefined && longitude !== undefined && (
         <div className="pt-2">
           <Checkbox
             id="rememberTransaction"
-            checked={rememberTransaction}
             onChange={(e) => setRememberTransaction(e.target.checked)}
             label="Remember transaction"
             disabled={isSubmitting}

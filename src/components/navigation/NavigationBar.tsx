@@ -39,10 +39,9 @@ export function NavigationBar() {
                 className={`
                   flex min-h-[44px] min-w-[44px] flex-col items-center justify-start gap-1 px-4 pt-1
                   transition-colors
-                  ${
-                    isActive
-                      ? "text-blue-500"
-                      : "text-gray-500 hover:text-gray-900"
+                  ${isActive
+                    ? "text-blue-500"
+                    : "text-gray-500 hover:text-gray-900"
                   }
                 `}
                 aria-current={isActive ? "page" : undefined}
@@ -73,10 +72,9 @@ export function NavigationBar() {
                 className={`
                   flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-1 rounded-xl px-3 py-2
                   transition-colors
-                  ${
-                    isActive
-                      ? "bg-blue-50 text-blue-500"
-                      : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                  ${isActive
+                    ? "bg-blue-50 text-blue-500"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
                   }
                 `}
                 aria-current={isActive ? "page" : undefined}
@@ -86,7 +84,6 @@ export function NavigationBar() {
                   strokeWidth={isActive ? 2.5 : 2}
                   fill={isActive ? "currentColor" : "none"}
                 />
-                <span className="text-[10px] font-medium">{item.label}</span>
               </Link>
             );
           })}

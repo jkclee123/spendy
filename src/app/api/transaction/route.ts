@@ -185,19 +185,6 @@ function validateRequest(body: unknown): ValidationResult {
     };
   }
 
-  if (
-    data.paymentMethod !== undefined &&
-    typeof data.paymentMethod !== "string"
-  ) {
-    return {
-      valid: false,
-      error: {
-        error: "Validation failed",
-        message: "paymentMethod must be a string",
-      },
-    };
-  }
-
   return { valid: true };
 }
 
@@ -290,7 +277,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       apiToken: body.apiToken,
       amount: body.amount,
       category: body.category,
-      paymentMethod: body.paymentMethod,
     });
 
     // Success response

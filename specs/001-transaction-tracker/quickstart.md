@@ -100,9 +100,10 @@ export default defineSchema({
 
   transactions: defineTable({
     userId: v.id("users"),
+    name: v.optional(v.string()),
+    merchant: v.optional(v.string()),
     category: v.optional(v.string()),
     amount: v.number(),
-    paymentMethod: v.optional(v.string()),
     createdAt: v.number(),
     source: v.union(v.literal("api"), v.literal("web")),
   })

@@ -37,8 +37,9 @@ paths:
                 summary: Transaction with all fields
                 value:
                   category: "Food & Dining"
+                  name: "Lunch"
+                  merchant: "Restaurant"
                   amount: 42.99
-                  paymentMethod: "Credit Card"
                   apiToken: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '201':
@@ -102,11 +103,6 @@ components:
           description: Transaction amount (must be positive)
           example: 25.50
           minimum: 0.01
-        paymentMethod:
-          type: string
-          description: Payment method used (e.g., "Credit Card", "Cash", "Debit")
-          example: "Credit Card"
-          nullable: true
         apiToken:
           type: string
           format: uuid

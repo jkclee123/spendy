@@ -134,8 +134,9 @@
 ```json
 {
   "category": "Food",
+  "name": "Lunch",
+  "merchant": "Restaurant",
   "amount": 25.50,
-  "paymentMethod": "Credit Card",
   "apiToken": "user-unique-token"
 }
 ```
@@ -143,7 +144,8 @@
 **Validation Rules**:
 - `amount`: Required, positive number
 - `category`: Optional, string (defaults to "Uncategorized")
-- `paymentMethod`: Optional, string
+- `name`: Optional, string
+- `merchant`: Optional, string
 - `apiToken`: Required, must match existing user
 
 **Response**:

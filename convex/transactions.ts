@@ -13,7 +13,6 @@ export const createFromApi = mutation({
     name: v.optional(v.string()),
     merchant: v.optional(v.string()),
     category: v.optional(v.string()),
-    paymentMethod: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // Validate amount
@@ -38,7 +37,6 @@ export const createFromApi = mutation({
       merchant: args.merchant,
       amount: args.amount,
       category: args.category,
-      paymentMethod: args.paymentMethod,
       createdAt: Date.now(),
       source: "api",
     });
@@ -58,7 +56,6 @@ export const createFromWeb = mutation({
     name: v.optional(v.string()),
     merchant: v.optional(v.string()),
     category: v.optional(v.string()),
-    paymentMethod: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     // Validate amount
@@ -79,7 +76,6 @@ export const createFromWeb = mutation({
       merchant: args.merchant,
       amount: args.amount,
       category: args.category,
-      paymentMethod: args.paymentMethod,
       createdAt: Date.now(),
       source: "web",
     });
@@ -199,7 +195,6 @@ export const update = mutation({
     name: v.optional(v.string()),
     merchant: v.optional(v.string()),
     category: v.optional(v.string()),
-    paymentMethod: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { transactionId, ...updates } = args;
@@ -221,8 +216,6 @@ export const update = mutation({
     if (updates.name !== undefined) patchData.name = updates.name;
     if (updates.merchant !== undefined) patchData.merchant = updates.merchant;
     if (updates.category !== undefined) patchData.category = updates.category;
-    if (updates.paymentMethod !== undefined)
-      patchData.paymentMethod = updates.paymentMethod;
 
     await ctx.db.patch(transactionId, patchData);
 
