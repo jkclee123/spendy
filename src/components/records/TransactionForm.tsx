@@ -393,7 +393,7 @@ export function TransactionForm({
         </div>
 
         {/* Calculator Buttons */}
-        <div className="mt-2 flex items-center justify-center gap-2">
+        <div className="mt-2 flex items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => {
@@ -480,6 +480,7 @@ export function TransactionForm({
               const result = evaluateFormula(amount);
               if (result !== null) {
                 setAmount(result.toString());
+                setErrors((prev) => ({ ...prev, amount: undefined }));
                 const input = amountInputRef.current;
                 if (input) {
                   input.focus();
@@ -488,8 +489,8 @@ export function TransactionForm({
                   }, 0);
                 }
               } else {
-                // Invalid formula - clear the input
-                setAmount("");
+                // Invalid formula - show error instead of clearing
+                setErrors((prev) => ({ ...prev, amount: "Invalid amount" }));
                 const input = amountInputRef.current;
                 if (input) {
                   input.focus();
