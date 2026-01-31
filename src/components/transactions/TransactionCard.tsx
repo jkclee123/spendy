@@ -14,7 +14,7 @@ const SWIPE_START_THRESHOLD = 10;
 
 /**
  * Displays a single transaction in a card format
- * Shows amount, category, payment method, date, and source
+ * Shows amount, category, date, and source
  * Supports swipe-to-delete from right to left
  */
 export function TransactionCard({

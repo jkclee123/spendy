@@ -195,6 +195,7 @@ export const update = mutation({
     name: v.optional(v.string()),
     merchant: v.optional(v.string()),
     category: v.optional(v.string()),
+    createdAt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const { transactionId, ...updates } = args;
@@ -216,6 +217,7 @@ export const update = mutation({
     if (updates.name !== undefined) patchData.name = updates.name;
     if (updates.merchant !== undefined) patchData.merchant = updates.merchant;
     if (updates.category !== undefined) patchData.category = updates.category;
+    if (updates.createdAt !== undefined) patchData.createdAt = updates.createdAt;
 
     await ctx.db.patch(transactionId, patchData);
 

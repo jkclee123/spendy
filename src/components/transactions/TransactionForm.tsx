@@ -114,6 +114,7 @@ export function TransactionForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
+  const [createdAt, setCreatedAt] = useState<string>("");
   const amountInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when initial values change
@@ -123,11 +124,13 @@ export function TransactionForm({
       setName(initialData.name || "");
       setMerchant(initialData.merchant || "");
       setCategory(initialData.category || "");
+      setCreatedAt(new Date(initialData.createdAt).toISOString().slice(0, 16));
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
       setMerchant(initialMerchant ?? "");
       setCategory(initialCategory ?? "");
+      setCreatedAt("");
     }
     setErrors({});
   }, [
@@ -243,13 +246,26 @@ export function TransactionForm({
 
       if (isEditMode && initialData) {
         // Update existing transaction
-        await updateTransaction({
+        const updateData: {
+          transactionId: Id<"transactions">;
+          amount: number;
+          name: string;
+          merchant: string;
+          category: string;
+          createdAt?: number;
+        } = {
           transactionId: initialData._id,
           amount: evaluatedAmount,
           name: name,
           merchant: merchant,
           category: category,
-        });
+        };
+
+        if (createdAt) {
+          updateData.createdAt = new Date(createdAt).getTime();
+        }
+
+        await updateTransaction(updateData);
 
         showToast("Transaction updated successfully", "success");
       } else {
@@ -547,6 +563,32 @@ export function TransactionForm({
           <p className="mt-1.5 text-sm text-red-500">{errors.name}</p>
         )}
       </div>
+
+      {/* Created At Field - Only in edit mode */}
+      {isEditMode && (
+        <div>
+          <label
+            htmlFor="createdAt"
+            className="mb-1.5 block text-sm font-medium text-gray-700"
+          >
+            Date & Time
+          </label>
+          <input
+            type="datetime-local"
+            id="createdAt"
+            value={createdAt}
+            onChange={(e) => setCreatedAt(e.target.value)}
+            disabled={isSubmitting}
+            className={`
+              w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+              transition-colors duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+              border-gray-300 hover:border-gray-400
+            `}
+          />
+        </div>
+      )}
 
       {/* Remember Transaction Checkbox - Only on create page with coordinates */}
       {!isEditMode && latitude !== undefined && longitude !== undefined && (
