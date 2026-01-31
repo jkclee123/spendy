@@ -103,7 +103,7 @@ export default function StatsPage() {
     <div className="space-y-4">
       {/* Header with time period selector */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">Stats</h2>
+        <h2 className="text-xl font-bold text-gray-900">Stats</h2>
 
         {/* Time Period Selector */}
         <div className="flex gap-2">

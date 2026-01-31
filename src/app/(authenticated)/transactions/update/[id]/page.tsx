@@ -6,10 +6,8 @@ import { useRouter, useParams } from "next/navigation";
 import { api } from "../../../../../../convex/_generated/api";
 import type { Id } from "../../../../../../convex/_generated/dataModel";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { TransactionForm } from "@/components/records/TransactionForm";
+import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 export default function EditTransactionPage() {
   const { data: session } = useSession();
@@ -71,11 +69,11 @@ export default function EditTransactionPage() {
   }
 
   const handleSuccess = () => {
-    router.push("/records");
+    router.push("/transactions");
   };
 
   const handleCancel = () => {
-    router.push("/records");
+    router.push("/transactions");
   };
 
   return (

@@ -10,7 +10,7 @@ export default function LoginPage() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/records" });
+      await signIn("google", { callbackUrl: "/transactions" });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error("Sign in error:", error);

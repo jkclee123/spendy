@@ -71,7 +71,7 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnAuthenticatedRoute =
-        nextUrl.pathname.startsWith("/records") ||
+        nextUrl.pathname.startsWith("/transactions") ||
         nextUrl.pathname.startsWith("/stats") ||
         nextUrl.pathname.startsWith("/settings");
 
@@ -79,7 +79,7 @@ export const authConfig: NextAuthConfig = {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn && nextUrl.pathname === "/login") {
-        return Response.redirect(new URL("/records", nextUrl));
+        return Response.redirect(new URL("/transactions", nextUrl));
       }
       return true;
     },

@@ -5,10 +5,8 @@ import { useQuery } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "../../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { TransactionForm } from "@/components/records/TransactionForm";
+import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 
 export default function NewTransactionPage() {
   const { data: session } = useSession();
@@ -67,11 +65,11 @@ export default function NewTransactionPage() {
   }
 
   const handleSuccess = () => {
-    router.push("/records");
+    router.push("/transactions");
   };
 
   const handleCancel = () => {
-    router.push("/records");
+    router.push("/transactions");
   };
 
   // Check if we have nearby location history data

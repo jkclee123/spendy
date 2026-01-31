@@ -6,16 +6,16 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { TransactionList } from "@/components/records/TransactionList";
+import { TransactionList } from "@/components/transactions/TransactionList";
 import {
   TransactionFilters,
   TransactionFiltersState,
-} from "@/components/records/TransactionFilters";
+} from "@/components/transactions/TransactionFilters";
 import type { Transaction } from "@/types";
 
-export default function RecordsPage() {
+export default function TransactionsPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [filters, setFilters] = useState<TransactionFiltersState>({});
@@ -38,7 +38,7 @@ export default function RecordsPage() {
   }, []);
 
   const handleTransactionClick = useCallback((transaction: Transaction) => {
-    router.push(`/records/update/${transaction._id}`);
+    router.push(`/transactions/update/${transaction._id}`);
   }, [router]);
 
   // Loading state
@@ -76,9 +76,9 @@ export default function RecordsPage() {
         <>
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Records</h2>
+            <h2 className="text-xl font-bold text-gray-900">Transactions</h2>
             <Link
-              href="/records/create"
+              href="/transactions/create"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm transition-all duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px]"
             >
               + New Transaction
@@ -94,9 +94,6 @@ export default function RecordsPage() {
 
           {/* Transaction List */}
           <Card padding="sm">
-            <CardHeader className="px-3 pt-2">
-              <CardTitle>Your Transactions</CardTitle>
-            </CardHeader>
             <CardContent className="px-1">
               <TransactionList
                 userId={user._id}

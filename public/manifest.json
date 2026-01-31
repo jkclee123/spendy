@@ -25,9 +25,9 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "View Records",
-      "short_name": "Records",
-      "url": "/records",
+      "name": "View Transactions",
+      "short_name": "Transactions",
+      "url": "/transactions",
       "icons": []
     },
     {
