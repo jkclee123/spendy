@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useCallback, useEffect, useMemo } from "react";
+import { useState, FormEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -10,6 +10,53 @@ import { CategorySelect } from "./CategorySelect";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
 import { Checkbox } from "@/components/ui/Checkbox";
+
+/**
+ * Safely evaluate a mathematical expression string
+ * Only supports basic arithmetic: +, -, *, /, decimal numbers
+ * Returns null if the expression is invalid
+ */
+function evaluateFormula(formula: string): number | null {
+  // Remove all whitespace
+  const sanitized = formula.replace(/\s/g, "");
+
+  // Replace × with * and ÷ with / for evaluation (do this BEFORE validation)
+  const normalized = sanitized.replace(/×/g, "*").replace(/÷/g, "/");
+
+  // Check for invalid characters (only allow 0-9, +, -, *, /, .)
+  if (!/^[\d+\-*/.]+$/.test(normalized)) {
+    return null;
+  }
+
+  // Check for invalid patterns (multiple operators in a row, etc.)
+  if (/[\+\*\/]{2,}/.test(normalized) || /[\+\-\*\/]$/.test(normalized) || /^[\*\/]/.test(normalized)) {
+    return null;
+  }
+
+  // Check for multiple decimal points in a number
+  const parts = normalized.split(/[\+\-\*\/]/);
+  for (const part of parts) {
+    if (part.split(".").length > 2) {
+      return null;
+    }
+  }
+
+  try {
+    // Use Function constructor for safer evaluation than eval()
+    // eslint-disable-next-line no-new-func
+    const result = new Function("return " + normalized)();
+    
+    // Validate result is a finite number
+    if (typeof result !== "number" || !isFinite(result) || isNaN(result)) {
+      return null;
+    }
+
+    // Round to 2 decimal places for currency
+    return Math.round(result * 100) / 100;
+  } catch {
+    return null;
+  }
+}
 
 interface FormErrors {
   amount?: string;
@@ -73,6 +120,7 @@ export function TransactionForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
+  const amountInputRef = useRef<HTMLInputElement>(null);
 
   // Reset form when initial values change
   useEffect(() => {
@@ -159,12 +207,13 @@ export function TransactionForm({
     if (!amount.trim()) {
       newErrors.amount = "Amount is required";
     } else {
-      const amountNum = parseFloat(amount);
-      if (isNaN(amountNum)) {
-        newErrors.amount = "Amount must be a valid number";
-      } else if (amountNum <= 0) {
+      // Try to evaluate as a formula first
+      const evaluatedAmount = evaluateFormula(amount);
+      if (evaluatedAmount === null) {
+        newErrors.amount = "Amount must be a valid number or formula";
+      } else if (evaluatedAmount <= 0) {
         newErrors.amount = "Amount must be greater than 0";
-      } else if (amountNum > 1000000000) {
+      } else if (evaluatedAmount > 1000000000) {
         newErrors.amount = "Amount is too large";
       }
     }
@@ -194,11 +243,19 @@ export function TransactionForm({
     setErrors({});
 
     try {
+      // Evaluate amount formula before submission
+      const evaluatedAmount = evaluateFormula(amount);
+      if (evaluatedAmount === null) {
+        setErrors({ amount: "Amount must be a valid number or formula" });
+        setIsSubmitting(false);
+        return;
+      }
+
       if (isEditMode && initialData) {
         // Update existing transaction
         await updateTransaction({
           transactionId: initialData._id,
-          amount: parseFloat(amount),
+          amount: evaluatedAmount,
           name: name,
           merchant: merchant,
           category: category,
@@ -210,7 +267,7 @@ export function TransactionForm({
         // Create new transaction
         await createTransaction({
           userId: userId,
-          amount: parseFloat(amount),
+          amount: evaluatedAmount,
           name: name,
           merchant: merchant,
           category: category,
@@ -223,7 +280,7 @@ export function TransactionForm({
             userId: userId,
             latitude: latitude,
             longitude: longitude,
-            amount: parseFloat(amount),
+            amount: evaluatedAmount,
             category: category,
             name: name,
           });
@@ -280,11 +337,10 @@ export function TransactionForm({
             $
           </span>
           <input
-            type="number"
+            ref={amountInputRef}
+            type="text"
             id="amount"
             inputMode="decimal"
-            step="0.01"
-            min="0"
             value={amount}
             onChange={(e) => {
               setAmount(e.target.value);
@@ -335,6 +391,119 @@ export function TransactionForm({
             </button>
           )}
         </div>
+
+        {/* Calculator Buttons */}
+        <div className="mt-2 flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              const input = amountInputRef.current;
+              if (input) {
+                const start = input.selectionStart || amount.length;
+                const newValue = amount.slice(0, start) + "+" + amount.slice(start);
+                setAmount(newValue);
+                input.focus();
+                setTimeout(() => {
+                  input.setSelectionRange(start + 1, start + 1);
+                }, 0);
+              }
+            }}
+            disabled={isSubmitting}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Add plus operator"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const input = amountInputRef.current;
+              if (input) {
+                const start = input.selectionStart || amount.length;
+                const newValue = amount.slice(0, start) + "-" + amount.slice(start);
+                setAmount(newValue);
+                input.focus();
+                setTimeout(() => {
+                  input.setSelectionRange(start + 1, start + 1);
+                }, 0);
+              }
+            }}
+            disabled={isSubmitting}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Add minus operator"
+          >
+            -
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const input = amountInputRef.current;
+              if (input) {
+                const start = input.selectionStart || amount.length;
+                const newValue = amount.slice(0, start) + "×" + amount.slice(start);
+                setAmount(newValue);
+                input.focus();
+                setTimeout(() => {
+                  input.setSelectionRange(start + 1, start + 1);
+                }, 0);
+              }
+            }}
+            disabled={isSubmitting}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Add multiply operator"
+          >
+            ×
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const input = amountInputRef.current;
+              if (input) {
+                const start = input.selectionStart || amount.length;
+                const newValue = amount.slice(0, start) + "÷" + amount.slice(start);
+                setAmount(newValue);
+                input.focus();
+                setTimeout(() => {
+                  input.setSelectionRange(start + 1, start + 1);
+                }, 0);
+              }
+            }}
+            disabled={isSubmitting}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Add divide operator"
+          >
+            ÷
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const result = evaluateFormula(amount);
+              if (result !== null) {
+                setAmount(result.toString());
+                const input = amountInputRef.current;
+                if (input) {
+                  input.focus();
+                  setTimeout(() => {
+                    input.setSelectionRange(result.toString().length, result.toString().length);
+                  }, 0);
+                }
+              } else {
+                // Invalid formula - clear the input
+                setAmount("");
+                const input = amountInputRef.current;
+                if (input) {
+                  input.focus();
+                }
+              }
+            }}
+            disabled={isSubmitting}
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-lg font-semibold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Evaluate formula"
+          >
+            =
+          </button>
+        </div>
+
         {errors.amount && (
           <p className="mt-1.5 text-sm text-red-500">{errors.amount}</p>
         )}
