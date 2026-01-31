@@ -14,7 +14,6 @@ import { Checkbox } from "@/components/ui/Checkbox";
 interface FormErrors {
   amount?: string;
   name?: string;
-  merchant?: string;
   category?: string;
   paymentMethod?: string;
   general?: string;
@@ -296,7 +295,7 @@ export function TransactionForm({
             placeholder="0.00"
             disabled={isSubmitting}
             className={`
-              w-full rounded-xl border bg-white py-3 pl-8 pr-4 text-base text-gray-900
+              w-full rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
               placeholder:text-gray-400
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
@@ -308,6 +307,33 @@ export function TransactionForm({
               }
             `}
           />
+          {amount && (
+            <button
+              type="button"
+              onClick={() => {
+                setAmount("");
+                document.getElementById("amount")?.focus();
+              }}
+              disabled={isSubmitting}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Clear amount"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          )}
         </div>
         {errors.amount && (
           <p className="mt-1.5 text-sm text-red-500">{errors.amount}</p>
@@ -402,44 +428,6 @@ export function TransactionForm({
         />
         {errors.paymentMethod && (
           <p className="mt-1.5 text-sm text-red-500">{errors.paymentMethod}</p>
-        )}
-      </div>
-
-      {/* Merchant Field */}
-      <div>
-        <label
-          htmlFor="merchant"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
-        >
-          Merchant
-        </label>
-        <input
-          type="text"
-          id="merchant"
-          value={merchant}
-          onChange={(e) => {
-            setMerchant(e.target.value);
-            if (errors.merchant) {
-              setErrors((prev) => ({ ...prev, merchant: undefined }));
-            }
-          }}
-          placeholder="e.g., Starbucks, Amazon"
-          disabled={isSubmitting}
-          className={`
-            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
-            placeholder:text-gray-400
-            transition-colors duration-200
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-            ${
-              errors.merchant
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 hover:border-gray-400"
-            }
-          `}
-        />
-        {errors.merchant && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.merchant}</p>
         )}
       </div>
 

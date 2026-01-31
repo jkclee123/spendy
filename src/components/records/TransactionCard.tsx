@@ -34,7 +34,7 @@ export function TransactionCard({
   }).format(transaction.amount);
 
   const date = new Date(transaction.createdAt);
-  const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
   // Shared drag handler functions
   const handleDragStart = useCallback((clientX: number) => {
@@ -207,12 +207,6 @@ export function TransactionCard({
               <time dateTime={new Date(transaction.createdAt).toISOString()}>
                 {formattedDate}
               </time>
-              {transaction.paymentMethod && (
-                <>
-                  <span>•</span>
-                  <span>{transaction.paymentMethod}</span>
-                </>
-              )}
             </div>
           </div>
         </div>

@@ -85,7 +85,7 @@ export function TransactionFilters({
     : "";
 
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 hover:border-gray-200">
+    <div className={`rounded-xl border border-gray-100 bg-white hover:border-gray-200 p-3`}>
       {/* Filter toggle button */}
       <button
         type="button"
@@ -157,7 +157,7 @@ export function TransactionFilters({
 
           {/* Date range filter */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div className="min-w-0">
               <label
                 htmlFor="filter-start-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
@@ -170,10 +170,10 @@ export function TransactionFilters({
                 value={startDateValue}
                 onChange={handleStartDateChange}
                 placeholder="Select start date"
-                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div>
+            <div className="min-w-0">
               <label
                 htmlFor="filter-end-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700"
@@ -186,7 +186,7 @@ export function TransactionFilters({
                 value={endDateValue}
                 onChange={handleEndDateChange}
                 placeholder="Select end date"
-                className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

@@ -16,6 +16,9 @@ const navItems: NavItem[] = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+// Icons that should only change color when active (no fill/stroke changes)
+const colorOnlyIcons = ["/stats", "/settings"];
+
 export function NavigationBar() {
   const pathname = usePathname();
 
@@ -23,17 +26,18 @@ export function NavigationBar() {
     <>
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur-sm md:hidden">
-        <div className="flex h-16 items-center justify-around">
+        <div className="flex h-20 items-start justify-around pt-3">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const Icon = item.icon;
+            const isColorOnly = colorOnlyIcons.includes(item.href);
 
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`
-                  flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-1 px-4
+                  flex min-h-[44px] min-w-[44px] flex-col items-center justify-start gap-1 px-4 pt-1
                   transition-colors
                   ${
                     isActive
@@ -45,10 +49,9 @@ export function NavigationBar() {
               >
                 <Icon
                   className="h-6 w-6"
-                  strokeWidth={isActive ? 2.5 : 2}
-                  fill={isActive ? "currentColor" : "none"}
+                  strokeWidth={isColorOnly ? 2 : (isActive ? 2.5 : 2)}
+                  fill={isColorOnly ? "none" : (isActive ? "currentColor" : "none")}
                 />
-                <span className="text-xs font-medium">{item.label}</span>
               </Link>
             );
           })}
