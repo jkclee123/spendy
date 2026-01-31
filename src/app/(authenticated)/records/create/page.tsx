@@ -35,10 +35,10 @@ export default function NewTransactionPage() {
     api.locationHistories.findNearby,
     latitude && longitude && user?._id
       ? {
-          userId: user._id,
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
-        }
+        userId: user._id,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+      }
       : "skip"
   );
 
@@ -99,21 +99,10 @@ export default function NewTransactionPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header with back link */}
-      <div className="flex items-center gap-2">
-        <Link
-          href="/records"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="text-sm font-medium">Back to Records</span>
-        </Link>
-      </div>
-
       {/* Add Transaction Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Add New Transaction</CardTitle>
+          <CardTitle>New Transaction</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionForm

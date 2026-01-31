@@ -66,12 +66,6 @@ export default function EditTransactionPage() {
         <p className="mt-2 max-w-sm text-sm text-gray-500">
           The transaction you are looking for does not exist.
         </p>
-        <Link
-          href="/records"
-          className="mt-4 text-blue-500 hover:text-blue-600"
-        >
-          Back to Records
-        </Link>
       </div>
     );
   }
@@ -86,21 +80,10 @@ export default function EditTransactionPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header with back link */}
-      <div className="flex items-center gap-2">
-        <Link
-          href="/records"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="text-sm font-medium">Back to Records</span>
-        </Link>
-      </div>
-
       {/* Edit Transaction Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Edit Transaction</CardTitle>
+          <CardTitle>Update Transaction</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionForm

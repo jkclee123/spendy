@@ -255,7 +255,7 @@ export function TransactionDetail({
             id="transaction-detail-title"
             className="text-lg font-semibold text-gray-900"
           >
-            {isEditing ? "Edit Transaction" : "Transaction Details"}
+            {isEditing ? "Update Transaction" : "Transaction Details"}
           </h2>
           <button
             onClick={onClose}

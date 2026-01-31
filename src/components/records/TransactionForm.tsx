@@ -45,7 +45,7 @@ function evaluateFormula(formula: string): number | null {
     // Use Function constructor for safer evaluation than eval()
     // eslint-disable-next-line no-new-func
     const result = new Function("return " + normalized)();
-    
+
     // Validate result is a finite number
     if (typeof result !== "number" || !isFinite(result) || isNaN(result)) {
       return null;
@@ -356,10 +356,9 @@ export function TransactionForm({
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-              ${
-                errors.amount
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 hover:border-gray-400"
+              ${errors.amount
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 hover:border-gray-400"
               }
             `}
           />
@@ -551,10 +550,9 @@ export function TransactionForm({
             transition-colors duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-            ${
-              errors.name
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 hover:border-gray-400"
+            ${errors.name
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 hover:border-gray-400"
             }
           `}
         />
@@ -589,10 +587,9 @@ export function TransactionForm({
             transition-colors duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-            ${
-              errors.paymentMethod
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 hover:border-gray-400"
+            ${errors.paymentMethod
+              ? "border-red-500 focus:ring-red-500"
+              : "border-gray-300 hover:border-gray-400"
             }
           `}
         />
@@ -637,10 +634,10 @@ export function TransactionForm({
           {isSubmitting
             ? isEditMode
               ? "Saving..."
-              : "Adding..."
+              : "Creating..."
             : isEditMode
               ? "Save Changes"
-              : "Add Transaction"}
+              : "Create"}
         </Button>
       </div>
     </form>
