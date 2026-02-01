@@ -176,11 +176,11 @@
 
 ### Implementation for User Story 7
 
-- [ ] T054 [US7] Run verification: curl -X POST http://localhost:3000/api/transaction returns 404
-- [ ] T055 [US7] Run verification: Users table schema has no apiToken field
-- [ ] T056 [US7] Run verification: Transactions table schema has no merchant field
-- [ ] T057 [US7] Run verification: Settings page has no API token section
-- [ ] T058 [US7] Run verification: Transaction form has no merchant input field
+- [X] T054 [US7] Run verification: curl -X POST http://localhost:3000/api/transaction returns 404
+- [X] T055 [US7] Run verification: Users table schema has no apiToken field
+- [X] T056 [US7] Run verification: Transactions table schema has no merchant field
+- [X] T057 [US7] Run verification: Settings page has no API token section
+- [X] T058 [US7] Run verification: Transaction form has no merchant input field
 
 **Checkpoint**: User Story 7 complete - legacy code completely removed and verified
 
