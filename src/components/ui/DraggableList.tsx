@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { GripVertical } from "lucide-react";
 
 interface DraggableListProps<T> {
@@ -13,7 +13,7 @@ interface DraggableListProps<T> {
 
 /**
  * List component with drag-to-reorder functionality
- * - Supports touch and mouse drag
+ * - Supports touch and mouse drag (only via handle)
  * - Provides visual feedback during drag
  * - Calls onReorder on drop with new array order
  */
@@ -27,16 +27,30 @@ export function DraggableList<T>({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const dragItemRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingFromHandle = useRef(false);
+
+  // Mouse drag handlers - only from handle
+  const handleHandleMouseDown = useCallback((index: number) => {
+    if (disabled) return;
+    isDraggingFromHandle.current = true;
+    setDraggedIndex(index);
+  }, [disabled]);
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     if (disabled) return;
+    // Only allow drag if initiated from handle
+    if (!isDraggingFromHandle.current) {
+      e.preventDefault();
+      return;
+    }
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", e.currentTarget.innerHTML);
     
-    // Set drag image
-    if (dragItemRef.current) {
-      e.dataTransfer.setDragImage(dragItemRef.current, 0, 0);
+    // Set drag image to the entire row
+    const rowElement = e.currentTarget;
+    if (rowElement) {
+      e.dataTransfer.setDragImage(rowElement, 0, 0);
     }
   };
 
@@ -61,23 +75,27 @@ export function DraggableList<T>({
 
     setDraggedIndex(null);
     setDragOverIndex(null);
+    isDraggingFromHandle.current = false;
   };
 
   const handleDragLeave = () => {
     setDragOverIndex(null);
   };
 
-  // Touch event support
+  // Touch event support - only from handle
   const [touchStartY, setTouchStartY] = useState<number | null>(null);
+  const isTouchDragging = useRef(false);
 
-  const handleTouchStart = (e: React.TouchEvent, index: number) => {
+  const handleHandleTouchStart = useCallback((e: React.TouchEvent, index: number) => {
     if (disabled) return;
+    e.stopPropagation();
+    isTouchDragging.current = true;
     setDraggedIndex(index);
     setTouchStartY(e.touches[0].clientY);
-  };
+  }, [disabled]);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (disabled || draggedIndex === null || touchStartY === null) return;
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (disabled || draggedIndex === null || touchStartY === null || !isTouchDragging.current) return;
 
     // Calculate which item we're over
     const element = document.elementFromPoint(
@@ -85,15 +103,15 @@ export function DraggableList<T>({
       e.touches[0].clientY
     );
     
-    const listItem = element?.closest('[data-draggable-item]');
+    const listItem = element?.closest("[data-draggable-item]");
     if (listItem) {
-      const overIndex = parseInt(listItem.getAttribute('data-index') || '0', 10);
+      const overIndex = parseInt(listItem.getAttribute("data-index") || "0", 10);
       setDragOverIndex(overIndex);
     }
-  };
+  }, [disabled, draggedIndex, touchStartY]);
 
-  const handleTouchEnd = () => {
-    if (disabled || draggedIndex === null) return;
+  const handleTouchEnd = useCallback(() => {
+    if (disabled || draggedIndex === null || !isTouchDragging.current) return;
     
     if (dragOverIndex !== null && draggedIndex !== dragOverIndex) {
       const newItems = [...items];
@@ -105,7 +123,8 @@ export function DraggableList<T>({
     setDraggedIndex(null);
     setDragOverIndex(null);
     setTouchStartY(null);
-  };
+    isTouchDragging.current = false;
+  }, [disabled, draggedIndex, dragOverIndex, items, onReorder]);
 
   return (
     <div className="space-y-2">
@@ -123,7 +142,6 @@ export function DraggableList<T>({
             onDragOver={(e) => handleDragOver(e, index)}
             onDragEnd={handleDragEnd}
             onDragLeave={handleDragLeave}
-            onTouchStart={(e) => handleTouchStart(e, index)}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             ref={isDragging ? dragItemRef : null}
@@ -133,9 +151,13 @@ export function DraggableList<T>({
               ${isDragOver && !isDragging ? "translate-y-1" : ""}
             `}
           >
-            {/* Drag handle */}
+            {/* Drag handle - only this triggers dragging */}
             {!disabled && (
-              <div className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500">
+              <div
+                className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 touch-none"
+                onMouseDown={() => handleHandleMouseDown(index)}
+                onTouchStart={(e) => handleHandleTouchStart(e, index)}
+              >
                 <GripVertical className="h-5 w-5" />
               </div>
             )}

@@ -5,7 +5,7 @@ import { usePaginatedQuery, useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
-import type { Transaction } from "@/types";
+import type { TransactionWithCategory } from "@/types";
 import { TransactionCard } from "./TransactionCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useToast } from "@/components/ui/Toast";
@@ -14,7 +14,7 @@ import type { TransactionFiltersState } from "./TransactionFilters";
 interface TransactionListProps {
   userId: Id<"users">;
   filters: TransactionFiltersState;
-  onTransactionClick?: (transaction: Transaction) => void;
+  onTransactionClick?: (transaction: TransactionWithCategory) => void;
 }
 
 const PAGE_SIZE = 20;
@@ -49,7 +49,7 @@ export function TransactionList({
   const deleteTransaction = useMutation(api.transactions.remove);
 
   const handleDelete = useCallback(
-    async (transaction: Transaction) => {
+    async (transaction: TransactionWithCategory) => {
       try {
         await deleteTransaction({
           transactionId: transaction._id,
@@ -117,7 +117,7 @@ export function TransactionList({
       {results.map((transaction) => (
         <TransactionCard
           key={transaction._id}
-          transaction={transaction as Transaction}
+          transaction={transaction as TransactionWithCategory}
           onClick={onTransactionClick}
           onDelete={handleDelete}
         />

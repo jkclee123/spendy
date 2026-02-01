@@ -26,7 +26,7 @@ export function SwipeableCard({
   onClick,
   disabled = false,
 }: SwipeableCardProps) {
-  const { offset, isSwiping, handlers } = useSwipeGesture({
+  const { offset, isSwiping, hasSwiped, resetHasSwiped, handlers } = useSwipeGesture({
     onSwipeLeft: onSwipeAction,
     threshold: 80,
     disabled,
@@ -42,6 +42,12 @@ export function SwipeableCard({
   const actionOpacity = Math.min(1, Math.abs(offset) / 40);
 
   const handleClick = () => {
+    // Prevent click if we just performed a swipe
+    if (hasSwiped) {
+      resetHasSwiped();
+      return;
+    }
+
     if (!isSwiping && offset === 0 && onClick) {
       onClick();
     }

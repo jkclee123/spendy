@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import type { Transaction } from "@/types";
+import type { TransactionWithCategory } from "@/types";
 
 interface TransactionCardProps {
-  transaction: Transaction;
-  onClick?: (transaction: Transaction) => void;
-  onDelete?: (transaction: Transaction) => void;
+  transaction: TransactionWithCategory;
+  onClick?: (transaction: TransactionWithCategory) => void;
+  onDelete?: (transaction: TransactionWithCategory) => void;
 }
 
 const SWIPE_THRESHOLD = 80;
@@ -196,13 +196,16 @@ export function TransactionCard({
         <div className="flex items-center gap-3">
           {/* Category indicator */}
           <div className="flex items-center justify-center">
-            <CategoryIcon category={transaction.category} />
+            <CategoryIcon categoryData={transaction.categoryData} />
           </div>
 
           {/* Transaction details */}
           <div className="flex flex-col">
             <span className="font-medium text-gray-900 dark:text-gray-100">
-              {transaction.name || transaction.category || "Uncategorized"}
+              {transaction.name || 
+                transaction.categoryData?.en_name || 
+                transaction.categoryData?.zh_name || 
+                "Uncategorized"}
             </span>
             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <time dateTime={new Date(transaction.createdAt).toISOString()}>
@@ -225,23 +228,14 @@ export function TransactionCard({
 
 /**
  * Icon based on transaction category
+ * Uses emoji from the UserCategory object
  */
-function CategoryIcon({ category }: { category?: string }) {
-  const iconMap: Record<string, string> = {
-    "Restaurants & Bars": "🍽️",
-    Drinks: "🥤",
-    Transport: "🚌",
-    Entertainment: "🎢",
-    Groceries: "👨🏼‍🍳",
-    Accommodation: "🏨",
-    Healthcare: "💊",
-    Insurance: "📜",
-    "Rent & Charges": "🏡",
-    Shopping: "🛍️",
-    Other: "❓",
-  };
-
-  const icon = category ? iconMap[category] || "💰" : "💰";
+function CategoryIcon({ 
+  categoryData 
+}: { 
+  categoryData?: { emoji: string } | null 
+}) {
+  const icon = categoryData?.emoji || "💰";
 
   return <span className="text-2xl">{icon}</span>;
 }

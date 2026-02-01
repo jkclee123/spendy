@@ -65,6 +65,7 @@ export const listByUser = query({
 /**
  * Get paginated transactions for a user with optional filters
  * Supports cursor-based pagination for infinite scroll
+ * Includes category data (emoji and names) for each transaction
  */
 export const listByUserPaginated = query({
   args: {
@@ -110,9 +111,31 @@ export const listByUserPaginated = query({
       filteredPage = filteredPage.filter((t) => t.amount <= args.maxAmount!);
     }
 
+    // Enrich transactions with category data
+    const enrichedPage = await Promise.all(
+      filteredPage.map(async (transaction) => {
+        if (!transaction.category) {
+          return { ...transaction, categoryData: null };
+        }
+
+        const categoryData = await ctx.db.get(transaction.category);
+        return {
+          ...transaction,
+          categoryData: categoryData
+            ? {
+                _id: categoryData._id,
+                emoji: categoryData.emoji,
+                en_name: categoryData.en_name,
+                zh_name: categoryData.zh_name,
+              }
+            : null,
+        };
+      })
+    );
+
     return {
       ...results,
-      page: filteredPage,
+      page: enrichedPage,
     };
   },
 });

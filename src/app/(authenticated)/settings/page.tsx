@@ -4,6 +4,8 @@ import { useSession, signOut } from "next-auth/react";
 import { useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
+import { ChevronRight, Tags, MapPin } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -108,6 +110,33 @@ export default function SettingsPage() {
             onChange={handleLanguageChange}
             label={t("language")}
           />
+        </CardContent>
+      </Card>
+
+      {/* Management Links */}
+      <Card>
+        <CardContent className="p-0">
+          <Link
+            href="/settings/userCategory"
+            className="flex min-h-[44px] items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Tags className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <span className="text-gray-900 dark:text-gray-100">{t("categorySettings")}</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+          </Link>
+          <div className="mx-4 border-t border-gray-200 dark:border-gray-700" />
+          <Link
+            href="/settings/locationHistories"
+            className="flex min-h-[44px] items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <MapPin className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+              <span className="text-gray-900 dark:text-gray-100">{t("locationHistorySettings")}</span>
+            </div>
+            <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+          </Link>
         </CardContent>
       </Card>
 

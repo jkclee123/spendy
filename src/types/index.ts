@@ -39,6 +39,19 @@ export interface Transaction {
 }
 
 /**
+ * Transaction with enriched category data
+ * Used in transaction list display
+ */
+export interface TransactionWithCategory extends Transaction {
+  categoryData?: {
+    _id: Id<"userCategories">;
+    emoji: string;
+    en_name?: string;
+    zh_name?: string;
+  } | null;
+}
+
+/**
  * Location history entity for remembering transaction locations
  */
 export interface LocationHistory {

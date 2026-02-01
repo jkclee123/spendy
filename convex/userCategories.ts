@@ -25,20 +25,22 @@ export const listByUser = query({
 });
 
 /**
- * Get only active categories for a user
+ * Get only active categories for a user, ordered by order field
  */
 export const listActiveByUser = query({
   args: {
     userId: v.id("users"),
   },
   handler: async (ctx, args) => {
-    return await ctx.db
+    const categories = await ctx.db
       .query("userCategories")
       .withIndex("by_userId_isActive", (q) => 
         q.eq("userId", args.userId).eq("isActive", true)
       )
-      .order("asc")
       .collect();
+
+    // Sort by order field
+    return categories.sort((a, b) => a.order - b.order);
   },
 });
 
@@ -204,5 +206,42 @@ export const reorder = mutation({
 
       await ctx.db.patch(update.categoryId, { order: update.order });
     }
+  },
+});
+
+/**
+ * Soft delete a category (marks as inactive)
+ */
+export const remove = mutation({
+  args: {
+    categoryId: v.id("userCategories"),
+  },
+  handler: async (ctx, args) => {
+    // Verify category exists
+    const category = await ctx.db.get(args.categoryId);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+
+    // Soft delete: mark as inactive instead of deleting
+    await ctx.db.patch(args.categoryId, { isActive: false });
+  },
+});
+
+/**
+ * Hard delete a category permanently
+ */
+export const hardDelete = mutation({
+  args: {
+    categoryId: v.id("userCategories"),
+  },
+  handler: async (ctx, args) => {
+    // Verify category exists
+    const category = await ctx.db.get(args.categoryId);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+
+    await ctx.db.delete(args.categoryId);
   },
 });

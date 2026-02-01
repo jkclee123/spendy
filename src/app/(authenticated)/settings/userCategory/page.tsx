@@ -16,8 +16,8 @@ import type { UserCategory } from "@/types";
  * Category management page
  * - Lists active categories (top section)
  * - Lists inactive categories (bottom section)
- * - Swipe to deactivate/activate
- * - Drag to reorder (active only)
+ * - Swipe left to delete
+ * - Drag handle to reorder (active only)
  * - Create button opens CategoryEditModal
  * - Tap category opens CategoryEditModal
  * - Auto-saves on reorder
@@ -44,8 +44,8 @@ export default function CategorySettingsPage() {
   // Mutations
   const createCategory = useMutation(api.userCategories.create);
   const updateCategory = useMutation(api.userCategories.update);
-  const deactivateCategory = useMutation(api.userCategories.deactivate);
-  const activateCategory = useMutation(api.userCategories.activate);
+  const deactivateCategory = useMutation(api.userCategories.remove);
+  const hardDeleteCategory = useMutation(api.userCategories.hardDelete);
   const reorderCategories = useMutation(api.userCategories.reorder);
 
   const activeCategories = categories?.filter((c) => c.isActive) || [];
@@ -89,16 +89,19 @@ export default function CategorySettingsPage() {
   };
 
   const handleDeactivate = async (category: UserCategory) => {
-    const confirmed = window.confirm(
-      `Deactivate ${getLocalizedName(category)}? It will be hidden from transaction forms.`
-    );
-    if (confirmed) {
-      await deactivateCategory({ categoryId: category._id });
-    }
+    // Soft delete - just deactivates the category, no confirmation needed
+    await deactivateCategory({ categoryId: category._id });
   };
 
-  const handleActivate = async (category: UserCategory) => {
-    await activateCategory({ categoryId: category._id });
+  const handleHardDelete = async (category: UserCategory) => {
+    const confirmed = window.confirm(
+      lang === "en"
+        ? `Permanently delete ${getLocalizedName(category)}? This action cannot be undone.`
+        : `永久刪除 ${getLocalizedName(category)}？此操作無法復原。`
+    );
+    if (confirmed) {
+      await hardDeleteCategory({ categoryId: category._id });
+    }
   };
 
   const handleReorder = async (newOrder: UserCategory[]) => {
@@ -158,8 +161,8 @@ export default function CategorySettingsPage() {
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {lang === "en"
-                ? "Drag to reorder, swipe left to deactivate"
-                : "拖動以重新排序，向左滑動以停用"}
+                ? "Drag handle to reorder, swipe left to deactivate"
+                : "拖動手柄以重新排序，向左滑動以停用"}
             </p>
           </div>
 
@@ -201,7 +204,9 @@ export default function CategorySettingsPage() {
                 {lang === "en" ? "Inactive Categories" : "停用的類別"}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {lang === "en" ? "Swipe left to activate" : "向左滑動以啟用"}
+                {lang === "en"
+                  ? "Tap to edit and reactivate, swipe left to delete"
+                  : "點擊以編輯並重新啟用，向左滑動以刪除"}
               </p>
             </div>
 
@@ -209,9 +214,9 @@ export default function CategorySettingsPage() {
               {inactiveCategories.map((category) => (
                 <SwipeableCard
                   key={category._id}
-                  onSwipeAction={() => handleActivate(category)}
-                  actionLabel={lang === "en" ? "Activate" : "啟用"}
-                  actionColor="blue"
+                  onSwipeAction={() => handleHardDelete(category)}
+                  actionLabel={lang === "en" ? "Delete" : "刪除"}
+                  actionColor="red"
                   onClick={() => handleOpenEdit(category)}
                 >
                   <div className="flex items-center gap-3 opacity-60">

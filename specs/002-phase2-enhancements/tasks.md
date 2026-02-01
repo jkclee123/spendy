@@ -162,7 +162,7 @@
 
 ### Implementation for User Story 6
 
-- [ ] T053 [US6] Update src/app/(authenticated)/settings/page.tsx - add navigation links to Category Settings and Location History Settings
+- [X] T053 [US6] Update src/app/(authenticated)/settings/page.tsx - add navigation links to Category Settings and Location History Settings
 
 **Checkpoint**: User Story 6 complete - settings page has links to both management pages
 

@@ -12,6 +12,8 @@ interface SwipeGestureConfig {
 interface SwipeGestureReturn {
   offset: number;
   isSwiping: boolean;
+  hasSwiped: boolean;
+  resetHasSwiped: () => void;
   handlers: {
     onTouchStart: (e: React.TouchEvent) => void;
     onTouchMove: (e: React.TouchEvent) => void;
@@ -132,9 +134,15 @@ export function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn 
     }
   }, [isSwiping, handleDragEnd]);
 
+  const resetHasSwiped = useCallback(() => {
+    hasSwipedRef.current = false;
+  }, []);
+
   return {
     offset,
     isSwiping,
+    hasSwiped: hasSwipedRef.current,
+    resetHasSwiped,
     handlers: {
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
