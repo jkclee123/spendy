@@ -150,7 +150,7 @@ src/
 
 messages/
 ├── en.json                                 # NEW: English translations
-└── zh-TW.json                              # NEW: Traditional Chinese translations
+└── zh-HK.json                              # NEW: Traditional Chinese translations
 
 convex/
 ├── schema.ts                               # Modified (new schema)

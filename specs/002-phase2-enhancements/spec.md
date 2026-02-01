@@ -3,7 +3,7 @@
 **Feature Branch**: `002-phase2-enhancements`  
 **Created**: 2026-02-01  
 **Status**: Draft  
-**Input**: User description: "Phase 2 development: dark theme support (follows browser), i18n (en/zh-TW), remove apiToken and merchant fields, add userCategory table with defaults, update transaction flow with location history selection, new settings pages for categories and location histories"
+**Input**: User description: "Phase 2 development: dark theme support (follows browser), i18n (en/zh-HK), remove apiToken and merchant fields, add userCategory table with defaults, update transaction flow with location history selection, new settings pages for categories and location histories"
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -155,8 +155,8 @@ The system removes deprecated fields (apiToken from users, merchant from transac
 
 **Internationalization**
 
-- **FR-004**: System MUST support two languages: English (en) and Traditional Chinese (zh-TW)
-- **FR-005**: System MUST detect browser language on first visit and set appropriate default (Chinese variants map to zh-TW, all others to en)
+- **FR-004**: System MUST support two languages: English (en) and Traditional Chinese (zh-HK)
+- **FR-005**: System MUST detect browser language on first visit and set appropriate default (Chinese variants map to zh-HK, all others to en)
 - **FR-006**: System MUST persist user language preference in their profile (lang field on user record)
 - **FR-007**: System MUST provide three language options in Settings: System (follows browser), English, Traditional Chinese
 - **FR-008**: System MUST immediately update all UI text when language preference changes

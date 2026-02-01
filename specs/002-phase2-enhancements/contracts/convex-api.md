@@ -14,6 +14,7 @@ This document defines the Convex query and mutation contracts for the Phase 2 fe
 Creates a new user and their default categories.
 
 **Args**:
+
 ```typescript
 {
   name: string;
@@ -25,6 +26,7 @@ Creates a new user and their default categories.
 **Returns**: `Id<"users">`
 
 **Behavior**:
+
 - If user with email exists, returns existing user ID
 - If new user, creates user AND two default userCategories
 - Default categories: Restaurant (🍗) and Transport (🚃)
@@ -50,22 +52,25 @@ Creates a new user and their default categories.
 Updates user's language preference.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
-  lang: "system" | "en" | "zh-TW";
+  lang: "system" | "en" | "zh-HK";
 }
 ```
 
 **Returns**: `void`
 
 **Validation**:
+
 - User must exist
 - Lang must be one of the valid values
 
 ---
 
 ### REMOVED: users.getByApiToken
+
 ### REMOVED: users.regenerateApiToken
 
 ---
@@ -77,6 +82,7 @@ Updates user's language preference.
 Get all categories for a user, ordered by active status then order.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -84,6 +90,7 @@ Get all categories for a user, ordered by active status then order.
 ```
 
 **Returns**:
+
 ```typescript
 Array<{
   _id: Id<"userCategories">;
@@ -94,10 +101,11 @@ Array<{
   zh_name?: string;
   order: number;
   createdAt: number;
-}>
+}>;
 ```
 
 **Behavior**:
+
 - Returns active categories first (sorted by order ASC)
 - Then inactive categories (sorted by order ASC)
 
@@ -108,6 +116,7 @@ Array<{
 Get only active categories for a user.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -123,6 +132,7 @@ Get only active categories for a user.
 Get a single category by ID.
 
 **Args**:
+
 ```typescript
 {
   categoryId: Id<"userCategories">;
@@ -138,18 +148,20 @@ Get a single category by ID.
 Create a new category.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
   emoji: string;
   name: string;
-  currentLang: "en" | "zh-TW";
+  currentLang: "en" | "zh-HK";
 }
 ```
 
 **Returns**: `Id<"userCategories">`
 
 **Behavior**:
+
 - Sets `isActive: true`
 - Sets `order` to `max(existing orders) + 1`
 - Saves `name` to both `en_name` and `zh_name` (new category has both empty)
@@ -161,18 +173,20 @@ Create a new category.
 Update a category's name and emoji.
 
 **Args**:
+
 ```typescript
 {
   categoryId: Id<"userCategories">;
   emoji?: string;
   name?: string;
-  currentLang: "en" | "zh-TW";
+  currentLang: "en" | "zh-HK";
 }
 ```
 
 **Returns**: `void`
 
 **Behavior**:
+
 - If `en_name` AND `zh_name` are both empty/null: save `name` to both
 - Otherwise: save `name` only to the field matching `currentLang`
 
@@ -183,6 +197,7 @@ Update a category's name and emoji.
 Mark a category as inactive.
 
 **Args**:
+
 ```typescript
 {
   categoryId: Id<"userCategories">;
@@ -198,6 +213,7 @@ Mark a category as inactive.
 Mark a category as active.
 
 **Args**:
+
 ```typescript
 {
   categoryId: Id<"userCategories">;
@@ -213,6 +229,7 @@ Mark a category as active.
 Update order values for multiple categories.
 
 **Args**:
+
 ```typescript
 {
   updates: Array<{
@@ -225,6 +242,7 @@ Update order values for multiple categories.
 **Returns**: `void`
 
 **Behavior**:
+
 - Batch updates order values
 - Used after drag-to-reorder completes
 
@@ -235,6 +253,7 @@ Update order values for multiple categories.
 ### transactions.createFromWeb (Modified)
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -247,6 +266,7 @@ Update order values for multiple categories.
 **Returns**: `Id<"transactions">`
 
 **Removed Args**:
+
 - `merchant` - No longer supported
 
 ---
@@ -254,6 +274,7 @@ Update order values for multiple categories.
 ### transactions.update (Modified)
 
 **Args**:
+
 ```typescript
 {
   transactionId: Id<"transactions">;
@@ -267,6 +288,7 @@ Update order values for multiple categories.
 **Returns**: `Id<"transactions">`
 
 **Removed Args**:
+
 - `merchant` - No longer supported
 
 ---
@@ -280,6 +302,7 @@ Update order values for multiple categories.
 ### transactions.listByUserPaginated (Modified)
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -311,6 +334,7 @@ Returns category IDs instead of strings. Frontend must join with userCategories 
 Find nearby location histories with expanded radius.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -321,6 +345,7 @@ Find nearby location histories with expanded radius.
 ```
 
 **Returns**:
+
 ```typescript
 Array<{
   _id: Id<"locationHistories">;
@@ -333,10 +358,11 @@ Array<{
   count: number;
   createdAt: number;
   distance: number; // Calculated distance in meters
-}>
+}>;
 ```
 
 **Behavior**:
+
 - Default radius changed from 100m to 200m
 - Results sorted by distance (ascending)
 
@@ -347,6 +373,7 @@ Array<{
 Create or update location history.
 
 **Args**:
+
 ```typescript
 {
   userId: Id<"users">;
@@ -362,6 +389,7 @@ Create or update location history.
 **Returns**: `Id<"locationHistories">`
 
 **Behavior**:
+
 - If `selectedLocationId` provided: update that specific record
 - If not provided: create new record
 - On update:
@@ -379,6 +407,7 @@ Create or update location history.
 Update a location history record directly (for settings page).
 
 **Args**:
+
 ```typescript
 {
   locationHistoryId: Id<"locationHistories">;
@@ -397,6 +426,7 @@ Update a location history record directly (for settings page).
 Delete a location history record.
 
 **Args**:
+
 ```typescript
 {
   locationHistoryId: Id<"locationHistories">;
@@ -439,7 +469,7 @@ export interface User {
   name: string;
   email: string;
   image?: string;
-  lang?: "system" | "en" | "zh-TW"; // NEW
+  lang?: "system" | "en" | "zh-HK"; // NEW
   createdAt: number;
   // REMOVED: apiToken
 }

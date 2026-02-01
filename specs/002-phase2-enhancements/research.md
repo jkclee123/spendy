@@ -31,18 +31,18 @@ This document captures technology decisions and research findings for the Phase 
 
 **Implementation Approach**:
 1. Add `next-intl` package
-2. Create `/messages/en.json` and `/messages/zh-TW.json` translation files
+2. Create `/messages/en.json` and `/messages/zh-HK.json` translation files
 3. Create `i18n.ts` configuration with locale detection
 4. Wrap app in `NextIntlClientProvider`
 5. Use `useTranslations` hook in components
-6. Store user preference in `user.lang` field (values: `"system"`, `"en"`, `"zh-TW"`)
+6. Store user preference in `user.lang` field (values: `"system"`, `"en"`, `"zh-HK"`)
 
 **Browser Language Detection Logic**:
 ```
 if user.lang === "system" || user.lang is empty:
   browserLang = navigator.language
   if browserLang starts with "zh":
-    use "zh-TW"
+    use "zh-HK"
   else:
     use "en"
 else:
@@ -179,7 +179,7 @@ else:
 function saveCategoryName(
   category: UserCategory,
   newName: string,
-  currentLang: "en" | "zh-TW"
+  currentLang: "en" | "zh-HK"
 ) {
   if (!category.en_name && !category.zh_name) {
     // Both empty - save to both

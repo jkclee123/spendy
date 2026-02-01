@@ -74,7 +74,7 @@ Create translation files:
 ```bash
 mkdir -p messages
 touch messages/en.json
-touch messages/zh-TW.json
+touch messages/zh-HK.json
 ```
 
 Create i18n configuration:
@@ -163,7 +163,7 @@ src/
 
 messages/
 ├── en.json
-└── zh-TW.json
+└── zh-HK.json
 
 convex/
 └── userCategories.ts

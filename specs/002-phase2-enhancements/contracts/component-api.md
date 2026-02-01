@@ -97,7 +97,7 @@ interface CategoryDropdownProps {
   disabled?: boolean;
   error?: string;
   label?: string;
-  currentLang: "en" | "zh-TW";
+  currentLang: "en" | "zh-HK";
 }
 ```
 
@@ -116,8 +116,8 @@ Dropdown for language preference selection.
 
 ```typescript
 interface LanguageSelectProps {
-  value: "system" | "en" | "zh-TW";
-  onChange: (lang: "system" | "en" | "zh-TW") => void;
+  value: "system" | "en" | "zh-HK";
+  onChange: (lang: "system" | "en" | "zh-HK") => void;
   disabled?: boolean;
 }
 ```
@@ -195,7 +195,7 @@ interface CategoryEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   category?: UserCategory; // undefined = create mode
-  currentLang: "en" | "zh-TW";
+  currentLang: "en" | "zh-HK";
   onSave: (data: { emoji: string; name: string }) => Promise<void>;
 }
 ```
@@ -219,7 +219,7 @@ interface LocationHistoryEditModalProps {
   onClose: () => void;
   locationHistory: LocationHistory;
   categories: UserCategory[];
-  currentLang: "en" | "zh-TW";
+  currentLang: "en" | "zh-HK";
   onSave: (data: {
     name?: string;
     amount?: number;
@@ -344,9 +344,9 @@ function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn;
 
 ```typescript
 interface LanguageContext {
-  lang: "en" | "zh-TW";
-  userPreference: "system" | "en" | "zh-TW";
-  setUserPreference: (lang: "system" | "en" | "zh-TW") => Promise<void>;
+  lang: "en" | "zh-HK";
+  userPreference: "system" | "en" | "zh-HK";
+  setUserPreference: (lang: "system" | "en" | "zh-HK") => Promise<void>;
 }
 
 function useLanguage(): LanguageContext;

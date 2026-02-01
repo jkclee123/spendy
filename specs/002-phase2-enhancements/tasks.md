@@ -22,7 +22,7 @@
 - [ ] T001 Install next-intl package for i18n support
 - [ ] T002 [P] Update tailwind.config.ts to enable `darkMode: "media"`
 - [ ] T003 [P] Create messages/en.json with English translations
-- [ ] T004 [P] Create messages/zh-TW.json with Traditional Chinese translations
+- [ ] T004 [P] Create messages/zh-HK.json with Traditional Chinese translations
 - [ ] T005 [P] Create src/i18n.ts for i18n configuration
 - [ ] T006 [P] Create src/i18n/request.ts for server-side i18n
 - [ ] T007 [P] Create src/lib/providers.tsx modification for NextIntlClientProvider
@@ -83,7 +83,7 @@
 - [ ] T027 [US2] Create src/hooks/useLanguage.ts - language context hook with system detection, user preference persistence
 - [ ] T028 [US8] Update src/app/layout.tsx - add NextIntlClientProvider wrapper
 - [ ] T029 [US2] Update src/lib/providers.tsx - add language provider
-- [ ] T030 [US2] Create src/components/settings/LanguageSelect.tsx - language dropdown with system/en/zh-TW options
+- [ ] T030 [US2] Create src/components/settings/LanguageSelect.tsx - language dropdown with system/en/zh-HK options
 - [ ] T031 [US2] Update src/app/(authenticated)/settings/page.tsx - add LanguageSelect component and integration
 - [ ] T032 [US2] Wrap settings page text with useTranslations for settings section
 - [ ] T033 [US2] Wrap categories page text with useTranslations for categories section

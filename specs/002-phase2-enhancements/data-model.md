@@ -57,7 +57,7 @@ User accounts with authentication and preferences.
 | name | string | Yes | Display name from OAuth provider |
 | email | string | Yes | Email address (unique) |
 | image | string | No | Profile image URL |
-| lang | string | No | Language preference: `"system"`, `"en"`, `"zh-TW"` |
+| lang | string | No | Language preference: `"system"`, `"en"`, `"zh-HK"` |
 | createdAt | number | Yes | Timestamp of account creation |
 
 **Removed Fields**:
@@ -71,7 +71,7 @@ User accounts with authentication and preferences.
 
 **Validation Rules**:
 - `email` must be unique
-- `lang` must be one of: `"system"`, `"en"`, `"zh-TW"`, or undefined
+- `lang` must be one of: `"system"`, `"en"`, `"zh-HK"`, or undefined
 
 ---
 
@@ -185,7 +185,7 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     image: v.optional(v.string()),
-    lang: v.optional(v.string()), // "system" | "en" | "zh-TW"
+    lang: v.optional(v.string()), // "system" | "en" | "zh-HK"
     createdAt: v.number(),
   })
     .index("by_email", ["email"]),
