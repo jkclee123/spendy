@@ -1,0 +1,54 @@
+{
+  "common": {
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "create": "新增",
+    "edit": "編輯",
+    "loading": "載入中...",
+    "error": "錯誤",
+    "success": "成功"
+  },
+  "settings": {
+    "title": "設定",
+    "profile": "個人資料",
+    "language": "語言",
+    "languageOptions": {
+      "system": "系統（自動）",
+      "en": "English",
+      "zhTW": "繁體中文"
+    },
+    "categorySettings": "類別設定",
+    "locationHistorySettings": "位置記錄",
+    "signOut": "登出"
+  },
+  "categories": {
+    "title": "類別",
+    "active": "啟用中",
+    "inactive": "已停用",
+    "createNew": "新增類別",
+    "editCategory": "編輯類別",
+    "name": "名稱",
+    "emoji": "圖示",
+    "swipeToDeactivate": "滑動以停用",
+    "dragToReorder": "拖曳以排序",
+    "noCategories": "尚未建立類別"
+  },
+  "locations": {
+    "title": "位置記錄",
+    "editLocation": "編輯位置",
+    "swipeToDelete": "滑動以刪除",
+    "noLocations": "尚未儲存位置"
+  },
+  "transactions": {
+    "title": "交易記錄",
+    "amount": "金額",
+    "category": "類別",
+    "name": "名稱",
+    "rememberTransaction": "記住此交易",
+    "create": "新增交易",
+    "update": "更新交易",
+    "selectLocation": "選擇附近位置",
+    "noTransactions": "尚未有交易記錄"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "create": "Create",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "language": "Language",
+    "languageOptions": {
+      "system": "System (Auto)",
+      "en": "English",
+      "zhTW": "繁體中文"
+    },
+    "categorySettings": "Category Settings",
+    "locationHistorySettings": "Location History",
+    "signOut": "Sign Out"
+  },
+  "categories": {
+    "title": "Categories",
+    "active": "Active",
+    "inactive": "Inactive",
+    "createNew": "Create New Category",
+    "editCategory": "Edit Category",
+    "name": "Name",
+    "emoji": "Emoji",
+    "swipeToDeactivate": "Swipe to deactivate",
+    "dragToReorder": "Drag to reorder",
+    "noCategories": "No categories yet"
+  },
+  "locations": {
+    "title": "Location History",
+    "editLocation": "Edit Location",
+    "swipeToDelete": "Swipe to delete",
+    "noLocations": "No saved locations yet"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "amount": "Amount",
+    "category": "Category",
+    "name": "Name",
+    "rememberTransaction": "Remember transaction",
+    "create": "Create Transaction",
+    "update": "Update Transaction",
+    "selectLocation": "Select nearby location",
+    "noTransactions": "No transactions yet"
+  }
+}

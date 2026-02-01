@@ -19,13 +19,13 @@
 
 **Purpose**: Project initialization, dependency installation, and configuration changes
 
-- [ ] T001 Install next-intl package for i18n support
-- [ ] T002 [P] Update tailwind.config.ts to enable `darkMode: "media"`
-- [ ] T003 [P] Create messages/en.json with English translations
-- [ ] T004 [P] Create messages/zh-HK.json with Traditional Chinese translations
-- [ ] T005 [P] Create src/i18n.ts for i18n configuration
-- [ ] T006 [P] Create src/i18n/request.ts for server-side i18n
-- [ ] T007 [P] Create src/lib/providers.tsx modification for NextIntlClientProvider
+- [X] T001 Install next-intl package for i18n support
+- [X] T002 [P] Update tailwind.config.ts to enable `darkMode: "media"`
+- [X] T003 [P] Create messages/en.json with English translations
+- [X] T004 [P] Create messages/zh-HK.json with Traditional Chinese translations
+- [X] T005 [P] Create src/i18n.ts for i18n configuration
+- [X] T006 [P] Create src/i18n/request.ts for server-side i18n
+- [X] T007 [P] Create src/lib/providers.tsx modification for NextIntlClientProvider
 
 ---
 
