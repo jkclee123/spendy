@@ -23,6 +23,7 @@ export function TransactionCard({
 }: TransactionCardProps) {
   const locale = useLocale();
   const t = useTranslations("transactions");
+  const tCommon = useTranslations("common");
 
   const formattedAmount = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -60,9 +61,8 @@ export function TransactionCard({
   };
 
   const handleSwipeAction = () => {
-    const confirmed = window.confirm(
-      `Delete ${formattedAmount} transaction? This action cannot be undone.`
-    );
+    const confirmMessage = `${t("deleteConfirmTitle")}\n\n${t("deleteConfirmMessage", { amount: formattedAmount })}`;
+    const confirmed = window.confirm(confirmMessage);
     if (confirmed && onDelete) {
       onDelete(transaction);
     }
@@ -75,7 +75,7 @@ export function TransactionCard({
   return (
     <SwipeableCard
       onSwipeAction={handleSwipeAction}
-      actionLabel="Delete"
+      actionLabel={tCommon("delete")}
       actionColor="red"
       onClick={onClick ? handleClick : undefined}
       disabled={!onDelete}

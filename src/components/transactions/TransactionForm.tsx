@@ -644,7 +644,7 @@ export function TransactionForm({
 
       {/* Created At Field - Only in edit mode */}
       {isEditMode && (
-        <div>
+        <div className="overflow-hidden">
           <label
             htmlFor="createdAt"
             className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -658,13 +658,14 @@ export function TransactionForm({
             onChange={(e) => setCreatedAt(e.target.value)}
             disabled={isSubmitting}
             className={`
-              w-full min-w-0 rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+              box-border w-full max-w-full min-w-0 rounded-xl border bg-white py-3 px-3 text-sm text-gray-900
               dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
               border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
               [color-scheme:light] dark:[color-scheme:dark]
+              [&::-webkit-datetime-edit]:text-sm
             `}
           />
         </div>

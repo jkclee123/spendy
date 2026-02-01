@@ -176,7 +176,7 @@ export function TransactionFilters({
           </div>
 
           {/* Date range filter */}
-          <div className="grid grid-cols-2 gap-3 overflow-hidden">
+          <div className="grid grid-cols-2 gap-2 overflow-hidden">
             <div className="min-w-0 overflow-hidden">
               <label
                 htmlFor="filter-start-date"
@@ -189,7 +189,7 @@ export function TransactionFilters({
                 id="filter-start-date"
                 value={startDateValue}
                 onChange={handleStartDateChange}
-                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 [&::-webkit-datetime-edit]:text-xs"
               />
             </div>
             <div className="min-w-0 overflow-hidden">
@@ -204,7 +204,7 @@ export function TransactionFilters({
                 id="filter-end-date"
                 value={endDateValue}
                 onChange={handleEndDateChange}
-                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 [&::-webkit-datetime-edit]:text-xs"
               />
             </div>
           </div>
