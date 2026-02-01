@@ -51,8 +51,6 @@ export function TransactionFilters({
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.category) count++;
-    if (filters.startDate) count++;
-    if (filters.endDate) count++;
     return count;
   }, [filters]);
 
@@ -67,42 +65,6 @@ export function TransactionFilters({
     [filters, onFiltersChange]
   );
 
-  const handleStartDateChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      onFiltersChange({
-        ...filters,
-        startDate: value ? new Date(value).getTime() : undefined,
-      });
-    },
-    [filters, onFiltersChange]
-  );
-
-  const handleEndDateChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      // Set to end of day for inclusive range
-      const date = value ? new Date(value) : undefined;
-      if (date) {
-        date.setHours(23, 59, 59, 999);
-      }
-      onFiltersChange({
-        ...filters,
-        endDate: date ? date.getTime() : undefined,
-      });
-    },
-    [filters, onFiltersChange]
-  );
-
-
-
-  // Convert timestamps back to date strings for input values
-  const startDateValue = filters.startDate
-    ? new Date(filters.startDate).toISOString().split("T")[0]
-    : "";
-  const endDateValue = filters.endDate
-    ? new Date(filters.endDate).toISOString().split("T")[0]
-    : "";
 
   return (
     <div className={`rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700 p-3`}>
@@ -173,40 +135,6 @@ export function TransactionFilters({
                 </option>
               ))}
             </select>
-          </div>
-
-          {/* Date range filter */}
-          <div className="grid grid-cols-2 gap-2 overflow-hidden">
-            <div className="min-w-0 overflow-hidden">
-              <label
-                htmlFor="filter-start-date"
-                className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {t("from")}
-              </label>
-              <input
-                type="date"
-                id="filter-start-date"
-                value={startDateValue}
-                onChange={handleStartDateChange}
-                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 [&::-webkit-datetime-edit]:text-xs"
-              />
-            </div>
-            <div className="min-w-0 overflow-hidden">
-              <label
-                htmlFor="filter-end-date"
-                className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {t("to")}
-              </label>
-              <input
-                type="date"
-                id="filter-end-date"
-                value={endDateValue}
-                onChange={handleEndDateChange}
-                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-xs text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 [&::-webkit-datetime-edit]:text-xs"
-              />
-            </div>
           </div>
 
           {/* Clear filters button */}

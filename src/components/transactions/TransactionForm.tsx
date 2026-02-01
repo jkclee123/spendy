@@ -78,6 +78,7 @@ interface TransactionFormProps {
   initialAmount?: number;
   initialCategory?: Id<"userCategories">;
   initialName?: string;
+  isMobile?: boolean;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -90,6 +91,7 @@ export function TransactionForm({
   initialAmount,
   initialCategory,
   initialName,
+  isMobile,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
@@ -362,6 +364,11 @@ export function TransactionForm({
       }
 
       onSuccess?.();
+
+      // Close browser tab if on mobile
+      if (isMobile && !isEditMode) {
+        window.close();
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(
@@ -644,7 +651,7 @@ export function TransactionForm({
 
       {/* Created At Field - Only in edit mode */}
       {isEditMode && (
-        <div className="overflow-hidden">
+        <div className="w-full overflow-hidden">
           <label
             htmlFor="createdAt"
             className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -658,15 +665,18 @@ export function TransactionForm({
             onChange={(e) => setCreatedAt(e.target.value)}
             disabled={isSubmitting}
             className={`
-              box-border w-full max-w-full min-w-0 rounded-xl border bg-white py-3 px-3 text-sm text-gray-900
+              box-border w-full max-w-full min-w-0 rounded-xl border bg-white py-3 px-3 text-gray-900
               dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
               border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
               [color-scheme:light] dark:[color-scheme:dark]
-              [&::-webkit-datetime-edit]:text-sm
+              [-webkit-appearance:none] [appearance:none]
+              [&::-webkit-datetime-edit]:min-w-0
+              [&::-webkit-datetime-edit-fields-wrapper]:min-w-0 [&::-webkit-datetime-edit-fields-wrapper]:overflow-hidden
             `}
+            style={{ fontSize: "16px" }}
           />
         </div>
       )}

@@ -19,8 +19,7 @@ export default function NewTransactionPage() {
   const latitude = searchParams.get("latitude");
   const longitude = searchParams.get("longitude");
   const amount = searchParams.get("amount");
-  // isMobile is accepted but not used (reserved for future use)
-  searchParams.get("isMobile");
+  const isMobile = searchParams.get("isMobile") === "true";
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -104,6 +103,7 @@ export default function NewTransactionPage() {
             initialAmount={initialAmount}
             initialCategory={initialCategory}
             initialName={initialName}
+            isMobile={isMobile}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />

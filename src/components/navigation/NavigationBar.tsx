@@ -57,7 +57,7 @@ export function NavigationBar() {
     <>
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm md:hidden">
-        <div className="flex h-20 items-start justify-around pt-3">
+      <div className="flex h-[4rem] items-start justify-around pt-3">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return <NavLink key={item.href} item={item} isActive={isActive} />;
