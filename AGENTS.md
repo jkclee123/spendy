@@ -43,6 +43,7 @@ bun run test:e2e         # Run Playwright e2e tests
 ### Imports
 
 Order imports in this sequence:
+
 1. React imports
 2. Next.js imports
 3. Third-party libraries (convex, next-auth, date-fns, lucide-react, etc.)
@@ -51,6 +52,7 @@ Order imports in this sequence:
 6. CSS imports last
 
 Example:
+
 ```typescript
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -93,6 +95,7 @@ import "./styles.css";
 - Use `forwardRef` for components that need ref forwarding
 
 Example:
+
 ```typescript
 "use client";
 
@@ -118,6 +121,7 @@ export function Button({ variant = "primary", size = "md", children }: ButtonPro
 - Validate inputs early and throw descriptive errors
 
 Example:
+
 ```typescript
 const handleSubmit = useCallback(async () => {
   try {
@@ -139,6 +143,7 @@ const handleSubmit = useCallback(async () => {
 - Use indexes for efficient queries
 
 Example:
+
 ```typescript
 export const createFromWeb = mutation({
   args: {
@@ -199,6 +204,7 @@ convex/                  # Backend functions
 ## Cursor Rules (Auto-generated)
 
 Located in `.cursor/rules/specify-rules.mdc`:
+
 - Follow TypeScript strict mode conventions
 - Run `bun test && bun run lint` before committing
 - Last updated: 2026-01-30
@@ -211,3 +217,12 @@ Located in `.cursor/rules/specify-rules.mdc`:
 - **Convex generated files**: Located in `convex/_generated/`, do not edit manually
 - **Auth protected routes**: Use `(authenticated)` route group
 - **API token auth**: External API uses token-based auth (not session-based)
+
+## Active Technologies
+
+- TypeScript 5.4+, Node.js 18+ + Next.js 14.2+, React 18.3+, Convex 1.31+, next-intl 3.x (new), Tailwind CSS 3.4+ (002-phase2-enhancements)
+- Convex (serverless database) (002-phase2-enhancements)
+
+## Recent Changes
+
+- 002-phase2-enhancements: Added TypeScript 5.4+, Node.js 18+ + Next.js 14.2+, React 18.3+, Convex 1.31+, next-intl 3.x (new), Tailwind CSS 3.4+
