@@ -427,7 +427,7 @@ export function TransactionForm({
             placeholder={t("amountPlaceholder")}
             disabled={isSubmitting}
             className={`
-              w-full rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
+              w-full min-w-0 rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
               dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               placeholder:text-gray-400 dark:placeholder:text-gray-500
               transition-colors duration-200
@@ -448,7 +448,7 @@ export function TransactionForm({
               }}
               disabled={isSubmitting}
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="Clear amount"
+              aria-label={t("clearAmount")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -486,7 +486,7 @@ export function TransactionForm({
             }}
             disabled={isSubmitting}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Add plus operator"
+            aria-label={t("addPlus")}
           >
             +
           </button>
@@ -506,7 +506,7 @@ export function TransactionForm({
             }}
             disabled={isSubmitting}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Add minus operator"
+            aria-label={t("addMinus")}
           >
             -
           </button>
@@ -526,7 +526,7 @@ export function TransactionForm({
             }}
             disabled={isSubmitting}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Add multiply operator"
+            aria-label={t("addMultiply")}
           >
             ×
           </button>
@@ -546,7 +546,7 @@ export function TransactionForm({
             }}
             disabled={isSubmitting}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Add divide operator"
+            aria-label={t("addDivide")}
           >
             ÷
           </button>
@@ -575,7 +575,7 @@ export function TransactionForm({
             }}
             disabled={isSubmitting}
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 dark:bg-blue-600 text-lg font-semibold text-white transition-colors hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label="Evaluate formula"
+            aria-label={t("evaluateFormula")}
           >
             =
           </button>
@@ -625,7 +625,7 @@ export function TransactionForm({
           placeholder={t("namePlaceholder")}
           disabled={isSubmitting}
           className={`
-            w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+            w-full min-w-0 rounded-xl border bg-white py-3 px-4 text-base text-gray-900
             dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
             placeholder:text-gray-400 dark:placeholder:text-gray-500
             transition-colors duration-200
@@ -658,12 +658,13 @@ export function TransactionForm({
             onChange={(e) => setCreatedAt(e.target.value)}
             disabled={isSubmitting}
             className={`
-              w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+              w-full min-w-0 rounded-xl border bg-white py-3 px-4 text-base text-gray-900
               dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
               border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
+              [color-scheme:light] dark:[color-scheme:dark]
             `}
           />
         </div>

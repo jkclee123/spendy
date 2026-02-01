@@ -2,6 +2,7 @@
 
 import { useState, useCallback, FormEvent, useEffect } from "react";
 import { useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +34,8 @@ export function TransactionDetail({
   onUpdated,
 }: TransactionDetailProps) {
   const { showToast } = useToast();
+  const t = useTranslations("transactions");
+  const tCommon = useTranslations("common");
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -249,7 +252,7 @@ export function TransactionDetail({
             id="transaction-detail-title"
             className="text-lg font-semibold text-gray-900"
           >
-            {isEditing ? "Update Transaction" : "Transaction Details"}
+            {isEditing ? t("update") : t("details")}
           </h2>
           <button
             onClick={onClose}
@@ -289,7 +292,7 @@ export function TransactionDetail({
                   htmlFor="edit-amount"
                   className="mb-1.5 block text-sm font-medium text-gray-700"
                 >
-                  Amount <span className="text-red-500">*</span>
+                  {t("amount")} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
@@ -311,7 +314,7 @@ export function TransactionDetail({
                     placeholder="0.00"
                     disabled={isSubmitting}
                     className={`
-                      w-full rounded-xl border py-3 pl-8 pr-4 text-base
+                      w-full min-w-0 rounded-xl border py-3 pl-8 pr-4 text-base
                       transition-colors duration-200
                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                       disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
@@ -329,7 +332,7 @@ export function TransactionDetail({
 
               {/* Category Field */}
               <CategorySelect
-                label="Category"
+                label={t("category")}
                 userId={transaction.userId}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -345,7 +348,7 @@ export function TransactionDetail({
                   disabled={isSubmitting}
                   className="flex-1"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
                 <Button
                   type="submit"
@@ -354,7 +357,7 @@ export function TransactionDetail({
                   disabled={isSubmitting}
                   className="flex-1"
                 >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
+                  {isSubmitting ? tCommon("saving") : tCommon("save")}
                 </Button>
               </div>
             </form>
@@ -378,14 +381,10 @@ export function TransactionDetail({
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Delete Transaction?
+                  {t("deleteConfirmTitle")}
                 </h3>
                 <p className="mt-2 text-sm text-gray-500">
-                  This action cannot be undone. The transaction of{" "}
-                  <span className="font-medium text-gray-900">
-                    {formattedAmount}
-                  </span>{" "}
-                  will be permanently removed.
+                  {t("deleteConfirmMessage", { amount: formattedAmount })}
                 </p>
               </div>
 
@@ -397,7 +396,7 @@ export function TransactionDetail({
                   disabled={isDeleting}
                   className="flex-1"
                 >
-                  Cancel
+                  {tCommon("cancel")}
                 </Button>
                 <Button
                   type="button"
@@ -407,7 +406,7 @@ export function TransactionDetail({
                   disabled={isDeleting}
                   className="flex-1"
                 >
-                  {isDeleting ? "Deleting..." : "Delete"}
+                  {isDeleting ? tCommon("deleting") : tCommon("delete")}
                 </Button>
               </div>
             </div>
@@ -416,7 +415,7 @@ export function TransactionDetail({
             <div className="space-y-4">
               {/* Amount */}
               <div className="flex flex-col items-center border-b border-gray-100 pb-4">
-                <span className="text-sm text-gray-500">Amount</span>
+                <span className="text-sm text-gray-500">{t("amount")}</span>
                 <span className="text-3xl font-bold text-gray-900">
                   {formattedAmount}
                 </span>
@@ -425,12 +424,12 @@ export function TransactionDetail({
               {/* Details Grid */}
               <div className="space-y-3">
                 <DetailRow
-                  label="Category"
-                  value={transaction.category || "Uncategorized"}
+                  label={t("category")}
+                  value={transaction.category || t("uncategorized")}
                   icon={getCategoryIcon(transaction.category)}
                 />
                 <DetailRow
-                  label="Date"
+                  label={t("dateTime")}
                   value={
                     <span title={absoluteDate}>
                       {formattedDate}
@@ -454,7 +453,7 @@ export function TransactionDetail({
               onClick={() => setShowDeleteConfirm(true)}
               className="flex-1"
             >
-              Delete
+              {tCommon("delete")}
             </Button>
             <Button
               type="button"
@@ -462,7 +461,7 @@ export function TransactionDetail({
               onClick={() => setIsEditing(true)}
               className="flex-1"
             >
-              Edit
+              {tCommon("edit")}
             </Button>
           </div>
         )}

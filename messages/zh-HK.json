@@ -8,6 +8,7 @@
     "update": "更新",
     "loading": "載入中...",
     "saving": "儲存中...",
+    "deleting": "刪除中...",
     "error": "錯誤",
     "success": "成功"
   },
@@ -83,6 +84,7 @@
     "rememberTransaction": "常用交易",
     "create": "新增記錄",
     "update": "更新記錄",
+    "details": "交易詳情",
     "selectLocation": "選擇附近位置",
     "clearLocation": "清除位置",
     "unnamedLocation": "未命名位置",
@@ -91,6 +93,12 @@
     "namePlaceholder": "例如：午餐",
     "dateTime": "日期與時間",
     "saveChanges": "儲存變更",
+    "clearAmount": "清除金額",
+    "addPlus": "加上加號",
+    "addMinus": "加上減號",
+    "addMultiply": "加上乘號",
+    "addDivide": "加上除號",
+    "evaluateFormula": "計算結果",
     "creating": "建立中...",
     "saving": "儲存中...",
     "selectCategory": "選擇類別",
@@ -117,6 +125,8 @@
       "updated": "交易已成功更新",
       "deleted": "交易已成功刪除"
     },
+    "deleteConfirmTitle": "刪除交易？",
+    "deleteConfirmMessage": "此操作無法復原。金額為 {amount} 的交易將被永久刪除。",
     "list": {
       "loading": "載入中...",
       "noTransactionsTitle": "尚未有記錄",

@@ -8,6 +8,7 @@
     "update": "Update",
     "loading": "Loading...",
     "saving": "Saving...",
+    "deleting": "Deleting...",
     "error": "Error",
     "success": "Success"
   },
@@ -83,6 +84,7 @@
     "rememberTransaction": "Frequently used transaction",
     "create": "Create Transaction",
     "update": "Update Transaction",
+    "details": "Transaction Details",
     "selectLocation": "Select nearby location",
     "clearLocation": "Clear location",
     "unnamedLocation": "Unnamed location",
@@ -91,6 +93,12 @@
     "namePlaceholder": "e.g., Lunch at Starbucks",
     "dateTime": "Date & Time",
     "saveChanges": "Save Changes",
+    "clearAmount": "Clear amount",
+    "addPlus": "Add plus operator",
+    "addMinus": "Add minus operator",
+    "addMultiply": "Add multiply operator",
+    "addDivide": "Add divide operator",
+    "evaluateFormula": "Evaluate formula",
     "creating": "Creating...",
     "saving": "Saving...",
     "selectCategory": "Select a category",
@@ -117,6 +125,8 @@
       "updated": "Transaction updated successfully",
       "deleted": "Transaction deleted successfully"
     },
+    "deleteConfirmTitle": "Delete Transaction?",
+    "deleteConfirmMessage": "This action cannot be undone. The transaction of {amount} will be permanently removed.",
     "list": {
       "loading": "Loading...",
       "noTransactionsTitle": "No transactions yet",

@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useQuery } from "convex/react";
 import { useRouter, useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { api } from "../../../../../../convex/_generated/api";
 import type { Id } from "../../../../../../convex/_generated/dataModel";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -14,6 +15,7 @@ export default function EditTransactionPage() {
   const router = useRouter();
   const params = useParams();
   const transactionId = params.id as Id<"transactions">;
+  const t = useTranslations("transactions");
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -81,7 +83,7 @@ export default function EditTransactionPage() {
       {/* Edit Transaction Form */}
       <Card>
         <CardHeader>
-          <CardTitle>Update Transaction</CardTitle>
+          <CardTitle>{t("update")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionForm
