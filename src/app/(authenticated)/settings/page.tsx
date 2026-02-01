@@ -37,7 +37,6 @@ export default function SettingsPage() {
       showToast(tCommon("success"), "success");
     } catch (error) {
       showToast(tCommon("error"), "error");
-      console.error("Failed to update language:", error);
     }
   };
 
