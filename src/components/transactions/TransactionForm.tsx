@@ -2,6 +2,7 @@
 
 import { useState, FormEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
@@ -90,6 +91,8 @@ export function TransactionForm({
 }: TransactionFormProps) {
   const { data: session } = useSession();
   const { showToast } = useToast();
+  const t = useTranslations("transactions");
+  const tCommon = useTranslations("common");
 
   const isEditMode = !!initialData;
 
@@ -188,27 +191,27 @@ export function TransactionForm({
 
     // Amount validation
     if (!amount.trim()) {
-      newErrors.amount = "Amount is required";
+      newErrors.amount = t("errors.amountRequired");
     } else {
       // Try to evaluate as a formula first
       const evaluatedAmount = evaluateFormula(amount);
       if (evaluatedAmount === null) {
-        newErrors.amount = "Amount must be a valid number or formula";
+        newErrors.amount = t("errors.amountInvalid");
       } else if (evaluatedAmount <= 0) {
-        newErrors.amount = "Amount must be greater than 0";
+        newErrors.amount = t("errors.amountTooSmall");
       } else if (evaluatedAmount > 1000000000) {
-        newErrors.amount = "Amount is too large";
+        newErrors.amount = t("errors.amountTooLarge");
       }
     }
 
     // Category validation
     if (!category) {
-      newErrors.category = "Category is required";
+      newErrors.category = t("errors.categoryRequired");
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [amount, category]);
+  }, [amount, category, t]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -218,7 +221,7 @@ export function TransactionForm({
     }
 
     if (!userId) {
-      setErrors({ general: "User not found. Please try logging in again." });
+      setErrors({ general: t("errors.userNotFound") });
       return;
     }
 
@@ -229,7 +232,7 @@ export function TransactionForm({
       // Evaluate amount formula before submission
       const evaluatedAmount = evaluateFormula(amount);
       if (evaluatedAmount === null) {
-        setErrors({ amount: "Amount must be a valid number or formula" });
+        setErrors({ amount: t("errors.amountInvalid") });
         setIsSubmitting(false);
         return;
       }
@@ -255,7 +258,7 @@ export function TransactionForm({
 
         await updateTransaction(updateData);
 
-        showToast("Transaction updated successfully", "success");
+        showToast(t("successMessages.updated"), "success");
       } else {
         // Create new transaction
         await createTransaction({
@@ -282,7 +285,7 @@ export function TransactionForm({
         setName("");
         setCategory(undefined);
 
-        showToast("Transaction added successfully", "success");
+        showToast(t("successMessages.created"), "success");
       }
 
       onSuccess?.();
@@ -296,8 +299,8 @@ export function TransactionForm({
         error instanceof Error
           ? error.message
           : isEditMode
-            ? "Failed to update transaction. Please try again."
-            : "Failed to create transaction. Please try again.";
+            ? t("errors.updateFailed")
+            : t("errors.createFailed");
       setErrors({ general: errorMessage });
       showToast(errorMessage, "error");
     } finally {
@@ -319,7 +322,7 @@ export function TransactionForm({
           htmlFor="amount"
           className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Amount <span className="text-red-500 dark:text-red-400">*</span>
+          {t("amount")} <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
@@ -337,7 +340,7 @@ export function TransactionForm({
                 setErrors((prev) => ({ ...prev, amount: undefined }));
               }
             }}
-            placeholder="0.00"
+            placeholder={t("amountPlaceholder")}
             disabled={isSubmitting}
             className={`
               w-full rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
@@ -477,9 +480,9 @@ export function TransactionForm({
                     input.setSelectionRange(result.toString().length, result.toString().length);
                   }, 0);
                 }
-              } else {
+               } else {
                 // Invalid formula - show error instead of clearing
-                setErrors((prev) => ({ ...prev, amount: "Invalid amount" }));
+                setErrors((prev) => ({ ...prev, amount: t("errors.amountInvalid") }));
                 const input = amountInputRef.current;
                 if (input) {
                   input.focus();
@@ -501,7 +504,7 @@ export function TransactionForm({
 
       {/* Category Field */}
       <CategorySelect
-        label="Category"
+        label={t("category")}
         required
         userId={userId}
         value={category as string}
@@ -521,7 +524,7 @@ export function TransactionForm({
           htmlFor="name"
           className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Name
+          {t("name")}
         </label>
         <input
           type="text"
@@ -533,7 +536,7 @@ export function TransactionForm({
               setErrors((prev) => ({ ...prev, name: undefined }));
             }
           }}
-          placeholder="e.g., Lunch at Starbucks"
+          placeholder={t("namePlaceholder")}
           disabled={isSubmitting}
           className={`
             w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
@@ -560,7 +563,7 @@ export function TransactionForm({
             htmlFor="createdAt"
             className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Date & Time
+            {t("dateTime")}
           </label>
           <input
             type="datetime-local"
@@ -586,7 +589,7 @@ export function TransactionForm({
           <Checkbox
             id="rememberTransaction"
             onChange={(e) => setRememberTransaction(e.target.checked)}
-            label="Remember transaction"
+            label={t("rememberTransaction")}
             disabled={isSubmitting}
           />
         </div>
@@ -602,7 +605,7 @@ export function TransactionForm({
             disabled={isSubmitting}
             className="flex-1"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
         )}
         <Button
@@ -614,11 +617,11 @@ export function TransactionForm({
         >
           {isSubmitting
             ? isEditMode
-              ? "Saving..."
-              : "Creating..."
+              ? t("saving")
+              : t("creating")
             : isEditMode
-              ? "Save Changes"
-              : "Create"}
+              ? t("saveChanges")
+              : tCommon("create")}
         </Button>
       </div>
     </form>

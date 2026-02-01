@@ -49,6 +49,36 @@
     "create": "Create Transaction",
     "update": "Update Transaction",
     "selectLocation": "Select nearby location",
-    "noTransactions": "No transactions yet"
+    "noTransactions": "No transactions yet",
+    "amountPlaceholder": "0.00",
+    "namePlaceholder": "e.g., Lunch at Starbucks",
+    "dateTime": "Date & Time",
+    "saveChanges": "Save Changes",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "selectCategory": "Select a category",
+    "errors": {
+      "amountRequired": "Amount is required",
+      "amountInvalid": "Amount must be a valid number or formula",
+      "amountTooSmall": "Amount must be greater than 0",
+      "amountTooLarge": "Amount is too large",
+      "categoryRequired": "Category is required",
+      "userNotFound": "User not found. Please try logging in again.",
+      "createFailed": "Failed to create transaction. Please try again.",
+      "updateFailed": "Failed to update transaction. Please try again."
+    },
+    "successMessages": {
+      "created": "Transaction added successfully",
+      "updated": "Transaction updated successfully",
+      "deleted": "Transaction deleted successfully"
+    },
+    "list": {
+      "loading": "Loading...",
+      "noTransactionsTitle": "No transactions yet",
+      "noTransactionsMessage": "Your transactions will appear here once you start tracking your spending.",
+      "noMatchingTitle": "No matching transactions",
+      "noMatchingMessage": "Try adjusting your filters to see more transactions.",
+      "deleteFailed": "Failed to delete transaction. Please try again."
+    }
   }
 }

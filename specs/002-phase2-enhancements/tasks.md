@@ -80,18 +80,19 @@
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Create src/hooks/useLanguage.ts - language context hook with system detection, user preference persistence
-- [ ] T028 [US8] Update src/app/layout.tsx - add NextIntlClientProvider wrapper
-- [ ] T029 [US2] Update src/lib/providers.tsx - add language provider
-- [ ] T030 [US2] Create src/components/settings/LanguageSelect.tsx - language dropdown with system/en/zh-HK options
-- [ ] T031 [US2] Update src/app/(authenticated)/settings/page.tsx - add LanguageSelect component and integration
-- [ ] T032 [US2] Wrap settings page text with useTranslations for settings section
-- [ ] T033 [US2] Wrap categories page text with useTranslations for categories section
-- [ ] T034 [US2] Wrap locations page text with useTranslations for locations section
-- [ ] T035 [US2] Wrap transaction form text with useTranslations for transactions section
-- [ ] T036 [US2] Wrap transaction list text with useTranslations for transactions section
+- [X] T027 [US2] Create src/hooks/useLanguage.ts - language context hook with system detection, user preference persistence
+- [X] T028 [US8] Update src/app/layout.tsx - add NextIntlClientProvider wrapper
+- [X] T029 [US2] Update src/lib/providers.tsx - add language provider
+- [X] T030 [US2] Create src/components/settings/LanguageSelect.tsx - language dropdown with system/en/zh-HK options
+- [X] T031 [US2] Update src/app/(authenticated)/settings/page.tsx - add LanguageSelect component and integration
+- [X] T032 [US2] Wrap settings page text with useTranslations for settings section
+- [ ] T033 [US2] Wrap categories page text with useTranslations for categories section (deferred - page not created yet)
+- [ ] T034 [US2] Wrap locations page text with useTranslations for locations section (deferred - page not created yet)
+- [X] T035 [US2] Wrap transaction form text with useTranslations for transactions section
+- [X] T036 [US2] Wrap transaction list text with useTranslations for transactions section
 
 **Checkpoint**: User Story 2 complete - language switching should update all UI text immediately
+**Note**: T033 and T034 deferred as category and location pages will be created in Phase 3/5
 
 ---
 

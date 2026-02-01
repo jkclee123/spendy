@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { usePaginatedQuery, useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
@@ -30,6 +31,7 @@ export function TransactionList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
+  const t = useTranslations("transactions");
 
   // Use paginated query with filters
   const { results, status, loadMore } = usePaginatedQuery(
@@ -52,16 +54,16 @@ export function TransactionList({
         await deleteTransaction({
           transactionId: transaction._id,
         });
-        showToast("Transaction deleted successfully", "success");
+        showToast(t("successMessages.deleted"), "success");
       } catch (error) {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "Failed to delete transaction. Please try again.";
+            : t("list.deleteFailed");
         showToast(errorMessage, "error");
       }
     },
-    [deleteTransaction, showToast]
+    [deleteTransaction, showToast, t]
   );
 
   // Set up intersection observer for infinite scroll
@@ -99,14 +101,14 @@ export function TransactionList({
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <LoadingSpinner size="lg" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("list.loading")}</p>
       </div>
     );
   }
 
   // Empty state
   if (results.length === 0) {
-    return <EmptyState hasFilters={hasActiveFilters(filters)} />;
+    return <EmptyState hasFilters={hasActiveFilters(filters)} t={t} />;
   }
 
   return (
@@ -147,19 +149,19 @@ function hasActiveFilters(filters: TransactionFiltersState): boolean {
 /**
  * Empty state component
  */
-function EmptyState({ hasFilters }: { hasFilters: boolean }) {
+function EmptyState({ hasFilters, t }: { hasFilters: boolean; t: (key: string) => string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
         <span className="text-2xl">{hasFilters ? "🔍" : "📝"}</span>
       </div>
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {hasFilters ? "No matching transactions" : "No transactions yet"}
+        {hasFilters ? t("list.noMatchingTitle") : t("list.noTransactionsTitle")}
       </h3>
       <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
         {hasFilters
-          ? "Try adjusting your filters to see more transactions."
-          : "Your transactions will appear here once you start tracking your spending."}
+          ? t("list.noMatchingMessage")
+          : t("list.noTransactionsMessage")}
       </p>
     </div>
   );

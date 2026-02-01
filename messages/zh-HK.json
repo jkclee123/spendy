@@ -49,6 +49,36 @@
     "create": "新增交易",
     "update": "更新交易",
     "selectLocation": "選擇附近位置",
-    "noTransactions": "尚未有交易記錄"
+    "noTransactions": "尚未有交易記錄",
+    "amountPlaceholder": "0.00",
+    "namePlaceholder": "例如：午餐",
+    "dateTime": "日期與時間",
+    "saveChanges": "儲存變更",
+    "creating": "建立中...",
+    "saving": "儲存中...",
+    "selectCategory": "選擇類別",
+    "errors": {
+      "amountRequired": "金額為必填",
+      "amountInvalid": "金額必須是有效的數字或算式",
+      "amountTooSmall": "金額必須大於 0",
+      "amountTooLarge": "金額過大",
+      "categoryRequired": "類別為必選",
+      "userNotFound": "找不到使用者。請重新登入。",
+      "createFailed": "建立交易失敗。請再試一次。",
+      "updateFailed": "更新交易失敗。請再試一次。"
+    },
+    "successMessages": {
+      "created": "交易已成功新增",
+      "updated": "交易已成功更新",
+      "deleted": "交易已成功刪除"
+    },
+    "list": {
+      "loading": "載入中...",
+      "noTransactionsTitle": "尚未有交易記錄",
+      "noTransactionsMessage": "當您開始記錄消費後，交易記錄會在此顯示。",
+      "noMatchingTitle": "找不到符合的交易記錄",
+      "noMatchingMessage": "請調整篩選條件以顯示更多交易記錄。",
+      "deleteFailed": "刪除交易失敗。請再試一次。"
+    }
   }
 }
