@@ -50,7 +50,7 @@ export default function TransactionsPage() {
       {isLoading && (
         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
           <LoadingSpinner size="lg" />
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
         </div>
       )}
 
@@ -59,11 +59,11 @@ export default function TransactionsPage() {
         <Card>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
                 <span className="text-2xl">⚠️</span>
               </div>
-              <h3 className="text-lg font-medium text-gray-900">User not found</h3>
-              <p className="mt-2 max-w-sm text-sm text-gray-500">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">User not found</h3>
+              <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
                 Please try logging out and logging back in.
               </p>
             </div>
@@ -76,7 +76,7 @@ export default function TransactionsPage() {
         <>
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">Transactions</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Transactions</h2>
             <Link
               href="/transactions/create"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm transition-all duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px]"

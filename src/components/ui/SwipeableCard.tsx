@@ -1,0 +1,104 @@
+"use client";
+
+import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+import { Trash2 } from "lucide-react";
+
+interface SwipeableCardProps {
+  children: React.ReactNode;
+  onSwipeAction: () => void;
+  actionLabel?: string;
+  actionColor?: "red" | "yellow" | "blue";
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+/**
+ * Reusable card component with swipe-to-action gesture
+ * - Swipe left reveals action button
+ * - Swipe past threshold triggers onSwipeAction
+ * - Extracted from TransactionCard logic
+ */
+export function SwipeableCard({
+  children,
+  onSwipeAction,
+  actionLabel = "Delete",
+  actionColor = "red",
+  onClick,
+  disabled = false,
+}: SwipeableCardProps) {
+  const { offset, isSwiping, handlers } = useSwipeGesture({
+    onSwipeLeft: onSwipeAction,
+    threshold: 80,
+    disabled,
+  });
+
+  const colorClasses = {
+    red: "bg-red-500 dark:bg-red-600",
+    yellow: "bg-yellow-500 dark:bg-yellow-600",
+    blue: "bg-blue-500 dark:bg-blue-600",
+  };
+
+  const isActionVisible = offset <= -40;
+  const actionOpacity = Math.min(1, Math.abs(offset) / 40);
+
+  const handleClick = () => {
+    if (!isSwiping && offset === 0 && onClick) {
+      onClick();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.key === "Enter" || e.key === " ") && onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  return (
+    <div className="relative overflow-hidden">
+      {/* Action background layer */}
+      <div
+        className={`
+          absolute inset-0 flex items-center justify-end rounded-xl
+          ${colorClasses[actionColor]} px-4 transition-opacity duration-200
+          ${isActionVisible ? "opacity-100" : "opacity-0"}
+        `}
+        aria-hidden="true"
+      >
+        <div
+          className="flex items-center gap-2 text-white"
+          style={{ opacity: actionOpacity }}
+        >
+          <Trash2 className="h-6 w-6" />
+          <span className="font-medium">{actionLabel}</span>
+        </div>
+      </div>
+
+      {/* Card content layer */}
+      <div
+        role={onClick ? "button" : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        onClick={onClick ? handleClick : undefined}
+        onKeyDown={onClick ? handleKeyDown : undefined}
+        {...handlers}
+        style={{
+          transform: `translateX(${offset}px)`,
+          transition: isSwiping ? "none" : "transform 0.3s ease-out",
+        }}
+        className={`
+          relative flex min-h-[72px] select-none items-center justify-between rounded-xl 
+          border border-gray-200 bg-gray-50 p-4
+          dark:border-gray-700 dark:bg-gray-800
+          ${
+            onClick && offset === 0
+              ? "cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              : ""
+          }
+          ${isSwiping ? "cursor-grabbing" : ""}
+        `}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}

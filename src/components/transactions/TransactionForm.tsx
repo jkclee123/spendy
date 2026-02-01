@@ -7,10 +7,12 @@ import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { CategorySelect } from "./CategorySelect";
+import { CategoryDropdown } from "@/components/ui/CategoryDropdown";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useQuery } from "convex/react";
 
 /**
  * Safely evaluate a mathematical expression string
@@ -91,10 +93,17 @@ export function TransactionForm({
 }: TransactionFormProps) {
   const { data: session } = useSession();
   const { showToast } = useToast();
+  const { lang } = useLanguage();
   const t = useTranslations("transactions");
   const tCommon = useTranslations("common");
 
   const isEditMode = !!initialData;
+
+  // Fetch user categories
+  const categories = useQuery(
+    api.userCategories.listActiveByUser,
+    userId ? { userId } : "skip"
+  );
 
   const [amount, setAmount] = useState(
     initialData
@@ -503,17 +512,18 @@ export function TransactionForm({
       </div>
 
       {/* Category Field */}
-      <CategorySelect
+      <CategoryDropdown
         label={t("category")}
         required
-        userId={userId}
-        value={category as string}
-        onChange={(e) => {
-          setCategory(e.target.value as Id<"userCategories">);
+        categories={categories || []}
+        value={category}
+        onChange={(newCategory) => {
+          setCategory(newCategory);
           if (errors.category) {
             setErrors((prev) => ({ ...prev, category: undefined }));
           }
         }}
+        currentLang={lang}
         disabled={isSubmitting}
         error={errors.category}
       />

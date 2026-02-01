@@ -104,20 +104,20 @@
 
 ### Backend Implementation for User Story 3
 
-- [ ] T037 [US3] Create convex/userCategories.ts - listByUser, listActiveByUser, getById, create, update, deactivate, activate, reorder mutations
+- [X] T037 [US3] Create convex/userCategories.ts - listByUser, listActiveByUser, getById, create, update, deactivate, activate, reorder mutations
 
 ### Frontend Implementation for User Story 3
 
-- [ ] T038 [US3] Create src/components/ui/Modal.tsx - reusable modal component with portal, backdrop close, focus trap, keyboard close
-- [ ] T039 [US3] Create src/hooks/useSwipeGesture.ts - extracted swipe logic from TransactionCard
-- [ ] T040 [US3] Create src/components/ui/SwipeableCard.tsx - reusable swipeable card component
-- [ ] T041 [US3] Create src/components/ui/DraggableList.tsx - drag-to-reorder list component
-- [ ] T042 [US3] Create src/components/ui/CategoryDropdown.tsx - custom category dropdown with emoji and localized name
-- [ ] T043 [US3] Create src/components/settings/CategoryEditModal.tsx - category create/edit popup with emoji picker and name input
-- [ ] T044 [US3] Create src/app/(authenticated)/settings/userCategory/page.tsx - category settings page with list, swipe-to-deactivate, drag-to-reorder
-- [ ] T045 [US3] Update src/components/transactions/TransactionForm.tsx - remove merchant field, integrate CategoryDropdown, pass userCategory ID
-- [ ] T046 [US3] Update src/components/transactions/CategorySelect.tsx - replace with CategoryDropdown component
-- [ ] T047 [US3] Update src/types/index.ts - add UserCategory type usage
+- [X] T038 [US3] Create src/components/ui/Modal.tsx - reusable modal component with portal, backdrop close, focus trap, keyboard close
+- [X] T039 [US3] Create src/hooks/useSwipeGesture.ts - extracted swipe logic from TransactionCard
+- [X] T040 [US3] Create src/components/ui/SwipeableCard.tsx - reusable swipeable card component
+- [X] T041 [US3] Create src/components/ui/DraggableList.tsx - drag-to-reorder list component
+- [X] T042 [US3] Create src/components/ui/CategoryDropdown.tsx - custom category dropdown with emoji and localized name
+- [X] T043 [US3] Create src/components/settings/CategoryEditModal.tsx - category create/edit popup with emoji picker and name input
+- [X] T044 [US3] Create src/app/(authenticated)/settings/userCategory/page.tsx - category settings page with list, swipe-to-deactivate, drag-to-reorder
+- [X] T045 [US3] Update src/components/transactions/TransactionForm.tsx - remove merchant field, integrate CategoryDropdown, pass userCategory ID
+- [X] T046 [US3] Update src/components/transactions/CategorySelect.tsx - replace with CategoryDropdown component
+- [X] T047 [US3] Update src/types/index.ts - add UserCategory type usage
 
 **Checkpoint**: User Story 3 complete - users can create categories, see them in transaction form, reorder and deactivate them
 
