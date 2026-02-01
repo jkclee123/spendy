@@ -308,7 +308,7 @@ export function TransactionForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {errors.general && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+        <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
           {errors.general}
         </div>
       )}
@@ -317,12 +317,12 @@ export function TransactionForm({
       <div>
         <label
           htmlFor="amount"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
+          className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Amount <span className="text-red-500">*</span>
+          Amount <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
             $
           </span>
           <input
@@ -341,13 +341,14 @@ export function TransactionForm({
             disabled={isSubmitting}
             className={`
               w-full rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
-              placeholder:text-gray-400
+              dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+              placeholder:text-gray-400 dark:placeholder:text-gray-500
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+              disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
               ${errors.amount
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 hover:border-gray-400"
+                : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
               }
             `}
           />
@@ -359,7 +360,7 @@ export function TransactionForm({
                 document.getElementById("amount")?.focus();
               }}
               disabled={isSubmitting}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Clear amount"
             >
               <svg
@@ -397,7 +398,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add plus operator"
           >
             +
@@ -417,7 +418,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add minus operator"
           >
             -
@@ -437,7 +438,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add multiply operator"
           >
             ×
@@ -457,7 +458,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add divide operator"
           >
             ÷
@@ -486,7 +487,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-lg font-semibold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 dark:bg-blue-600 text-lg font-semibold text-white transition-colors hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Evaluate formula"
           >
             =
@@ -494,7 +495,7 @@ export function TransactionForm({
         </div>
 
         {errors.amount && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.amount}</p>
+          <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.amount}</p>
         )}
       </div>
 
@@ -518,7 +519,7 @@ export function TransactionForm({
       <div>
         <label
           htmlFor="name"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
+          className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
           Name
         </label>
@@ -536,18 +537,19 @@ export function TransactionForm({
           disabled={isSubmitting}
           className={`
             w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
-            placeholder:text-gray-400
+            dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+            placeholder:text-gray-400 dark:placeholder:text-gray-500
             transition-colors duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+            disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
             ${errors.name
               ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 hover:border-gray-400"
+              : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
             }
           `}
         />
         {errors.name && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.name}</p>
+          <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.name}</p>
         )}
       </div>
 
@@ -556,7 +558,7 @@ export function TransactionForm({
         <div>
           <label
             htmlFor="createdAt"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             Date & Time
           </label>
@@ -568,10 +570,11 @@ export function TransactionForm({
             disabled={isSubmitting}
             className={`
               w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+              dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-              border-gray-300 hover:border-gray-400
+              disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
+              border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
             `}
           />
         </div>

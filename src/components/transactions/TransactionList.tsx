@@ -99,7 +99,7 @@ export function TransactionList({
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <LoadingSpinner size="lg" />
-        <p className="text-sm text-gray-500">Loading...</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
       </div>
     );
   }
@@ -150,13 +150,13 @@ function hasActiveFilters(filters: TransactionFiltersState): boolean {
 function EmptyState({ hasFilters }: { hasFilters: boolean }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
         <span className="text-2xl">{hasFilters ? "🔍" : "📝"}</span>
       </div>
-      <h3 className="text-lg font-medium text-gray-900">
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
         {hasFilters ? "No matching transactions" : "No transactions yet"}
       </h3>
-      <p className="mt-2 max-w-sm text-sm text-gray-500">
+      <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
         {hasFilters
           ? "Try adjusting your filters to see more transactions."
           : "Your transactions will appear here once you start tracking your spending."}

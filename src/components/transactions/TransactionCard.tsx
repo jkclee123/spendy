@@ -138,7 +138,7 @@ export function TransactionCard({
       <div
         className={`
           absolute inset-0 flex items-center justify-end rounded-xl
-          bg-red-500 px-4 transition-opacity duration-200
+          bg-red-500 dark:bg-red-600 px-4 transition-opacity duration-200
           ${isDeleteVisible ? "opacity-100" : "opacity-0"}
         `}
         aria-hidden="true"
@@ -184,8 +184,9 @@ export function TransactionCard({
         className={`
           relative flex min-h-[72px] select-none items-center justify-between rounded-xl 
           border border-gray-200 bg-gray-50 p-4
+          dark:border-gray-700 dark:bg-gray-800
           ${onClick && swipeOffset === 0
-            ? "cursor-pointer hover:border-gray-400 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            ? "cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             : ""
           }
           ${isSwiping ? "cursor-grabbing" : ""}
@@ -200,10 +201,10 @@ export function TransactionCard({
 
           {/* Transaction details */}
           <div className="flex flex-col">
-            <span className="font-medium text-gray-900">
+            <span className="font-medium text-gray-900 dark:text-gray-100">
               {transaction.name || transaction.category || "Uncategorized"}
             </span>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <time dateTime={new Date(transaction.createdAt).toISOString()}>
                 {formattedDate}
               </time>
@@ -213,7 +214,7 @@ export function TransactionCard({
 
         {/* Right side: Amount */}
         <div className="flex flex-col items-end">
-          <span className="text-lg font-semibold text-gray-900">
+          <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {formattedAmount}
           </span>
         </div>

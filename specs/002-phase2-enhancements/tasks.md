@@ -57,16 +57,16 @@
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Update src/app/layout.tsx - add dark mode detection and class on html element
-- [ ] T018 [US1] Update src/app/globals.css - add CSS variables for dark mode colors
-- [ ] T019 [US1] Add dark: classes to TransactionCard.tsx
-- [ ] T020 [US1] Add dark: classes to TransactionList.tsx
-- [ ] T021 [US1] Add dark: classes to TransactionForm.tsx
-- [ ] T022 [US1] Add dark: classes to BottomNav.tsx
-- [ ] T023 [US1] Add dark: classes to Button.tsx
-- [ ] T024 [US1] Add dark: classes to Card.tsx
-- [ ] T025 [US1] Add dark: classes to Toast.tsx
-- [ ] T026 [US1] Update src/app/(authenticated)/settings/page.tsx - add dark mode classes
+- [X] T017 [US1] Update src/app/layout.tsx - add dark mode detection and class on html element
+- [X] T018 [US1] Update src/app/globals.css - add CSS variables for dark mode colors
+- [X] T019 [US1] Add dark: classes to TransactionCard.tsx
+- [X] T020 [US1] Add dark: classes to TransactionList.tsx
+- [X] T021 [US1] Add dark: classes to TransactionForm.tsx
+- [X] T022 [US1] Add dark: classes to NavigationBar.tsx
+- [X] T023 [US1] Add dark: classes to Button.tsx
+- [X] T024 [US1] Add dark: classes to Card.tsx
+- [X] T025 [US1] Add dark: classes to Toast.tsx
+- [X] T026 [US1] Update src/app/(authenticated)/settings/page.tsx - add dark mode classes
 
 **Checkpoint**: User Story 1 complete - dark theme should work by toggling system preference
 

@@ -25,7 +25,7 @@ export function NavigationBar() {
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white/95 backdrop-blur-sm md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm md:hidden">
         <div className="flex h-20 items-start justify-around pt-3">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -40,8 +40,8 @@ export function NavigationBar() {
                   flex min-h-[44px] min-w-[44px] flex-col items-center justify-start gap-1 px-4 pt-1
                   transition-colors
                   ${isActive
-                    ? "text-blue-500"
-                    : "text-gray-500 hover:text-gray-900"
+                    ? "text-blue-500 dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
                   }
                 `}
                 aria-current={isActive ? "page" : undefined}
@@ -58,7 +58,7 @@ export function NavigationBar() {
       </nav>
 
       {/* Desktop Side Navigation */}
-      <nav className="fixed left-0 top-14 z-50 hidden h-[calc(100vh-3.5rem)] w-20 flex-col border-r border-t border-gray-200 bg-white md:flex">
+      <nav className="fixed left-0 top-14 z-50 hidden h-[calc(100vh-3.5rem)] w-20 flex-col border-r border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 md:flex">
         {/* Nav Items */}
         <div className="flex flex-1 flex-col items-center gap-2 py-4">
           {navItems.map((item) => {
@@ -73,8 +73,8 @@ export function NavigationBar() {
                   flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-1 rounded-xl px-3 py-2
                   transition-colors
                   ${isActive
-                    ? "bg-blue-50 text-blue-500"
-                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+                    ? "bg-blue-50 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400"
+                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                   }
                 `}
                 aria-current={isActive ? "page" : undefined}
