@@ -42,13 +42,15 @@
   },
   "transactions": {
     "title": "交易記錄",
+    "newTransaction": "新增記錄",
     "amount": "金額",
     "category": "類別",
     "name": "名稱",
     "rememberTransaction": "記住此交易",
-    "create": "新增交易",
-    "update": "更新交易",
+    "create": "新增記錄",
+    "update": "更新記錄",
     "selectLocation": "選擇附近位置",
+    "clearLocation": "清除位置",
     "unnamedLocation": "未命名位置",
     "noTransactions": "尚未有交易記錄",
     "amountPlaceholder": "0.00",
@@ -58,6 +60,14 @@
     "creating": "建立中...",
     "saving": "儲存中...",
     "selectCategory": "選擇類別",
+    "filters": {
+      "title": "篩選",
+      "category": "類別",
+      "from": "起始日期",
+      "to": "結束日期",
+      "allCategories": "所有類別",
+      "clearAll": "清除所有篩選"
+    },
     "errors": {
       "amountRequired": "金額為必填",
       "amountInvalid": "金額必須是有效的數字或算式",

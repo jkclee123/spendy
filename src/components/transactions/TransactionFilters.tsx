@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
@@ -29,6 +30,7 @@ export function TransactionFilters({
   onFiltersChange,
   onClearFilters,
 }: TransactionFiltersProps) {
+  const t = useTranslations("transactions.filters");
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Fetch user categories
@@ -113,7 +115,7 @@ export function TransactionFilters({
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
           </svg>
-          <span className="font-medium text-gray-700 dark:text-gray-300">Filters</span>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{t("title")}</span>
           {activeFilterCount > 0 && (
             <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-medium text-white">
               {activeFilterCount}
@@ -145,7 +147,7 @@ export function TransactionFilters({
               htmlFor="filter-category"
               className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Category
+              {t("category")}
             </label>
             <select
               id="filter-category"
@@ -153,7 +155,7 @@ export function TransactionFilters({
               onChange={handleCategoryChange}
               className="min-h-[44px] w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="" className="text-gray-600 dark:text-gray-400">All categories</option>
+              <option value="" className="text-gray-600 dark:text-gray-400">{t("allCategories")}</option>
               {categories?.map((category) => (
                 <option key={category._id} value={category._id}>
                   {category.emoji} {category.en_name || category.zh_name}
@@ -169,7 +171,7 @@ export function TransactionFilters({
                 htmlFor="filter-start-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                From
+                {t("from")}
               </label>
               <input
                 type="date"
@@ -185,7 +187,7 @@ export function TransactionFilters({
                 htmlFor="filter-end-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                To
+                {t("to")}
               </label>
               <input
                 type="date"
@@ -207,7 +209,7 @@ export function TransactionFilters({
               onClick={onClearFilters}
               className="w-full"
             >
-              Clear all filters
+              {t("clearAll")}
             </Button>
           )}
         </div>

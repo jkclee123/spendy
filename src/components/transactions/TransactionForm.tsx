@@ -132,11 +132,13 @@ export function TransactionForm({
   const [rememberTransaction, setRememberTransaction] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
   const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(undefined);
+  const [hasUserInteractedWithLocation, setHasUserInteractedWithLocation] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-select closest location when nearby locations become available
+  // Only auto-select if user hasn't manually interacted with the dropdown
   useEffect(() => {
-    if (!isEditMode && nearbyLocations && nearbyLocations.length > 0 && selectedLocationId === undefined) {
+    if (!isEditMode && nearbyLocations && nearbyLocations.length > 0 && selectedLocationId === undefined && !hasUserInteractedWithLocation) {
       const closestLocation = nearbyLocations[0];
       setSelectedLocationId(closestLocation._id);
       // Pre-fill form with closest location's data
@@ -150,10 +152,11 @@ export function TransactionForm({
         setCategory(closestLocation.category);
       }
     }
-  }, [nearbyLocations, isEditMode, selectedLocationId]);
+  }, [nearbyLocations, isEditMode, selectedLocationId, hasUserInteractedWithLocation]);
 
   // Handle location selection change - pre-fill form with selected location data
   const handleLocationChange = useCallback((locationId: Id<"locationHistories"> | undefined) => {
+    setHasUserInteractedWithLocation(true);
     setSelectedLocationId(locationId);
     if (locationId && nearbyLocations) {
       const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
@@ -179,12 +182,14 @@ export function TransactionForm({
       setCategory(initialData.category);
       setCreatedAt(new Date(initialData.createdAt).toISOString().slice(0, 16));
       setSelectedLocationId(undefined);
+      setHasUserInteractedWithLocation(true); // Prevent auto-select in edit mode
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
       setCategory(initialCategory);
       setCreatedAt("");
       // Don't reset selectedLocationId here - let the auto-select effect handle it
+      setHasUserInteractedWithLocation(false); // Allow auto-select on fresh form
     }
     setErrors({});
   }, [
@@ -344,6 +349,7 @@ export function TransactionForm({
         setName("");
         setCategory(undefined);
         setSelectedLocationId(undefined);
+        setHasUserInteractedWithLocation(false);
 
         showToast(t("successMessages.created"), "success");
       }

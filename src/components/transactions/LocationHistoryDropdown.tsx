@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, SelectHTMLAttributes } from "react";
-import { MapPin, ChevronDown } from "lucide-react";
+import { MapPin, ChevronDown, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { LocationHistoryWithDistance } from "@/hooks/useNearbyLocations";
@@ -50,6 +50,10 @@ export const LocationHistoryDropdown = forwardRef<
     return null;
   }
 
+  const handleClear = () => {
+    onChange(undefined);
+  };
+
   return (
     <div className="w-full">
       {label && (
@@ -60,42 +64,54 @@ export const LocationHistoryDropdown = forwardRef<
           {label}
         </label>
       )}
-      <div className="relative">
-        <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-          <MapPin className="h-4 w-4" />
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <MapPin className="h-4 w-4" />
+          </div>
+          <select
+            ref={ref}
+            id={selectId}
+            value={value || ""}
+            onChange={handleChange}
+            disabled={disabled}
+            className={`
+              min-h-[44px] w-full appearance-none rounded-xl border pl-10 pr-10 py-3 text-base
+              transition-colors duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+              dark:disabled:bg-gray-700 dark:disabled:text-gray-400
+              border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500
+              ${
+                hasValue
+                  ? "text-gray-900 bg-white dark:text-gray-100 dark:bg-gray-800"
+                  : "text-gray-500 bg-white dark:text-gray-400 dark:bg-gray-800"
+              }
+              ${className}
+            `}
+            {...props}
+          >
+            <option value="">{t("selectLocation")}</option>
+            {locations.map((location) => (
+              <option key={location._id} value={location._id}>
+                {location.name || t("unnamedLocation")} ({formatDistance(location.distance)})
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+            <ChevronDown className="h-5 w-5" />
+          </div>
         </div>
-        <select
-          ref={ref}
-          id={selectId}
-          value={value || ""}
-          onChange={handleChange}
-          disabled={disabled}
-          className={`
-            min-h-[44px] w-full appearance-none rounded-xl border pl-10 pr-10 py-3 text-base
-            transition-colors duration-200
-            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-            dark:disabled:bg-gray-700 dark:disabled:text-gray-400
-            border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500
-            ${
-              hasValue
-                ? "text-gray-900 bg-white dark:text-gray-100 dark:bg-gray-800"
-                : "text-gray-500 bg-white dark:text-gray-400 dark:bg-gray-800"
-            }
-            ${className}
-          `}
-          {...props}
-        >
-          <option value="">{t("selectLocation")}</option>
-          {locations.map((location) => (
-            <option key={location._id} value={location._id}>
-              {location.name || t("unnamedLocation")} ({formatDistance(location.distance)})
-            </option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-          <ChevronDown className="h-5 w-5" />
-        </div>
+        {hasValue && !disabled && (
+          <button
+            type="button"
+            onClick={handleClear}
+            aria-label={t("clearLocation")}
+            className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl border border-gray-300 bg-white text-gray-500 transition-colors duration-200 hover:border-gray-400 hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
     </div>
   );
