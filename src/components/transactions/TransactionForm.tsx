@@ -165,11 +165,9 @@ export function TransactionForm({
         _creationTime: Date.now(),
         userId: args.userId,
         name: args.name,
-        merchant: args.merchant,
         amount: args.amount,
         category: args.category,
         createdAt: Date.now(),
-        source: "web" as const,
       };
 
       // Get current transactions from local store and add the optimistic one

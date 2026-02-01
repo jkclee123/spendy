@@ -8,7 +8,21 @@ export interface User {
   name: string;
   email: string;
   image?: string;
-  apiToken: string;
+  lang?: "system" | "en" | "zh-HK";
+  createdAt: number;
+}
+
+/**
+ * User-defined spending category with emoji and bilingual names
+ */
+export interface UserCategory {
+  _id: Id<"userCategories">;
+  userId: Id<"users">;
+  isActive: boolean;
+  emoji: string;
+  en_name?: string;
+  zh_name?: string;
+  order: number;
   createdAt: number;
 }
 
@@ -19,29 +33,24 @@ export interface Transaction {
   _id: Id<"transactions">;
   userId: Id<"users">;
   name?: string;
-  merchant?: string;
-  category?: string;
+  category?: Id<"userCategories">;
   amount: number;
   createdAt: number;
-  source: "api" | "web";
 }
 
 /**
- * Request body for creating a transaction via external API
+ * Location history entity for remembering transaction locations
  */
-export interface CreateTransactionRequest {
-  category?: string;
+export interface LocationHistory {
+  _id: Id<"locationHistories">;
+  userId: Id<"users">;
+  latitude: number;
+  longitude: number;
   amount: number;
-  apiToken: string;
-}
-
-/**
- * Response body for successful transaction creation
- */
-export interface CreateTransactionResponse {
-  success: boolean;
-  transactionId: string;
-  message: string;
+  category?: Id<"userCategories">;
+  name?: string;
+  count: number;
+  createdAt: number;
 }
 
 /**
@@ -52,25 +61,6 @@ export interface ErrorResponse {
   message: string;
   details?: Record<string, unknown>;
 }
-
-/**
- * Default transaction categories
- */
-export const DEFAULT_CATEGORIES = [
-  "Restaurants & Bars",
-  "Drinks",
-  "Transport",
-  "Entertainment",
-  "Groceries",
-  "Accommodation",
-  "Healthcare",
-  "Insurance",
-  "Rent & Charges",
-  "Shopping",
-  "Other",
-] as const;
-
-export type DefaultCategory = (typeof DEFAULT_CATEGORIES)[number];
 
 /**
  * Time period options for stats filtering

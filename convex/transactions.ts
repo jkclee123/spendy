@@ -3,59 +3,15 @@ import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 
 /**
- * Create a transaction from the external API
- * Authenticates using apiToken and creates a transaction with source="api"
- */
-export const createFromApi = mutation({
-  args: {
-    apiToken: v.string(),
-    amount: v.number(),
-    name: v.optional(v.string()),
-    merchant: v.optional(v.string()),
-    category: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    // Validate amount
-    if (args.amount <= 0) {
-      throw new Error("amount must be a positive number");
-    }
-
-    // Lookup user by apiToken
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_apiToken", (q) => q.eq("apiToken", args.apiToken))
-      .unique();
-
-    if (!user) {
-      throw new Error("Invalid or missing API token");
-    }
-
-    // Create the transaction
-    const transactionId = await ctx.db.insert("transactions", {
-      userId: user._id,
-      name: args.name,
-      merchant: args.merchant,
-      amount: args.amount,
-      category: args.category,
-      createdAt: Date.now(),
-      source: "api",
-    });
-
-    return transactionId;
-  },
-});
-
-/**
  * Create a transaction from the web interface
- * Uses the authenticated user's ID and creates a transaction with source="web"
+ * Uses the authenticated user's ID and creates a transaction
  */
 export const createFromWeb = mutation({
   args: {
     userId: v.id("users"),
     amount: v.number(),
     name: v.optional(v.string()),
-    merchant: v.optional(v.string()),
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
   },
   handler: async (ctx, args) => {
     // Validate amount
@@ -73,11 +29,9 @@ export const createFromWeb = mutation({
     const transactionId = await ctx.db.insert("transactions", {
       userId: args.userId,
       name: args.name,
-      merchant: args.merchant,
       amount: args.amount,
       category: args.category,
       createdAt: Date.now(),
-      source: "web",
     });
 
     return transactionId;
@@ -117,7 +71,7 @@ export const listByUserPaginated = query({
     userId: v.id("users"),
     paginationOpts: paginationOptsValidator,
     // Optional filters
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
     startDate: v.optional(v.number()),
     endDate: v.optional(v.number()),
     minAmount: v.optional(v.number()),
@@ -193,8 +147,7 @@ export const update = mutation({
     transactionId: v.id("transactions"),
     amount: v.optional(v.number()),
     name: v.optional(v.string()),
-    merchant: v.optional(v.string()),
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
     createdAt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -215,7 +168,6 @@ export const update = mutation({
     const patchData: Record<string, unknown> = {};
     if (updates.amount !== undefined) patchData.amount = updates.amount;
     if (updates.name !== undefined) patchData.name = updates.name;
-    if (updates.merchant !== undefined) patchData.merchant = updates.merchant;
     if (updates.category !== undefined) patchData.category = updates.category;
     if (updates.createdAt !== undefined) patchData.createdAt = updates.createdAt;
 

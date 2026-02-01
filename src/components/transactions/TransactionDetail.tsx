@@ -438,22 +438,6 @@ export function TransactionDetail({
                     </span>
                   }
                 />
-                <DetailRow
-                  label="Source"
-                  value={
-                    <span
-                      className={`
-                        rounded-full px-2 py-0.5 text-xs font-medium
-                        ${transaction.source === "api"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-blue-100 text-blue-700"
-                        }
-                      `}
-                    >
-                      {transaction.source === "api" ? "API" : "Web"}
-                    </span>
-                  }
-                />
               </div>
             </div>
           )}

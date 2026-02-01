@@ -32,7 +32,7 @@ export const findNearby = query({
     radiusMeters: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const radius = args.radiusMeters ?? 100;
+    const radius = args.radiusMeters ?? 200;
     
     // Calculate bounding box
     // 1 degree latitude ≈ 111,000 meters
@@ -78,8 +78,8 @@ export const findNearby = query({
 });
 
 /**
- * Create or update a location history record within 100 meters
- * If a record exists within 100m, update it with weighted average location
+ * Create or update a location history record within 200 meters
+ * If selectedLocationId is provided, update that specific record
  * Otherwise, create a new record
  */
 export const upsertNearby = mutation({
@@ -88,63 +88,34 @@ export const upsertNearby = mutation({
     latitude: v.number(),
     longitude: v.number(),
     amount: v.number(),
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
     name: v.optional(v.string()),
+    selectedLocationId: v.optional(v.id("locationHistories")),
   },
   handler: async (ctx, args) => {
-    const radius = 100;
-    
-    // Calculate bounding box for 100m
-    const latDelta = radius / 111000;
-    const longDelta = radius / (111000 * Math.cos((args.latitude * Math.PI) / 180));
-    
-    const minLat = args.latitude - latDelta;
-    const maxLat = args.latitude + latDelta;
-    const minLong = args.longitude - longDelta;
-    const maxLong = args.longitude + longDelta;
-    
-    // Get all location histories for the user
-    const allHistories = await ctx.db
-      .query("locationHistories")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .collect();
-    
-    // Find closest record within 100m
-    let closest: { history: Doc<"locationHistories">; distance: number } | null = null;
-    
-    for (const history of allHistories) {
-      if (history.latitude < minLat || history.latitude > maxLat) continue;
-      if (history.longitude < minLong || history.longitude > maxLong) continue;
-      if (history.category?.toLowerCase() !== args.category?.toLowerCase()) continue;
-
-      const distance = calculateDistance(
-        args.latitude,
-        args.longitude,
-        history.latitude,
-        history.longitude
-      );
-      
-      if (distance <= radius) {
-        if (!closest || distance < closest.distance) {
-          closest = { history, distance };
-        }
+    if (args.selectedLocationId) {
+      // Update the specific selected location
+      const existing = await ctx.db.get(args.selectedLocationId);
+      if (!existing) {
+        throw new Error("Selected location history not found");
       }
-    }
-    
-    if (closest) {
-      // Update existing record
-      const newCount = closest.history.count + 1;
+      
+      if (existing.userId !== args.userId) {
+        throw new Error("Cannot update another user's location history");
+      }
+      
+      const newCount = existing.count + 1;
       
       // Calculate weighted average for location
       // newLat = oldLat + (formLat - oldLat) / newCount
       const newLat =
-        closest.history.latitude +
-        (args.latitude - closest.history.latitude) / newCount;
+        existing.latitude +
+        (args.latitude - existing.latitude) / newCount;
       const newLong =
-        closest.history.longitude +
-        (args.longitude - closest.history.longitude) / newCount;
+        existing.longitude +
+        (args.longitude - existing.longitude) / newCount;
       
-      await ctx.db.patch(closest.history._id, {
+      await ctx.db.patch(args.selectedLocationId, {
         latitude: newLat,
         longitude: newLong,
         amount: args.amount,
@@ -153,7 +124,7 @@ export const upsertNearby = mutation({
         count: newCount,
       });
       
-      return closest.history._id;
+      return args.selectedLocationId;
     } else {
       // Create new record
       const newId = await ctx.db.insert("locationHistories", {
@@ -197,5 +168,57 @@ export const getById = query({
   },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.locationHistoryId);
+  },
+});
+
+/**
+ * Update a location history record
+ */
+export const update = mutation({
+  args: {
+    locationHistoryId: v.id("locationHistories"),
+    name: v.optional(v.string()),
+    amount: v.optional(v.number()),
+    category: v.optional(v.id("userCategories")),
+  },
+  handler: async (ctx, args) => {
+    const { locationHistoryId, ...updates } = args;
+
+    // Validate amount if provided
+    if (updates.amount !== undefined && updates.amount <= 0) {
+      throw new Error("amount must be a positive number");
+    }
+
+    // Verify location history exists
+    const locationHistory = await ctx.db.get(locationHistoryId);
+    if (!locationHistory) {
+      throw new Error("Location history not found");
+    }
+
+    // Apply updates (only include defined values)
+    const patchData: Record<string, unknown> = {};
+    if (updates.name !== undefined) patchData.name = updates.name;
+    if (updates.amount !== undefined) patchData.amount = updates.amount;
+    if (updates.category !== undefined) patchData.category = updates.category;
+
+    await ctx.db.patch(locationHistoryId, patchData);
+  },
+});
+
+/**
+ * Delete a location history record
+ */
+export const remove = mutation({
+  args: {
+    locationHistoryId: v.id("locationHistories"),
+  },
+  handler: async (ctx, args) => {
+    // Verify location history exists
+    const locationHistory = await ctx.db.get(args.locationHistoryId);
+    if (!locationHistory) {
+      throw new Error("Location history not found");
+    }
+
+    await ctx.db.delete(args.locationHistoryId);
   },
 });

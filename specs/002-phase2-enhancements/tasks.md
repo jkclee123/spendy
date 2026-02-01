@@ -35,15 +35,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Update convex/schema.ts - remove apiToken from users, add userCategories table, update locationHistories.category type, update transactions.category type
-- [ ] T009 [P] Clear Convex development data (users, transactions, locationHistories tables)
-- [ ] T010 [P] Update convex/users.ts - remove getByApiToken, remove regenerateApiToken, add updateLanguage mutation
-- [ ] T011 [P] Update convex/transactions.ts - remove createFromApi mutation, update createFromWeb category type
-- [ ] T012 [P] Update convex/locationHistories.ts - update findNearby radius to 200m, update upsertNearby category type, add update and remove mutations
-- [ ] T013 [P] Update convex/http.ts - modify users.create to also create default userCategories (Restaurant, Transport)
-- [ ] T014 [P] Delete src/app/api/transaction/route.ts (external API endpoint)
-- [ ] T015 [P] Delete src/components/settings/ApiTokenDisplay.tsx
-- [ ] T016 [P] Update src/types/index.ts - remove CreateTransactionRequest, CreateTransactionResponse, DEFAULT_CATEGORIES, User.apiToken, Transaction.merchant, add User.lang, update Transaction.category to Id type, add UserCategory interface, update LocationHistory.category to Id type
+- [X] T008 Update convex/schema.ts - remove apiToken from users, add userCategories table, update locationHistories.category type, update transactions.category type
+- [X] T009 [P] Clear Convex development data (users, transactions, locationHistories tables)
+- [X] T010 [P] Update convex/users.ts - remove getByApiToken, remove regenerateApiToken, add updateLanguage mutation
+- [X] T011 [P] Update convex/transactions.ts - remove createFromApi mutation, update createFromWeb category type
+- [X] T012 [P] Update convex/locationHistories.ts - update findNearby radius to 200m, update upsertNearby category type, add update and remove mutations
+- [X] T013 [P] Update convex/http.ts - modify users.create to also create default userCategories (Restaurant, Transport)
+- [X] T014 [P] Delete src/app/api/transaction/route.ts (external API endpoint)
+- [X] T015 [P] Delete src/components/settings/ApiTokenDisplay.tsx
+- [X] T016 [P] Update src/types/index.ts - remove CreateTransactionRequest, CreateTransactionResponse, DEFAULT_CATEGORIES, User.apiToken, Transaction.merchant, add User.lang, update Transaction.category to Id type, add UserCategory interface, update LocationHistory.category to Id type
 
 **Checkpoint**: Schema and legacy cleanup complete - user story implementation can now begin in parallel
 

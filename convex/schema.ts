@@ -6,20 +6,30 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     image: v.optional(v.string()),
-    apiToken: v.string(),
+    lang: v.optional(v.string()),
     createdAt: v.number(),
   })
-    .index("by_email", ["email"])
-    .index("by_apiToken", ["apiToken"]),
+    .index("by_email", ["email"]),
+
+  userCategories: defineTable({
+    userId: v.id("users"),
+    isActive: v.boolean(),
+    emoji: v.string(),
+    en_name: v.optional(v.string()),
+    zh_name: v.optional(v.string()),
+    order: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_userId", ["userId"])
+    .index("by_userId_isActive", ["userId", "isActive"])
+    .index("by_userId_order", ["userId", "order"]),
 
   transactions: defineTable({
     userId: v.id("users"),
     name: v.optional(v.string()),
-    merchant: v.optional(v.string()),
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
     amount: v.number(),
     createdAt: v.number(),
-    source: v.union(v.literal("api"), v.literal("web")),
   })
     .index("by_userId", ["userId"])
     .index("by_userId_createdAt", ["userId", "createdAt"])
@@ -30,7 +40,7 @@ export default defineSchema({
     latitude: v.number(),
     longitude: v.number(),
     amount: v.number(),
-    category: v.optional(v.string()),
+    category: v.optional(v.id("userCategories")),
     name: v.optional(v.string()),
     count: v.number(),
     createdAt: v.number(),
