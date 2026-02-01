@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { usePaginatedQuery, useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
-import type { Transaction } from "@/types";
+import type { TransactionWithCategory } from "@/types";
 import { TransactionCard } from "./TransactionCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useToast } from "@/components/ui/Toast";
@@ -13,7 +14,7 @@ import type { TransactionFiltersState } from "./TransactionFilters";
 interface TransactionListProps {
   userId: Id<"users">;
   filters: TransactionFiltersState;
-  onTransactionClick?: (transaction: Transaction) => void;
+  onTransactionClick?: (transaction: TransactionWithCategory) => void;
 }
 
 const PAGE_SIZE = 20;
@@ -30,13 +31,14 @@ export function TransactionList({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
+  const t = useTranslations("transactions");
 
   // Use paginated query with filters
   const { results, status, loadMore } = usePaginatedQuery(
     api.transactions.listByUserPaginated,
     {
       userId,
-      category: filters.category,
+      category: filters.category as Id<"userCategories"> | undefined,
       startDate: filters.startDate,
       endDate: filters.endDate,
     },
@@ -47,21 +49,21 @@ export function TransactionList({
   const deleteTransaction = useMutation(api.transactions.remove);
 
   const handleDelete = useCallback(
-    async (transaction: Transaction) => {
+    async (transaction: TransactionWithCategory) => {
       try {
         await deleteTransaction({
           transactionId: transaction._id,
         });
-        showToast("Transaction deleted successfully", "success");
+        showToast(t("successMessages.deleted"), "success");
       } catch (error) {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : "Failed to delete transaction. Please try again.";
+            : t("list.deleteFailed");
         showToast(errorMessage, "error");
       }
     },
-    [deleteTransaction, showToast]
+    [deleteTransaction, showToast, t]
   );
 
   // Set up intersection observer for infinite scroll
@@ -99,14 +101,14 @@ export function TransactionList({
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <LoadingSpinner size="lg" />
-        <p className="text-sm text-gray-500">Loading...</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("list.loading")}</p>
       </div>
     );
   }
 
   // Empty state
   if (results.length === 0) {
-    return <EmptyState hasFilters={hasActiveFilters(filters)} />;
+    return <EmptyState hasFilters={hasActiveFilters(filters)} t={t} />;
   }
 
   return (
@@ -115,7 +117,7 @@ export function TransactionList({
       {results.map((transaction) => (
         <TransactionCard
           key={transaction._id}
-          transaction={transaction as Transaction}
+          transaction={transaction as TransactionWithCategory}
           onClick={onTransactionClick}
           onDelete={handleDelete}
         />
@@ -147,19 +149,19 @@ function hasActiveFilters(filters: TransactionFiltersState): boolean {
 /**
  * Empty state component
  */
-function EmptyState({ hasFilters }: { hasFilters: boolean }) {
+function EmptyState({ hasFilters, t }: { hasFilters: boolean; t: (key: string) => string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
         <span className="text-2xl">{hasFilters ? "🔍" : "📝"}</span>
       </div>
-      <h3 className="text-lg font-medium text-gray-900">
-        {hasFilters ? "No matching transactions" : "No transactions yet"}
+      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+        {hasFilters ? t("list.noMatchingTitle") : t("list.noTransactionsTitle")}
       </h3>
-      <p className="mt-2 max-w-sm text-sm text-gray-500">
+      <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
         {hasFilters
-          ? "Try adjusting your filters to see more transactions."
-          : "Your transactions will appear here once you start tracking your spending."}
+          ? t("list.noMatchingMessage")
+          : ""}
       </p>
     </div>
   );

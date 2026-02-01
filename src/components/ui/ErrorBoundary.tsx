@@ -50,9 +50,9 @@ export class ErrorBoundary extends Component<
 
       return (
         <div className="flex min-h-[50vh] flex-col items-center justify-center px-4 py-12 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
             <svg
-              className="h-8 w-8 text-red-600"
+              className="h-8 w-8 text-red-600 dark:text-red-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -65,14 +65,14 @@ export class ErrorBoundary extends Component<
               />
             </svg>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Something went wrong
           </h2>
-          <p className="mt-2 max-w-md text-sm text-gray-500">
+          <p className="mt-2 max-w-md text-sm text-gray-500 dark:text-gray-400">
             An unexpected error occurred. Please try again or refresh the page.
           </p>
           {process.env.NODE_ENV === "development" && this.state.error && (
-            <pre className="mt-4 max-w-lg overflow-auto rounded-lg bg-gray-100 p-4 text-left text-xs text-gray-700">
+            <pre className="mt-4 max-w-lg overflow-auto rounded-lg bg-gray-100 dark:bg-gray-800 p-4 text-left text-xs text-gray-700 dark:text-gray-300">
               {this.state.error.message}
             </pre>
           )}
@@ -112,11 +112,11 @@ export function ErrorDisplay({
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-lg bg-red-50 p-4 ${className}`}
+      className={`flex items-start gap-3 rounded-lg bg-red-50 dark:bg-red-900/20 p-4 ${className}`}
       role="alert"
     >
       <svg
-        className="h-5 w-5 flex-shrink-0 text-red-500"
+        className="h-5 w-5 flex-shrink-0 text-red-500 dark:text-red-400"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -129,13 +129,13 @@ export function ErrorDisplay({
         />
       </svg>
       <div className="flex-1">
-        <p className="text-sm font-medium text-red-800">Error</p>
-        <p className="mt-1 text-sm text-red-700">{message}</p>
+        <p className="text-sm font-medium text-red-800 dark:text-red-300">Error</p>
+        <p className="mt-1 text-sm text-red-700 dark:text-red-400">{message}</p>
       </div>
       {onDismiss && (
         <button
           onClick={onDismiss}
-          className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-red-500 transition-colors hover:bg-red-100"
+          className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-red-500 dark:text-red-400 transition-colors hover:bg-red-100 dark:hover:bg-red-900/40"
           aria-label="Dismiss error"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

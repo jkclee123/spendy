@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
-import { ConvexClientProvider } from "@/lib/convex";
-import { ToastProvider } from "@/components/ui/Toast";
+import { LanguageWrapper } from "@/lib/LanguageWrapper";
 import "./globals.css";
 
 const inter = Inter({
@@ -46,14 +44,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} font-sans antialiased`}
-      >
-        <SessionProvider>
-          <ConvexClientProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </ConvexClientProvider>
-        </SessionProvider>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <LanguageWrapper>{children}</LanguageWrapper>
       </body>
     </html>
   );

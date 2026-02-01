@@ -3,6 +3,7 @@
 import { useState, useCallback, FormEvent, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
 import { useToast } from "@/components/ui/Toast";
@@ -154,7 +155,7 @@ export function TransactionDetail({
       await updateTransaction({
         transactionId: transaction._id,
         amount: parseFloat(amount),
-        category: category || undefined,
+        category: (category as Id<"userCategories">) || undefined,
       });
 
       setIsEditing(false);
@@ -329,6 +330,7 @@ export function TransactionDetail({
               {/* Category Field */}
               <CategorySelect
                 label="Category"
+                userId={transaction.userId}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 disabled={isSubmitting}
@@ -435,22 +437,6 @@ export function TransactionDetail({
                       <span className="ml-1 text-xs text-gray-400">
                         ({absoluteDate})
                       </span>
-                    </span>
-                  }
-                />
-                <DetailRow
-                  label="Source"
-                  value={
-                    <span
-                      className={`
-                        rounded-full px-2 py-0.5 text-xs font-medium
-                        ${transaction.source === "api"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-blue-100 text-blue-700"
-                        }
-                      `}
-                    >
-                      {transaction.source === "api" ? "API" : "Web"}
                     </span>
                   }
                 />

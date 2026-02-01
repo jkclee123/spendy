@@ -2,14 +2,19 @@
 
 import { useState, FormEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { useMutation } from "convex/react";
+import { useTranslations } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { CategorySelect } from "./CategorySelect";
+import { CategoryDropdown } from "@/components/ui/CategoryDropdown";
+import { LocationHistoryDropdown } from "@/components/transactions/LocationHistoryDropdown";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
 import { Checkbox } from "@/components/ui/Checkbox";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useQuery } from "convex/react";
+import { useNearbyLocations } from "@/hooks/useNearbyLocations";
 
 /**
  * Safely evaluate a mathematical expression string
@@ -71,9 +76,8 @@ interface TransactionFormProps {
   latitude?: number;
   longitude?: number;
   initialAmount?: number;
-  initialCategory?: string;
+  initialCategory?: Id<"userCategories">;
   initialName?: string;
-  initialMerchant?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -86,14 +90,29 @@ export function TransactionForm({
   initialAmount,
   initialCategory,
   initialName,
-  initialMerchant,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
   const { data: session } = useSession();
   const { showToast } = useToast();
+  const { lang } = useLanguage();
+  const t = useTranslations("transactions");
+  const tCommon = useTranslations("common");
 
   const isEditMode = !!initialData;
+
+  // Fetch user categories
+  const categories = useQuery(
+    api.userCategories.listActiveByUser,
+    userId ? { userId } : "skip"
+  );
+
+  // Query nearby locations when GPS coordinates are available
+  const { locations: nearbyLocations, isLoading: isLoadingLocations } = useNearbyLocations(
+    userId,
+    latitude,
+    longitude
+  );
 
   const [amount, setAmount] = useState(
     initialData
@@ -105,32 +124,79 @@ export function TransactionForm({
   const [name, setName] = useState(
     initialData?.name ?? initialName ?? ""
   );
-  const [merchant, setMerchant] = useState(
-    initialData?.merchant ?? initialMerchant ?? ""
-  );
-  const [category, setCategory] = useState(
-    initialData?.category ?? initialCategory ?? ""
+  const [category, setCategory] = useState<Id<"userCategories"> | undefined>(
+    initialData?.category ?? initialCategory
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
+  const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(undefined);
+  const [hasUserInteractedWithLocation, setHasUserInteractedWithLocation] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-select closest location when nearby locations become available
+  // Only auto-select if user hasn't manually interacted with the dropdown
+  useEffect(() => {
+    if (!isEditMode && nearbyLocations && nearbyLocations.length > 0 && selectedLocationId === undefined && !hasUserInteractedWithLocation) {
+      const closestLocation = nearbyLocations[0];
+      setSelectedLocationId(closestLocation._id);
+      // Pre-fill form with closest location's data
+      if (closestLocation.amount !== undefined) {
+        setAmount(closestLocation.amount.toString());
+      }
+      if (closestLocation.name) {
+        setName(closestLocation.name);
+      }
+      if (closestLocation.category) {
+        setCategory(closestLocation.category);
+      }
+    }
+  }, [nearbyLocations, isEditMode, selectedLocationId, hasUserInteractedWithLocation]);
+
+  // Handle location selection change - pre-fill form with selected location data
+  const handleLocationChange = useCallback((locationId: Id<"locationHistories"> | undefined) => {
+    setHasUserInteractedWithLocation(true);
+    setSelectedLocationId(locationId);
+    if (locationId && nearbyLocations) {
+      const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
+      if (selectedLocation) {
+        if (selectedLocation.amount !== undefined) {
+          setAmount(selectedLocation.amount.toString());
+        }
+        if (selectedLocation.name) {
+          setName(selectedLocation.name);
+        }
+        if (selectedLocation.category) {
+          setCategory(selectedLocation.category);
+        }
+      }
+    }
+  }, [nearbyLocations]);
 
   // Reset form when initial values change
   useEffect(() => {
     if (initialData) {
       setAmount(initialData.amount.toString());
       setName(initialData.name || "");
-      setMerchant(initialData.merchant || "");
-      setCategory(initialData.category || "");
-      setCreatedAt(new Date(initialData.createdAt).toISOString().slice(0, 16));
+      setCategory(initialData.category);
+      // Convert to local time for datetime-local input
+      const date = new Date(initialData.createdAt);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      setCreatedAt(`${year}-${month}-${day}T${hours}:${minutes}`);
+      setSelectedLocationId(undefined);
+      setHasUserInteractedWithLocation(true); // Prevent auto-select in edit mode
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
-      setMerchant(initialMerchant ?? "");
-      setCategory(initialCategory ?? "");
+      setCategory(initialCategory);
       setCreatedAt("");
+      // Don't reset selectedLocationId here - let the auto-select effect handle it
+      setHasUserInteractedWithLocation(false); // Allow auto-select on fresh form
     }
     setErrors({});
   }, [
@@ -138,7 +204,6 @@ export function TransactionForm({
     initialAmount,
     initialCategory,
     initialName,
-    initialMerchant,
   ]);
 
   // Pre-check "Remember transaction" if latitude and longitude exist in query params
@@ -165,11 +230,9 @@ export function TransactionForm({
         _creationTime: Date.now(),
         userId: args.userId,
         name: args.name,
-        merchant: args.merchant,
         amount: args.amount,
         category: args.category,
         createdAt: Date.now(),
-        source: "web" as const,
       };
 
       // Get current transactions from local store and add the optimistic one
@@ -198,27 +261,27 @@ export function TransactionForm({
 
     // Amount validation
     if (!amount.trim()) {
-      newErrors.amount = "Amount is required";
+      newErrors.amount = t("errors.amountRequired");
     } else {
       // Try to evaluate as a formula first
       const evaluatedAmount = evaluateFormula(amount);
       if (evaluatedAmount === null) {
-        newErrors.amount = "Amount must be a valid number or formula";
+        newErrors.amount = t("errors.amountInvalid");
       } else if (evaluatedAmount <= 0) {
-        newErrors.amount = "Amount must be greater than 0";
+        newErrors.amount = t("errors.amountTooSmall");
       } else if (evaluatedAmount > 1000000000) {
-        newErrors.amount = "Amount is too large";
+        newErrors.amount = t("errors.amountTooLarge");
       }
     }
 
     // Category validation
-    if (!category.trim()) {
-      newErrors.category = "Category is required";
+    if (!category) {
+      newErrors.category = t("errors.categoryRequired");
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [amount, category]);
+  }, [amount, category, t]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -228,7 +291,7 @@ export function TransactionForm({
     }
 
     if (!userId) {
-      setErrors({ general: "User not found. Please try logging in again." });
+      setErrors({ general: t("errors.userNotFound") });
       return;
     }
 
@@ -239,7 +302,7 @@ export function TransactionForm({
       // Evaluate amount formula before submission
       const evaluatedAmount = evaluateFormula(amount);
       if (evaluatedAmount === null) {
-        setErrors({ amount: "Amount must be a valid number or formula" });
+        setErrors({ amount: t("errors.amountInvalid") });
         setIsSubmitting(false);
         return;
       }
@@ -250,14 +313,12 @@ export function TransactionForm({
           transactionId: Id<"transactions">;
           amount: number;
           name: string;
-          merchant: string;
-          category: string;
+          category?: Id<"userCategories">;
           createdAt?: number;
         } = {
           transactionId: initialData._id,
           amount: evaluatedAmount,
           name: name,
-          merchant: merchant,
           category: category,
         };
 
@@ -267,14 +328,13 @@ export function TransactionForm({
 
         await updateTransaction(updateData);
 
-        showToast("Transaction updated successfully", "success");
+        showToast(t("successMessages.updated"), "success");
       } else {
         // Create new transaction
         await createTransaction({
           userId: userId,
           amount: evaluatedAmount,
           name: name,
-          merchant: merchant,
           category: category,
         });
 
@@ -287,16 +347,18 @@ export function TransactionForm({
             amount: evaluatedAmount,
             category: category,
             name: name,
+            selectedLocationId: selectedLocationId,
           });
         }
 
         // Reset form
         setAmount("");
         setName("");
-        setMerchant("");
-        setCategory("");
+        setCategory(undefined);
+        setSelectedLocationId(undefined);
+        setHasUserInteractedWithLocation(false);
 
-        showToast("Transaction added successfully", "success");
+        showToast(t("successMessages.created"), "success");
       }
 
       onSuccess?.();
@@ -310,8 +372,8 @@ export function TransactionForm({
         error instanceof Error
           ? error.message
           : isEditMode
-            ? "Failed to update transaction. Please try again."
-            : "Failed to create transaction. Please try again.";
+            ? t("errors.updateFailed")
+            : t("errors.createFailed");
       setErrors({ general: errorMessage });
       showToast(errorMessage, "error");
     } finally {
@@ -322,21 +384,32 @@ export function TransactionForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {errors.general && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+        <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
           {errors.general}
         </div>
+      )}
+
+      {/* Location History Dropdown - Only show when GPS coordinates exist and not in edit mode */}
+      {!isEditMode && latitude !== undefined && longitude !== undefined && nearbyLocations && nearbyLocations.length > 0 && (
+        <LocationHistoryDropdown
+          locations={nearbyLocations}
+          value={selectedLocationId}
+          onChange={handleLocationChange}
+          disabled={isSubmitting || isLoadingLocations}
+          label={t("selectLocation")}
+        />
       )}
 
       {/* Amount Field */}
       <div>
         <label
           htmlFor="amount"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
+          className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Amount <span className="text-red-500">*</span>
+          {t("amount")} <span className="text-red-500 dark:text-red-400">*</span>
         </label>
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
             $
           </span>
           <input
@@ -351,17 +424,18 @@ export function TransactionForm({
                 setErrors((prev) => ({ ...prev, amount: undefined }));
               }
             }}
-            placeholder="0.00"
+            placeholder={t("amountPlaceholder")}
             disabled={isSubmitting}
             className={`
               w-full rounded-xl border bg-white py-3 pl-8 pr-10 text-base text-gray-900
-              placeholder:text-gray-400
+              dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+              placeholder:text-gray-400 dark:placeholder:text-gray-500
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+              disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
               ${errors.amount
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 hover:border-gray-400"
+                : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
               }
             `}
           />
@@ -373,7 +447,7 @@ export function TransactionForm({
                 document.getElementById("amount")?.focus();
               }}
               disabled={isSubmitting}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Clear amount"
             >
               <svg
@@ -411,7 +485,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add plus operator"
           >
             +
@@ -431,7 +505,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add minus operator"
           >
             -
@@ -451,7 +525,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add multiply operator"
           >
             ×
@@ -471,7 +545,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-lg font-semibold text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Add divide operator"
           >
             ÷
@@ -490,9 +564,9 @@ export function TransactionForm({
                     input.setSelectionRange(result.toString().length, result.toString().length);
                   }, 0);
                 }
-              } else {
+               } else {
                 // Invalid formula - show error instead of clearing
-                setErrors((prev) => ({ ...prev, amount: "Invalid amount" }));
+                setErrors((prev) => ({ ...prev, amount: t("errors.amountInvalid") }));
                 const input = amountInputRef.current;
                 if (input) {
                   input.focus();
@@ -500,7 +574,7 @@ export function TransactionForm({
               }
             }}
             disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-lg font-semibold text-white transition-colors hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 dark:bg-blue-600 text-lg font-semibold text-white transition-colors hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Evaluate formula"
           >
             =
@@ -508,21 +582,24 @@ export function TransactionForm({
         </div>
 
         {errors.amount && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.amount}</p>
+          <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.amount}</p>
         )}
       </div>
 
       {/* Category Field */}
-      <CategorySelect
-        label="Category"
+      <CategoryDropdown
+        label={t("category")}
+        placeholder={t("selectCategory")}
         required
+        categories={categories || []}
         value={category}
-        onChange={(e) => {
-          setCategory(e.target.value);
+        onChange={(newCategory) => {
+          setCategory(newCategory);
           if (errors.category) {
             setErrors((prev) => ({ ...prev, category: undefined }));
           }
         }}
+        currentLang={lang}
         disabled={isSubmitting}
         error={errors.category}
       />
@@ -531,9 +608,9 @@ export function TransactionForm({
       <div>
         <label
           htmlFor="name"
-          className="mb-1.5 block text-sm font-medium text-gray-700"
+          className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
         >
-          Name
+          {t("name")}
         </label>
         <input
           type="text"
@@ -545,22 +622,23 @@ export function TransactionForm({
               setErrors((prev) => ({ ...prev, name: undefined }));
             }
           }}
-          placeholder="e.g., Lunch at Starbucks"
+          placeholder={t("namePlaceholder")}
           disabled={isSubmitting}
           className={`
             w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
-            placeholder:text-gray-400
+            dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+            placeholder:text-gray-400 dark:placeholder:text-gray-500
             transition-colors duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-            disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
+            disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
             ${errors.name
               ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 hover:border-gray-400"
+              : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
             }
           `}
         />
         {errors.name && (
-          <p className="mt-1.5 text-sm text-red-500">{errors.name}</p>
+          <p className="mt-1.5 text-sm text-red-500 dark:text-red-400">{errors.name}</p>
         )}
       </div>
 
@@ -569,9 +647,9 @@ export function TransactionForm({
         <div>
           <label
             htmlFor="createdAt"
-            className="mb-1.5 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Date & Time
+            {t("dateTime")}
           </label>
           <input
             type="datetime-local"
@@ -581,10 +659,11 @@ export function TransactionForm({
             disabled={isSubmitting}
             className={`
               w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+              dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-500
-              border-gray-300 hover:border-gray-400
+              disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
+              border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
             `}
           />
         </div>
@@ -596,7 +675,7 @@ export function TransactionForm({
           <Checkbox
             id="rememberTransaction"
             onChange={(e) => setRememberTransaction(e.target.checked)}
-            label="Remember transaction"
+            label={t("rememberTransaction")}
             disabled={isSubmitting}
           />
         </div>
@@ -612,7 +691,7 @@ export function TransactionForm({
             disabled={isSubmitting}
             className="flex-1"
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
         )}
         <Button
@@ -624,11 +703,11 @@ export function TransactionForm({
         >
           {isSubmitting
             ? isEditMode
-              ? "Saving..."
-              : "Creating..."
+              ? t("saving")
+              : t("creating")
             : isEditMode
-              ? "Save Changes"
-              : "Create"}
+              ? t("saveChanges")
+              : tCommon("create")}
         </Button>
       </div>
     </form>

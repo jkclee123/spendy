@@ -1,0 +1,128 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "create": "Create",
+    "edit": "Edit",
+    "update": "Update",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "error": "Error",
+    "success": "Success"
+  },
+  "stats": {
+    "title": "Stats",
+    "week": "Week",
+    "month": "Month",
+    "year": "Year",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "thisYear": "This Year",
+    "spendingByCategory": "Spending by Category",
+    "monthlySpending": "Monthly Spending (12 months)",
+    "recentSpending": "Recent Spending",
+    "totalSpending": "Total spending",
+    "noData": "No data for {period}",
+    "noDataMessage": "Charts and insights will appear here once you have some transaction data.",
+    "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "language": "Language",
+    "languageOptions": {
+      "system": "System (Auto)",
+      "en": "English",
+      "zhTW": "繁體中文"
+    },
+    "categorySettings": "Category Settings",
+    "locationHistorySettings": "Location History",
+    "signOut": "Sign Out"
+  },
+  "categories": {
+    "title": "Categories",
+    "active": "Activate",
+    "inactive": "Inactive",
+    "createNew": "Create New Category",
+    "editCategory": "Edit Category",
+    "createCategory": "Create Category",
+    "name": "Name",
+    "emoji": "Emoji",
+    "orTypeEmoji": "Or type an emoji",
+    "categoryName": "Category name",
+    "swipeToDeactivate": "Swipe to deactivate",
+    "dragToReorder": "Drag to reorder",
+    "noCategories": "No categories yet",
+    "selectEmoji": "Please select an emoji",
+    "enterName": "Please enter a category name",
+    "saveFailed": "Failed to save category",
+    "editingEnglish": "Editing English name",
+    "savedBothLanguages": "Name will be saved in both languages",
+    "activeCategories": "Active Categories",
+    "inactiveCategories": "Inactive Categories",
+    "dragHint": "Drag handle to reorder, swipe left to deactivate",
+    "inactiveHint": "Tap to edit and reactivate, swipe left to delete",
+    "noActiveCategories": "No active categories yet",
+    "confirmDelete": "Permanently delete {name}? This action cannot be undone.",
+    "deactivate": "Deactivate"
+  },
+  "locations": {
+    "title": "Location History",
+    "editLocation": "Edit Location",
+    "swipeToDelete": "Swipe to delete",
+    "noLocations": "No saved locations yet"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "newTransaction": "New Transaction",
+    "amount": "Amount",
+    "category": "Category",
+    "name": "Name",
+    "uncategorized": "Uncategorized",
+    "rememberTransaction": "Frequently used transaction",
+    "create": "Create Transaction",
+    "update": "Update Transaction",
+    "selectLocation": "Select nearby location",
+    "clearLocation": "Clear location",
+    "unnamedLocation": "Unnamed location",
+    "noTransactions": "No transactions yet",
+    "amountPlaceholder": "0.00",
+    "namePlaceholder": "e.g., Lunch at Starbucks",
+    "dateTime": "Date & Time",
+    "saveChanges": "Save Changes",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "selectCategory": "Select a category",
+    "filters": {
+      "title": "Filters",
+      "category": "Category",
+      "from": "From",
+      "to": "To",
+      "allCategories": "All categories",
+      "clearAll": "Clear all filters"
+    },
+    "errors": {
+      "amountRequired": "Amount is required",
+      "amountInvalid": "Amount must be a valid number or formula",
+      "amountTooSmall": "Amount must be greater than 0",
+      "amountTooLarge": "Amount is too large",
+      "categoryRequired": "Category is required",
+      "userNotFound": "User not found. Please try logging in again.",
+      "createFailed": "Failed to create transaction. Please try again.",
+      "updateFailed": "Failed to update transaction. Please try again."
+    },
+    "successMessages": {
+      "created": "Transaction added successfully",
+      "updated": "Transaction updated successfully",
+      "deleted": "Transaction deleted successfully"
+    },
+    "list": {
+      "loading": "Loading...",
+      "noTransactionsTitle": "No transactions yet",
+      "noMatchingTitle": "No matching transactions",
+      "noMatchingMessage": "Try adjusting your filters to see more transactions.",
+      "deleteFailed": "Failed to delete transaction. Please try again."
+    }
+  }
+}

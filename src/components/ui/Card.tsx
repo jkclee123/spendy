@@ -6,9 +6,9 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles = {
-  default: "bg-white shadow-sm",
-  elevated: "bg-white shadow-lg",
-  outline: "bg-white border border-gray-200",
+  default: "bg-white dark:bg-gray-800 shadow-sm",
+  elevated: "bg-white dark:bg-gray-800 shadow-lg",
+  outline: "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
 };
 
 const paddingStyles = {
@@ -73,7 +73,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
     return (
       <h3
         ref={ref}
-        className={`text-lg font-semibold text-gray-900 ${className}`}
+        className={`text-lg font-semibold text-gray-900 dark:text-gray-100 ${className}`}
         {...props}
       >
         {children}

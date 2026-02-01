@@ -15,19 +15,6 @@ export const getByEmail = query({
 });
 
 /**
- * Get a user by their API token (for external API authentication)
- */
-export const getByApiToken = query({
-  args: { apiToken: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("users")
-      .withIndex("by_apiToken", (q) => q.eq("apiToken", args.apiToken))
-      .unique();
-  },
-});
-
-/**
  * Create a new user (called on first login via OAuth)
  */
 export const create = mutation({
@@ -47,28 +34,36 @@ export const create = mutation({
       return existingUser._id;
     }
 
-    // Generate a unique API token (UUID v4 format)
-    const apiToken = crypto.randomUUID();
-
     return await ctx.db.insert("users", {
       name: args.name,
       email: args.email,
       image: args.image,
-      apiToken,
       createdAt: Date.now(),
     });
   },
 });
 
 /**
- * Regenerate a user's API token
+ * Update a user's language preference
  */
-export const regenerateApiToken = mutation({
-  args: { userId: v.id("users") },
+export const updateLanguage = mutation({
+  args: {
+    userId: v.id("users"),
+    lang: v.string(),
+  },
   handler: async (ctx, args) => {
-    const newToken = crypto.randomUUID();
-    await ctx.db.patch(args.userId, { apiToken: newToken });
-    return newToken;
+    // Validate language value
+    if (!["system", "en", "zh-HK"].includes(args.lang)) {
+      throw new Error("Invalid language value. Must be 'system', 'en', or 'zh-HK'");
+    }
+
+    // Verify user exists
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    await ctx.db.patch(args.userId, { lang: args.lang });
   },
 });
 

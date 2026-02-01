@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { useQuery } from "convex/react";
+import { useTranslations, useLocale } from "next-intl";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
+import type { UserCategory } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { DEFAULT_CATEGORIES } from "@/types";
 
 export interface TransactionFiltersState {
   category?: string;
@@ -11,6 +15,7 @@ export interface TransactionFiltersState {
 }
 
 interface TransactionFiltersProps {
+  userId: Id<"users">;
   filters: TransactionFiltersState;
   onFiltersChange: (filters: TransactionFiltersState) => void;
   onClearFilters: () => void;
@@ -21,11 +26,26 @@ interface TransactionFiltersProps {
  * Supports date range, category, and amount range filtering
  */
 export function TransactionFilters({
+  userId,
   filters,
   onFiltersChange,
   onClearFilters,
 }: TransactionFiltersProps) {
+  const t = useTranslations("transactions.filters");
+  const locale = useLocale();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Fetch user categories
+  const categories = useQuery(api.userCategories.listActiveByUser, { userId });
+
+  // Get localized category name based on current language
+  const getLocalizedName = useCallback((category: UserCategory): string => {
+    if (locale === "en") {
+      return category.en_name || category.zh_name || "Unnamed";
+    } else {
+      return category.zh_name || category.en_name || "未命名";
+    }
+  }, [locale]);
 
   // Count active filters
   const activeFilterCount = useMemo(() => {
@@ -85,7 +105,7 @@ export function TransactionFilters({
     : "";
 
   return (
-    <div className={`rounded-xl border border-gray-100 bg-white hover:border-gray-200 p-3`}>
+    <div className={`rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700 p-3`}>
       {/* Filter toggle button */}
       <button
         type="button"
@@ -94,7 +114,7 @@ export function TransactionFilters({
       >
         <div className="flex items-center gap-2">
           <svg
-            className="h-5 w-5 text-gray-500"
+            className="h-5 w-5 text-gray-500 dark:text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -106,7 +126,7 @@ export function TransactionFilters({
               d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
             />
           </svg>
-          <span className="font-medium text-gray-700">Filters</span>
+          <span className="font-medium text-gray-700 dark:text-gray-300">{t("title")}</span>
           {activeFilterCount > 0 && (
             <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-medium text-white">
               {activeFilterCount}
@@ -114,7 +134,7 @@ export function TransactionFilters({
           )}
         </div>
         <svg
-          className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+          className={`h-5 w-5 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
             }`}
           fill="none"
           stroke="currentColor"
@@ -136,20 +156,20 @@ export function TransactionFilters({
           <div>
             <label
               htmlFor="filter-category"
-              className="mb-1.5 block text-sm font-medium text-gray-700"
+              className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Category
+              {t("category")}
             </label>
             <select
               id="filter-category"
               value={filters.category || ""}
               onChange={handleCategoryChange}
-              className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="min-h-[44px] w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="" className="text-gray-600">All categories</option>
-              {DEFAULT_CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              <option value="" className="text-gray-600 dark:text-gray-400">{t("allCategories")}</option>
+              {categories?.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.emoji} {getLocalizedName(category)}
                 </option>
               ))}
             </select>
@@ -160,9 +180,9 @@ export function TransactionFilters({
             <div className="min-w-0">
               <label
                 htmlFor="filter-start-date"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                From
+                {t("from")}
               </label>
               <input
                 type="date"
@@ -170,15 +190,15 @@ export function TransactionFilters({
                 value={startDateValue}
                 onChange={handleStartDateChange}
                 placeholder="Select start date"
-                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="min-w-0">
               <label
                 htmlFor="filter-end-date"
-                className="mb-1.5 block text-sm font-medium text-gray-700"
+                className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                To
+                {t("to")}
               </label>
               <input
                 type="date"
@@ -186,7 +206,7 @@ export function TransactionFilters({
                 value={endDateValue}
                 onChange={handleEndDateChange}
                 placeholder="Select end date"
-                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 bg-white px-2 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -200,7 +220,7 @@ export function TransactionFilters({
               onClick={onClearFilters}
               className="w-full"
             >
-              Clear all filters
+              {t("clearAll")}
             </Button>
           )}
         </div>

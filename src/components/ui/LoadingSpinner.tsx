@@ -16,7 +16,7 @@ export function LoadingSpinner({
   return (
     <div
       className={`
-        animate-spin rounded-full border-gray-300 border-t-blue-500
+        animate-spin rounded-full border-gray-300 dark:border-gray-600 border-t-blue-500
         ${sizeStyles[size]}
         ${className}
       `}
@@ -36,7 +36,7 @@ export function LoadingPage({ message = "Loading..." }: LoadingPageProps) {
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
       <LoadingSpinner size="lg" />
-      <p className="text-sm text-gray-500">{message}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
     </div>
   );
 }

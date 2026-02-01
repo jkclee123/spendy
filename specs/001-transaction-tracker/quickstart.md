@@ -105,7 +105,6 @@ export default defineSchema({
     category: v.optional(v.string()),
     amount: v.number(),
     createdAt: v.number(),
-    source: v.union(v.literal("api"), v.literal("web")),
   })
     .index("by_userId", ["userId"])
     .index("by_userId_createdAt", ["userId", "createdAt"]),
@@ -147,11 +146,11 @@ spendy/
 Add to `next.config.js`:
 
 ```javascript
-const withPWA = require('next-pwa')({
-  dest: 'public',
+const withPWA = require("next-pwa")({
+  dest: "public",
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development',
+  disable: process.env.NODE_ENV === "development",
 });
 
 module.exports = withPWA({
@@ -164,11 +163,11 @@ module.exports = withPWA({
 Use `next/navigation` for SPA-like navigation:
 
 ```typescript
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 // In component
 const router = useRouter();
-router.push('/records'); // No page reload
+router.push("/records"); // No page reload
 ```
 
 ### Protected Routes
@@ -203,12 +202,15 @@ bun test:all
 ## Common Issues
 
 ### "Convex deployment not found"
+
 - Run `bunx convex dev` to initialize/connect deployment
 
 ### "Google OAuth redirect URI mismatch"
+
 - Ensure `http://localhost:3000/api/auth/callback/google` is in authorized URIs
 
 ### "NEXTAUTH_SECRET missing"
+
 - Generate with: `openssl rand -base64 32`
 
 ## Resources

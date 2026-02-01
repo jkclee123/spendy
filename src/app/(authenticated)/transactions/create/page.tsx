@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { useQuery } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +10,7 @@ import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 export default function NewTransactionPage() {
+  const t = useTranslations();
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,7 +19,6 @@ export default function NewTransactionPage() {
   const latitude = searchParams.get("latitude");
   const longitude = searchParams.get("longitude");
   const amount = searchParams.get("amount");
-  const merchant = searchParams.get("merchant");
   // isMobile is accepted but not used (reserved for future use)
   searchParams.get("isMobile");
 
@@ -55,9 +56,9 @@ export default function NewTransactionPage() {
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
           <span className="text-2xl">⚠️</span>
         </div>
-        <h3 className="text-lg font-medium text-gray-900">User not found</h3>
+        <h3 className="text-lg font-medium text-gray-900">{t("transactions.errors.userNotFound")}</h3>
         <p className="mt-2 max-w-sm text-sm text-gray-500">
-          Please try logging out and logging back in.
+          {t("common.error")}
         </p>
       </div>
     );
@@ -83,21 +84,17 @@ export default function NewTransactionPage() {
       : nearbyLocation?.amount;
 
   // Category from locationHistory if available
-  const initialCategory = nearbyLocation?.category || "";
+  const initialCategory = nearbyLocation?.category;
 
   // Name from locationHistory if available
   const initialName = nearbyLocation?.name || "";
-
-  // Merchant from query params (if not empty)
-  const initialMerchant =
-    merchant && merchant.trim() !== "" ? merchant : undefined;
 
   return (
     <div className="space-y-4">
       {/* Add Transaction Form */}
       <Card>
         <CardHeader>
-          <CardTitle>New Transaction</CardTitle>
+          <CardTitle>{t("transactions.newTransaction")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionForm
@@ -107,7 +104,6 @@ export default function NewTransactionPage() {
             initialAmount={initialAmount}
             initialCategory={initialCategory}
             initialName={initialName}
-            initialMerchant={initialMerchant}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />

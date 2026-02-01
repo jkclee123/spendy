@@ -109,10 +109,10 @@ interface ToastItemProps {
  */
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
   const typeStyles: Record<ToastType, string> = {
-    success: "bg-green-600 text-white",
-    error: "bg-red-600 text-white",
-    info: "bg-blue-600 text-white",
-    warning: "bg-yellow-500 text-gray-900",
+    success: "bg-green-600 dark:bg-green-700 text-white",
+    error: "bg-red-600 dark:bg-red-700 text-white",
+    info: "bg-blue-600 dark:bg-blue-700 text-white",
+    warning: "bg-yellow-500 dark:bg-yellow-600 text-gray-900 dark:text-gray-100",
   };
 
   const typeIcons: Record<ToastType, ReactNode> = {
