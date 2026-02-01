@@ -176,8 +176,8 @@ export function TransactionFilters({
           </div>
 
           {/* Date range filter */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="min-w-0">
+          <div className="grid grid-cols-2 gap-3 overflow-hidden">
+            <div className="min-w-0 overflow-hidden">
               <label
                 htmlFor="filter-start-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -189,11 +189,10 @@ export function TransactionFilters({
                 id="filter-start-date"
                 value={startDateValue}
                 onChange={handleStartDateChange}
-                placeholder="Select start date"
-                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 overflow-hidden">
               <label
                 htmlFor="filter-end-date"
                 className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -205,8 +204,7 @@ export function TransactionFilters({
                 id="filter-end-date"
                 value={endDateValue}
                 onChange={handleEndDateChange}
-                placeholder="Select end date"
-                className="min-h-[44px] w-full min-w-0 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="box-border min-h-[44px] w-full max-w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-2 py-2.5 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

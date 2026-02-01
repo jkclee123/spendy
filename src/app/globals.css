@@ -23,7 +23,48 @@
     --text-secondary: #9ca3af;
     --primary: #60a5fa;
     --destructive: #f87171;
+    color-scheme: dark;
   }
+}
+
+/* Date input styling */
+input[type="date"] {
+  color-scheme: light;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* Prevent date inputs from overflowing container */
+  min-width: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  input[type="date"] {
+    color-scheme: dark;
+  }
+}
+
+/* Tailwind dark class support for date inputs */
+.dark input[type="date"] {
+  color-scheme: dark;
+}
+
+/* WebKit date input calendar icon styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }
 
 body {
