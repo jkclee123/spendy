@@ -8,11 +8,13 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { CategoryDropdown } from "@/components/ui/CategoryDropdown";
+import { LocationHistoryDropdown } from "@/components/transactions/LocationHistoryDropdown";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useQuery } from "convex/react";
+import { useNearbyLocations } from "@/hooks/useNearbyLocations";
 
 /**
  * Safely evaluate a mathematical expression string
@@ -105,6 +107,13 @@ export function TransactionForm({
     userId ? { userId } : "skip"
   );
 
+  // Query nearby locations when GPS coordinates are available
+  const { locations: nearbyLocations, isLoading: isLoadingLocations } = useNearbyLocations(
+    userId,
+    latitude,
+    longitude
+  );
+
   const [amount, setAmount] = useState(
     initialData
       ? initialData.amount.toString()
@@ -122,7 +131,45 @@ export function TransactionForm({
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
+  const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(undefined);
   const amountInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-select closest location when nearby locations become available
+  useEffect(() => {
+    if (!isEditMode && nearbyLocations && nearbyLocations.length > 0 && selectedLocationId === undefined) {
+      const closestLocation = nearbyLocations[0];
+      setSelectedLocationId(closestLocation._id);
+      // Pre-fill form with closest location's data
+      if (closestLocation.amount !== undefined) {
+        setAmount(closestLocation.amount.toString());
+      }
+      if (closestLocation.name) {
+        setName(closestLocation.name);
+      }
+      if (closestLocation.category) {
+        setCategory(closestLocation.category);
+      }
+    }
+  }, [nearbyLocations, isEditMode, selectedLocationId]);
+
+  // Handle location selection change - pre-fill form with selected location data
+  const handleLocationChange = useCallback((locationId: Id<"locationHistories"> | undefined) => {
+    setSelectedLocationId(locationId);
+    if (locationId && nearbyLocations) {
+      const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
+      if (selectedLocation) {
+        if (selectedLocation.amount !== undefined) {
+          setAmount(selectedLocation.amount.toString());
+        }
+        if (selectedLocation.name) {
+          setName(selectedLocation.name);
+        }
+        if (selectedLocation.category) {
+          setCategory(selectedLocation.category);
+        }
+      }
+    }
+  }, [nearbyLocations]);
 
   // Reset form when initial values change
   useEffect(() => {
@@ -131,11 +178,13 @@ export function TransactionForm({
       setName(initialData.name || "");
       setCategory(initialData.category);
       setCreatedAt(new Date(initialData.createdAt).toISOString().slice(0, 16));
+      setSelectedLocationId(undefined);
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
       setCategory(initialCategory);
       setCreatedAt("");
+      // Don't reset selectedLocationId here - let the auto-select effect handle it
     }
     setErrors({});
   }, [
@@ -286,6 +335,7 @@ export function TransactionForm({
             amount: evaluatedAmount,
             category: category,
             name: name,
+            selectedLocationId: selectedLocationId,
           });
         }
 
@@ -293,6 +343,7 @@ export function TransactionForm({
         setAmount("");
         setName("");
         setCategory(undefined);
+        setSelectedLocationId(undefined);
 
         showToast(t("successMessages.created"), "success");
       }
@@ -323,6 +374,17 @@ export function TransactionForm({
         <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
           {errors.general}
         </div>
+      )}
+
+      {/* Location History Dropdown - Only show when GPS coordinates exist and not in edit mode */}
+      {!isEditMode && latitude !== undefined && longitude !== undefined && nearbyLocations && nearbyLocations.length > 0 && (
+        <LocationHistoryDropdown
+          locations={nearbyLocations}
+          value={selectedLocationId}
+          onChange={handleLocationChange}
+          disabled={isSubmitting || isLoadingLocations}
+          label={t("selectLocation")}
+        />
       )}
 
       {/* Amount Field */}

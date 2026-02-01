@@ -6,7 +6,6 @@ import { useQuery, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { Plus, ChevronLeft } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
-import type { Id } from "../../../../../convex/_generated/dataModel";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
 import { DraggableList } from "@/components/ui/DraggableList";
 import { CategoryEditModal } from "@/components/settings/CategoryEditModal";

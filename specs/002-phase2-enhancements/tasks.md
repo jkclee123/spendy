@@ -131,9 +131,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T048 [US4] Create src/hooks/useNearbyLocations.ts - hook to query nearby locations within 200m radius
-- [ ] T049 [US4] Create src/components/transactions/LocationHistoryDropdown.tsx - dropdown for nearby location selection sorted by distance
-- [ ] T050 [US4] Update src/components/transactions/TransactionForm.tsx - add LocationHistoryDropdown when GPS coordinates exist, pre-fill form with closest location, pass selectedLocationId to upsertNearby
+- [X] T048 [US4] Create src/hooks/useNearbyLocations.ts - hook to query nearby locations within 200m radius
+- [X] T049 [US4] Create src/components/transactions/LocationHistoryDropdown.tsx - dropdown for nearby location selection sorted by distance
+- [X] T050 [US4] Update src/components/transactions/TransactionForm.tsx - add LocationHistoryDropdown when GPS coordinates exist, pre-fill form with closest location, pass selectedLocationId to upsertNearby
 
 **Checkpoint**: User Story 4 complete - transaction form shows nearby locations and pre-fills when selected
 

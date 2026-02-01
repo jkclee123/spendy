@@ -161,7 +161,7 @@ function EmptyState({ hasFilters, t }: { hasFilters: boolean; t: (key: string) =
       <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
         {hasFilters
           ? t("list.noMatchingMessage")
-          : t("list.noTransactionsMessage")}
+          : ""}
       </p>
     </div>
   );

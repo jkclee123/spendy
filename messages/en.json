@@ -49,6 +49,7 @@
     "create": "Create Transaction",
     "update": "Update Transaction",
     "selectLocation": "Select nearby location",
+    "unnamedLocation": "Unnamed location",
     "noTransactions": "No transactions yet",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "e.g., Lunch at Starbucks",
@@ -75,7 +76,6 @@
     "list": {
       "loading": "Loading...",
       "noTransactionsTitle": "No transactions yet",
-      "noTransactionsMessage": "Your transactions will appear here once you start tracking your spending.",
       "noMatchingTitle": "No matching transactions",
       "noMatchingMessage": "Try adjusting your filters to see more transactions.",
       "deleteFailed": "Failed to delete transaction. Please try again."

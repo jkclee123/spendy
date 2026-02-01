@@ -49,6 +49,7 @@
     "create": "新增交易",
     "update": "更新交易",
     "selectLocation": "選擇附近位置",
+    "unnamedLocation": "未命名位置",
     "noTransactions": "尚未有交易記錄",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "例如：午餐",
@@ -74,10 +75,9 @@
     },
     "list": {
       "loading": "載入中...",
-      "noTransactionsTitle": "尚未有交易記錄",
-      "noTransactionsMessage": "當您開始記錄消費後，交易記錄會在此顯示。",
-      "noMatchingTitle": "找不到符合的交易記錄",
-      "noMatchingMessage": "請調整篩選條件以顯示更多交易記錄。",
+      "noTransactionsTitle": "尚未有記錄",
+      "noMatchingTitle": "找不到符合的記錄",
+      "noMatchingMessage": "請調整篩選條件以顯示更多記錄。",
       "deleteFailed": "刪除交易失敗。請再試一次。"
     }
   }
