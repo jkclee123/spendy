@@ -3,6 +3,7 @@
 import { useState, useCallback, FormEvent, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
 import { CategorySelect } from "./CategorySelect";
 import { useToast } from "@/components/ui/Toast";
@@ -154,7 +155,7 @@ export function TransactionDetail({
       await updateTransaction({
         transactionId: transaction._id,
         amount: parseFloat(amount),
-        category: category || undefined,
+        category: (category as Id<"userCategories">) || undefined,
       });
 
       setIsEditing(false);
@@ -329,6 +330,7 @@ export function TransactionDetail({
               {/* Category Field */}
               <CategorySelect
                 label="Category"
+                userId={transaction.userId}
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 disabled={isSubmitting}

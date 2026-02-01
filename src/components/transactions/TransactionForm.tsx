@@ -71,9 +71,8 @@ interface TransactionFormProps {
   latitude?: number;
   longitude?: number;
   initialAmount?: number;
-  initialCategory?: string;
+  initialCategory?: Id<"userCategories">;
   initialName?: string;
-  initialMerchant?: string;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -86,7 +85,6 @@ export function TransactionForm({
   initialAmount,
   initialCategory,
   initialName,
-  initialMerchant,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
@@ -105,11 +103,8 @@ export function TransactionForm({
   const [name, setName] = useState(
     initialData?.name ?? initialName ?? ""
   );
-  const [merchant, setMerchant] = useState(
-    initialData?.merchant ?? initialMerchant ?? ""
-  );
-  const [category, setCategory] = useState(
-    initialData?.category ?? initialCategory ?? ""
+  const [category, setCategory] = useState<Id<"userCategories"> | undefined>(
+    initialData?.category ?? initialCategory
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -122,14 +117,12 @@ export function TransactionForm({
     if (initialData) {
       setAmount(initialData.amount.toString());
       setName(initialData.name || "");
-      setMerchant(initialData.merchant || "");
-      setCategory(initialData.category || "");
+      setCategory(initialData.category);
       setCreatedAt(new Date(initialData.createdAt).toISOString().slice(0, 16));
     } else {
       setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
       setName(initialName ?? "");
-      setMerchant(initialMerchant ?? "");
-      setCategory(initialCategory ?? "");
+      setCategory(initialCategory);
       setCreatedAt("");
     }
     setErrors({});
@@ -138,7 +131,6 @@ export function TransactionForm({
     initialAmount,
     initialCategory,
     initialName,
-    initialMerchant,
   ]);
 
   // Pre-check "Remember transaction" if latitude and longitude exist in query params
@@ -210,7 +202,7 @@ export function TransactionForm({
     }
 
     // Category validation
-    if (!category.trim()) {
+    if (!category) {
       newErrors.category = "Category is required";
     }
 
@@ -248,14 +240,12 @@ export function TransactionForm({
           transactionId: Id<"transactions">;
           amount: number;
           name: string;
-          merchant: string;
-          category: string;
+          category?: Id<"userCategories">;
           createdAt?: number;
         } = {
           transactionId: initialData._id,
           amount: evaluatedAmount,
           name: name,
-          merchant: merchant,
           category: category,
         };
 
@@ -272,7 +262,6 @@ export function TransactionForm({
           userId: userId,
           amount: evaluatedAmount,
           name: name,
-          merchant: merchant,
           category: category,
         });
 
@@ -291,8 +280,7 @@ export function TransactionForm({
         // Reset form
         setAmount("");
         setName("");
-        setMerchant("");
-        setCategory("");
+        setCategory(undefined);
 
         showToast("Transaction added successfully", "success");
       }
@@ -514,9 +502,10 @@ export function TransactionForm({
       <CategorySelect
         label="Category"
         required
-        value={category}
+        userId={userId}
+        value={category as string}
         onChange={(e) => {
-          setCategory(e.target.value);
+          setCategory(e.target.value as Id<"userCategories">);
           if (errors.category) {
             setErrors((prev) => ({ ...prev, category: undefined }));
           }

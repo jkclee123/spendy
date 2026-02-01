@@ -36,7 +36,7 @@ export function TransactionList({
     api.transactions.listByUserPaginated,
     {
       userId,
-      category: filters.category,
+      category: filters.category as Id<"userCategories"> | undefined,
       startDate: filters.startDate,
       endDate: filters.endDate,
     },

@@ -201,7 +201,7 @@ export function TransactionCard({
           {/* Transaction details */}
           <div className="flex flex-col">
             <span className="font-medium text-gray-900">
-              {transaction.name || transaction.merchant || transaction.category || "Uncategorized"}
+              {transaction.name || transaction.category || "Uncategorized"}
             </span>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <time dateTime={new Date(transaction.createdAt).toISOString()}>

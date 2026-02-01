@@ -7,7 +7,6 @@ import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -75,16 +74,6 @@ export default function SettingsPage() {
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* API Token Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>API Token</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ApiTokenDisplay userId={user._id} apiToken={user.apiToken} />
         </CardContent>
       </Card>
 

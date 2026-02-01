@@ -87,6 +87,7 @@ export default function TransactionsPage() {
 
           {/* Filters */}
           <TransactionFilters
+            userId={user._id}
             filters={filters}
             onFiltersChange={handleFiltersChange}
             onClearFilters={handleClearFilters}

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
-import { DEFAULT_CATEGORIES } from "@/types";
 
 export interface TransactionFiltersState {
   category?: string;
@@ -11,6 +13,7 @@ export interface TransactionFiltersState {
 }
 
 interface TransactionFiltersProps {
+  userId: Id<"users">;
   filters: TransactionFiltersState;
   onFiltersChange: (filters: TransactionFiltersState) => void;
   onClearFilters: () => void;
@@ -21,11 +24,15 @@ interface TransactionFiltersProps {
  * Supports date range, category, and amount range filtering
  */
 export function TransactionFilters({
+  userId,
   filters,
   onFiltersChange,
   onClearFilters,
 }: TransactionFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Fetch user categories
+  const categories = useQuery(api.userCategories.listActiveByUser, { userId });
 
   // Count active filters
   const activeFilterCount = useMemo(() => {
@@ -147,9 +154,9 @@ export function TransactionFilters({
               className="min-h-[44px] w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="" className="text-gray-600">All categories</option>
-              {DEFAULT_CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+              {categories?.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.emoji} {category.en_name || category.zh_name}
                 </option>
               ))}
             </select>

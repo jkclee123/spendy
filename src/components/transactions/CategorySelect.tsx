@@ -2,21 +2,27 @@
 
 import { forwardRef, SelectHTMLAttributes } from "react";
 import { ChevronDown } from "lucide-react";
-import { DEFAULT_CATEGORIES } from "@/types";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 interface CategorySelectProps
   extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "children"> {
   error?: string;
   label?: string;
   required?: boolean;
+  userId: Id<"users">;
 }
 
 export const CategorySelect = forwardRef<
   HTMLSelectElement,
   CategorySelectProps
->(({ className = "", error, label, required, id, value, ...props }, ref) => {
+>(({ className = "", error, label, required, id, value, userId, ...props }, ref) => {
   const selectId = id || "category-select";
   const hasValue = value && value !== "";
+
+  // Fetch user categories
+  const categories = useQuery(api.userCategories.listActiveByUser, { userId });
 
   return (
     <div className="w-full">
@@ -54,9 +60,9 @@ export const CategorySelect = forwardRef<
           {...props}
         >
           <option value="">Select a category</option>
-          {DEFAULT_CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {category}
+          {categories?.map((category) => (
+            <option key={category._id} value={category._id}>
+              {category.emoji} {category.en_name || category.zh_name}
             </option>
           ))}
         </select>

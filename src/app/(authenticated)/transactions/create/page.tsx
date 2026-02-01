@@ -17,7 +17,6 @@ export default function NewTransactionPage() {
   const latitude = searchParams.get("latitude");
   const longitude = searchParams.get("longitude");
   const amount = searchParams.get("amount");
-  const merchant = searchParams.get("merchant");
   // isMobile is accepted but not used (reserved for future use)
   searchParams.get("isMobile");
 
@@ -83,14 +82,10 @@ export default function NewTransactionPage() {
       : nearbyLocation?.amount;
 
   // Category from locationHistory if available
-  const initialCategory = nearbyLocation?.category || "";
+  const initialCategory = nearbyLocation?.category;
 
   // Name from locationHistory if available
   const initialName = nearbyLocation?.name || "";
-
-  // Merchant from query params (if not empty)
-  const initialMerchant =
-    merchant && merchant.trim() !== "" ? merchant : undefined;
 
   return (
     <div className="space-y-4">
@@ -107,7 +102,6 @@ export default function NewTransactionPage() {
             initialAmount={initialAmount}
             initialCategory={initialCategory}
             initialName={initialName}
-            initialMerchant={initialMerchant}
             onSuccess={handleSuccess}
             onCancel={handleCancel}
           />
