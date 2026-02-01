@@ -35,7 +35,7 @@ export default function SettingsPage() {
     try {
       await setUserPreference(lang);
       showToast(tCommon("success"), "success");
-    } catch (error) {
+    } catch {
       showToast(tCommon("error"), "error");
     }
   };
