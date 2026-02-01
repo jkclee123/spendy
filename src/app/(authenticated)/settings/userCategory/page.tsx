@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQuery, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Plus, ChevronLeft } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
@@ -26,6 +27,8 @@ export default function CategorySettingsPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const { lang } = useLanguage();
+  const t = useTranslations("categories");
+  const tCommon = useTranslations("common");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<UserCategory | undefined>(undefined);
 
@@ -45,7 +48,7 @@ export default function CategorySettingsPage() {
   const createCategory = useMutation(api.userCategories.create);
   const updateCategory = useMutation(api.userCategories.update);
   const deactivateCategory = useMutation(api.userCategories.remove);
-  const hardDeleteCategory = useMutation(api.userCategories.hardDelete);
+  const activateCategory = useMutation(api.userCategories.activate);
   const reorderCategories = useMutation(api.userCategories.reorder);
 
   const activeCategories = categories?.filter((c) => c.isActive) || [];
@@ -93,15 +96,9 @@ export default function CategorySettingsPage() {
     await deactivateCategory({ categoryId: category._id });
   };
 
-  const handleHardDelete = async (category: UserCategory) => {
-    const confirmed = window.confirm(
-      lang === "en"
-        ? `Permanently delete ${getLocalizedName(category)}? This action cannot be undone.`
-        : `永久刪除 ${getLocalizedName(category)}？此操作無法復原。`
-    );
-    if (confirmed) {
-      await hardDeleteCategory({ categoryId: category._id });
-    }
+  const handleActivate = async (category: UserCategory) => {
+    // Activate the category - no confirmation needed
+    await activateCategory({ categoryId: category._id });
   };
 
   const handleReorder = async (newOrder: UserCategory[]) => {
@@ -138,15 +135,16 @@ export default function CategorySettingsPage() {
               <ChevronLeft className="h-6 w-6 text-gray-700 dark:text-gray-300" />
             </button>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {lang === "en" ? "Categories" : "類別"}
+              {t("title")}
             </h1>
           </div>
           <button
             onClick={handleOpenCreate}
             className="flex items-center gap-2 rounded-xl bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            aria-label={t("createNew")}
           >
-            <Plus className="h-5 w-5" />
-            <span>{lang === "en" ? "Create" : "新增"}</span>
+            <Plus className="h-5 w-5" aria-hidden="true" />
+            <span>{tCommon("create")}</span>
           </button>
         </div>
       </header>
@@ -154,22 +152,20 @@ export default function CategorySettingsPage() {
       {/* Content */}
       <main className="p-4 space-y-8">
         {/* Active categories */}
-        <section>
+        <section aria-labelledby="active-categories-heading">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {lang === "en" ? "Active Categories" : "啟用的類別"}
+            <h2 id="active-categories-heading" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t("activeCategories")}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {lang === "en"
-                ? "Drag handle to reorder, swipe left to deactivate"
-                : "拖動手柄以重新排序，向左滑動以停用"}
+              {t("dragHint")}
             </p>
           </div>
 
           {activeCategories.length === 0 ? (
             <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center">
               <p className="text-gray-500 dark:text-gray-400">
-                {lang === "en" ? "No active categories yet" : "尚未有啟用的類別"}
+                {t("noActiveCategories")}
               </p>
             </div>
           ) : (
@@ -179,12 +175,12 @@ export default function CategorySettingsPage() {
               renderItem={(category) => (
                 <SwipeableCard
                   onSwipeAction={() => handleDeactivate(category)}
-                  actionLabel={lang === "en" ? "Deactivate" : "停用"}
+                  actionLabel={t("deactivate")}
                   actionColor="yellow"
                   onClick={() => handleOpenEdit(category)}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{category.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">{category.emoji}</span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
                       {getLocalizedName(category)}
                     </span>
@@ -198,15 +194,13 @@ export default function CategorySettingsPage() {
 
         {/* Inactive categories */}
         {inactiveCategories.length > 0 && (
-          <section>
+          <section aria-labelledby="inactive-categories-heading">
             <div className="mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {lang === "en" ? "Inactive Categories" : "停用的類別"}
+              <h2 id="inactive-categories-heading" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {t("inactiveCategories")}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {lang === "en"
-                  ? "Tap to edit and reactivate, swipe left to delete"
-                  : "點擊以編輯並重新啟用，向左滑動以刪除"}
+                {t("inactiveHint")}
               </p>
             </div>
 
@@ -214,13 +208,13 @@ export default function CategorySettingsPage() {
               {inactiveCategories.map((category) => (
                 <SwipeableCard
                   key={category._id}
-                  onSwipeAction={() => handleHardDelete(category)}
-                  actionLabel={lang === "en" ? "Delete" : "刪除"}
-                  actionColor="red"
-                  onClick={() => handleOpenEdit(category)}
+                  onSwipeAction={() => handleActivate(category)}
+                  actionLabel={t("active")}
+                  actionColor="blue"
+                  onClick={() => handleActivate(category)}
                 >
                   <div className="flex items-center gap-3 opacity-60">
-                    <span className="text-2xl">{category.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">{category.emoji}</span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
                       {getLocalizedName(category)}
                     </span>

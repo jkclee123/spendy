@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Modal } from "@/components/ui/Modal";
 import type { UserCategory } from "@/types";
 
@@ -31,6 +32,8 @@ export function CategoryEditModal({
   currentLang,
   onSave,
 }: CategoryEditModalProps) {
+  const t = useTranslations("categories");
+  const tCommon = useTranslations("common");
   const [emoji, setEmoji] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -60,12 +63,12 @@ export function CategoryEditModal({
 
     // Validation
     if (!emoji.trim()) {
-      setError("Please select an emoji");
+      setError(t("selectEmoji"));
       return;
     }
 
     if (!name.trim()) {
-      setError("Please enter a category name");
+      setError(t("enterName"));
       return;
     }
 
@@ -78,7 +81,7 @@ export function CategoryEditModal({
       });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save category");
+      setError(err instanceof Error ? err.message : t("saveFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -92,14 +95,14 @@ export function CategoryEditModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditMode ? "Edit Category" : "Create Category"}
+      title={isEditMode ? t("editCategory") : t("createCategory")}
       size="md"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Emoji picker */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Emoji <span className="text-red-500">*</span>
+            {t("emoji")} <span className="text-red-500">*</span>
           </label>
           
           {/* Selected emoji display */}
@@ -109,19 +112,22 @@ export function CategoryEditModal({
               type="text"
               value={emoji}
               onChange={(e) => setEmoji(e.target.value)}
-              placeholder="Or type an emoji"
+              placeholder={t("orTypeEmoji")}
               className="flex-1 min-h-[44px] rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               maxLength={2}
+              aria-label={t("emoji")}
             />
           </div>
 
           {/* Emoji grid */}
-          <div className="grid grid-cols-8 gap-2">
+          <div className="grid grid-cols-8 gap-2" role="group" aria-label={t("emoji")}>
             {COMMON_EMOJIS.map((e) => (
               <button
                 key={e}
                 type="button"
                 onClick={() => handleEmojiClick(e)}
+                aria-pressed={emoji === e}
+                aria-label={`Select emoji ${e}`}
                 className={`
                   min-h-[44px] text-2xl rounded-lg transition-colors
                   hover:bg-gray-100 dark:hover:bg-gray-700
@@ -140,14 +146,14 @@ export function CategoryEditModal({
             htmlFor="category-name"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >
-            Name <span className="text-red-500">*</span>
+            {t("name")} <span className="text-red-500">*</span>
           </label>
           <input
             id="category-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder={currentLang === "en" ? "Category name" : "類別名稱"}
+            placeholder={t("categoryName")}
             className="w-full min-h-[44px] rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             maxLength={50}
             disabled={isLoading}
@@ -155,17 +161,15 @@ export function CategoryEditModal({
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             {isEditMode && category
               ? currentLang === "en"
-                ? "Editing English name"
-                : "修改中文名稱"
-              : currentLang === "en"
-                ? "Name will be saved in both languages"
-                : "名稱將儲存為兩種語言"}
+                ? t("editingEnglish")
+                : t.raw("editingChinese") || "修改中文名稱"
+              : t("savedBothLanguages")}
           </p>
         </div>
 
         {/* Error message */}
         {error && (
-          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">
+          <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400" role="alert">
             {error}
           </div>
         )}
@@ -178,14 +182,14 @@ export function CategoryEditModal({
             disabled={isLoading}
             className="flex-1 min-h-[44px] rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50"
           >
-            Cancel
+            {tCommon("cancel")}
           </button>
           <button
             type="submit"
             disabled={isLoading}
             className="flex-1 min-h-[44px] rounded-xl bg-blue-500 px-4 py-2 font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           >
-            {isLoading ? "Saving..." : isEditMode ? "Update" : "Create"}
+            {isLoading ? tCommon("saving") : isEditMode ? tCommon("update") : tCommon("create")}
           </button>
         </div>
       </form>

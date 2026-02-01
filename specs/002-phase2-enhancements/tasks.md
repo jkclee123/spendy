@@ -190,13 +190,13 @@
 
 **Purpose**: Final improvements, accessibility, and integration validation
 
-- [ ] T059 [P] Update TransactionCard.tsx to use SwipeableCard component (refactor from extracted logic)
-- [ ] T060 [P] Add missing dark: classes to any remaining components
-- [ ] T061 [P] Add missing i18n translations to any remaining text strings
-- [ ] T062 [P] Add accessibility attributes (ARIA labels, keyboard navigation) to new components
-- [ ] T063 [P] Run bun run lint to verify no linting errors
-- [ ] T064 [P] Run bun run build to verify production build succeeds
-- [ ] T065 [P] Verify quickstart.md testing checklist items
+- [X] T059 [P] Update TransactionCard.tsx to use SwipeableCard component (refactor from extracted logic)
+- [X] T060 [P] Add missing dark: classes to any remaining components
+- [X] T061 [P] Add missing i18n translations to any remaining text strings
+- [X] T062 [P] Add accessibility attributes (ARIA labels, keyboard navigation) to new components
+- [X] T063 [P] Run bun run lint to verify no linting errors
+- [X] T064 [P] Run bun run build to verify production build succeeds
+- [X] T065 [P] Verify quickstart.md testing checklist items
 
 ---
 

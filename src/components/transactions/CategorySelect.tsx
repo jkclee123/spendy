@@ -1,10 +1,12 @@
 "use client";
 
-import { forwardRef, SelectHTMLAttributes } from "react";
+import { forwardRef, SelectHTMLAttributes, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { useQuery } from "convex/react";
+import { useLocale } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import type { UserCategory } from "@/types";
 
 interface CategorySelectProps
   extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "children"> {
@@ -20,9 +22,19 @@ export const CategorySelect = forwardRef<
 >(({ className = "", error, label, required, id, value, userId, ...props }, ref) => {
   const selectId = id || "category-select";
   const hasValue = value && value !== "";
+  const locale = useLocale();
 
   // Fetch user categories
   const categories = useQuery(api.userCategories.listActiveByUser, { userId });
+
+  // Get localized category name based on current language
+  const getLocalizedName = useCallback((category: UserCategory): string => {
+    if (locale === "en") {
+      return category.en_name || category.zh_name || "Unnamed";
+    } else {
+      return category.zh_name || category.en_name || "未命名";
+    }
+  }, [locale]);
 
   return (
     <div className="w-full">
@@ -62,7 +74,7 @@ export const CategorySelect = forwardRef<
           <option value="">Select a category</option>
           {categories?.map((category) => (
             <option key={category._id} value={category._id}>
-              {category.emoji} {category.en_name || category.zh_name}
+              {category.emoji} {getLocalizedName(category)}
             </option>
           ))}
         </select>

@@ -127,7 +127,10 @@ export function DraggableList<T>({
   }, [disabled, draggedIndex, dragOverIndex, items, onReorder]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" role="list" aria-label="Reorderable list">
+      <p id="drag-instructions" className="sr-only">
+        Use arrow keys to reorder items when focused on the drag handle
+      </p>
       {items.map((item, index) => {
         const isDragging = draggedIndex === index;
         const isDragOver = dragOverIndex === index;
@@ -154,11 +157,31 @@ export function DraggableList<T>({
             {/* Drag handle - only this triggers dragging */}
             {!disabled && (
               <div
-                className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 touch-none"
+                role="button"
+                tabIndex={0}
+                aria-label={`Drag to reorder item ${index + 1}`}
+                aria-describedby="drag-instructions"
+                className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 touch-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
                 onMouseDown={() => handleHandleMouseDown(index)}
                 onTouchStart={(e) => handleHandleTouchStart(e, index)}
+                onKeyDown={(e) => {
+                  // Allow keyboard reordering with arrow keys
+                  if (e.key === "ArrowUp" && index > 0) {
+                    e.preventDefault();
+                    const newItems = [...items];
+                    const [removed] = newItems.splice(index, 1);
+                    newItems.splice(index - 1, 0, removed);
+                    onReorder(newItems);
+                  } else if (e.key === "ArrowDown" && index < items.length - 1) {
+                    e.preventDefault();
+                    const newItems = [...items];
+                    const [removed] = newItems.splice(index, 1);
+                    newItems.splice(index + 1, 0, removed);
+                    onReorder(newItems);
+                  }
+                }}
               >
-                <GripVertical className="h-5 w-5" />
+                <GripVertical className="h-5 w-5" aria-hidden="true" />
               </div>
             )}
 

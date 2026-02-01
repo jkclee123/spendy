@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "convex/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
+import type { UserCategory } from "@/types";
 import { Button } from "@/components/ui/Button";
 
 export interface TransactionFiltersState {
@@ -31,10 +32,20 @@ export function TransactionFilters({
   onClearFilters,
 }: TransactionFiltersProps) {
   const t = useTranslations("transactions.filters");
+  const locale = useLocale();
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Fetch user categories
   const categories = useQuery(api.userCategories.listActiveByUser, { userId });
+
+  // Get localized category name based on current language
+  const getLocalizedName = useCallback((category: UserCategory): string => {
+    if (locale === "en") {
+      return category.en_name || category.zh_name || "Unnamed";
+    } else {
+      return category.zh_name || category.en_name || "未命名";
+    }
+  }, [locale]);
 
   // Count active filters
   const activeFilterCount = useMemo(() => {
@@ -158,7 +169,7 @@ export function TransactionFilters({
               <option value="" className="text-gray-600 dark:text-gray-400">{t("allCategories")}</option>
               {categories?.map((category) => (
                 <option key={category._id} value={category._id}>
-                  {category.emoji} {category.en_name || category.zh_name}
+                  {category.emoji} {getLocalizedName(category)}
                 </option>
               ))}
             </select>

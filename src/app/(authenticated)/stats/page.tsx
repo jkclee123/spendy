@@ -5,7 +5,6 @@ import { useQuery } from "convex/react";
 import { useSession } from "next-auth/react";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { MonthlyHistogram } from "@/components/stats/MonthlyHistogram";
@@ -82,7 +81,7 @@ export default function StatsPage() {
   const periodButtonClass = (period: TimePeriod) =>
     `min-h-[44px] min-w-[44px] px-4 py-2 text-sm font-medium rounded-lg transition-colors ${timePeriod === period
       ? "bg-blue-500 text-white"
-      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
     }`;
 
   // Get period label for display
@@ -103,7 +102,7 @@ export default function StatsPage() {
     <div className="space-y-4">
       {/* Header with time period selector */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Stats</h2>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Stats</h2>
 
         {/* Time Period Selector */}
         <div className="flex gap-2">
@@ -151,9 +150,9 @@ export default function StatsPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
                 <svg
-                  className="h-8 w-8 text-gray-400"
+                  className="h-8 w-8 text-gray-400 dark:text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -166,20 +165,13 @@ export default function StatsPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-gray-900">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                 No data for {getPeriodLabel().toLowerCase()}
               </h3>
-              <p className="mt-2 max-w-sm text-sm text-gray-500">
+              <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
                 Charts and insights will appear here once you have some transaction data.
-                Try selecting a different time period or add transactions via the API.
+                Try selecting a different time period or add some transactions.
               </p>
-              <Button
-                variant="outline"
-                className="mt-4"
-                onClick={() => window.location.href = "/settings"}
-              >
-                View API Token
-              </Button>
             </div>
           </CardContent>
         </Card>

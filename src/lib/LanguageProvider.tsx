@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useLanguage } from "@/hooks/useLanguage";
 import { ToastProvider } from "@/components/ui/Toast";
@@ -17,12 +17,21 @@ interface LanguageProviderProps {
  */
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const { lang } = useLanguage();
-  
+
+  // Detect user's timezone from browser
+  const timeZone = useMemo(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return "UTC";
+    }
+  }, []);
+
   // Select messages based on detected language
   const messages = lang === "zh-HK" ? zhHKMessages : enMessages;
 
   return (
-    <NextIntlClientProvider locale={lang} messages={messages}>
+    <NextIntlClientProvider locale={lang} messages={messages} timeZone={timeZone}>
       <ToastProvider>{children}</ToastProvider>
     </NextIntlClientProvider>
   );

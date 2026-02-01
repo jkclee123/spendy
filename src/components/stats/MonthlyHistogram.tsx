@@ -64,10 +64,10 @@ export function MonthlyHistogram({ data, className = "" }: MonthlyHistogramProps
     if (active && payload && payload.length) {
       const item = payload[0].payload;
       return (
-        <div className="rounded-lg bg-white p-3 shadow-lg border border-gray-200">
-          <p className="font-medium text-gray-900">{item.fullLabel}</p>
-          <p className="text-sm text-gray-600">{formatCurrency(item.total)}</p>
-          <p className="text-xs text-gray-500">
+        <div className="rounded-lg bg-white dark:bg-gray-800 p-3 shadow-lg border border-gray-200 dark:border-gray-700">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{item.fullLabel}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{formatCurrency(item.total)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             {item.count} transaction{item.count !== 1 ? "s" : ""}
           </p>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 import { useQuery } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +10,7 @@ import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 export default function NewTransactionPage() {
+  const t = useTranslations();
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -54,9 +56,9 @@ export default function NewTransactionPage() {
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
           <span className="text-2xl">⚠️</span>
         </div>
-        <h3 className="text-lg font-medium text-gray-900">User not found</h3>
+        <h3 className="text-lg font-medium text-gray-900">{t("transactions.errors.userNotFound")}</h3>
         <p className="mt-2 max-w-sm text-sm text-gray-500">
-          Please try logging out and logging back in.
+          {t("common.error")}
         </p>
       </div>
     );
@@ -92,7 +94,7 @@ export default function NewTransactionPage() {
       {/* Add Transaction Form */}
       <Card>
         <CardHeader>
-          <CardTitle>New Transaction</CardTitle>
+          <CardTitle>{t("transactions.newTransaction")}</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionForm

@@ -45,9 +45,9 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
     if (active && payload && payload.length) {
       const item = payload[0].payload;
       return (
-        <div className="rounded-lg bg-white p-3 shadow-lg border border-gray-200">
-          <p className="font-medium text-gray-900">{item.category}</p>
-          <p className="text-sm text-gray-600">
+        <div className="rounded-lg bg-white dark:bg-gray-800 p-3 shadow-lg border border-gray-200 dark:border-gray-700">
+          <p className="font-medium text-gray-900 dark:text-gray-100">{item.category}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {formatCurrency(item.total)} ({item.count} transaction{item.count !== 1 ? "s" : ""})
           </p>
         </div>
@@ -60,8 +60,8 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
   const renderLegend = (value: string, entry: { payload?: Record<string, unknown> }) => {
     const total = (entry.payload?.total as number) ?? 0;
     return (
-      <span className="text-sm text-gray-700">
-        {value} <span className="text-gray-500">({formatCurrency(total)})</span>
+      <span className="text-sm text-gray-700 dark:text-gray-300">
+        {value} <span className="text-gray-500 dark:text-gray-400">({formatCurrency(total)})</span>
       </span>
     );
   };
@@ -110,8 +110,8 @@ export function CategoryPieChart({ data, className = "" }: CategoryPieChartProps
 
       {/* Summary */}
       <div className="mt-4 text-center">
-        <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalAmount)}</p>
-        <p className="text-sm text-gray-500">Total spending</p>
+        <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalAmount)}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Total spending</p>
       </div>
     </div>
   );
