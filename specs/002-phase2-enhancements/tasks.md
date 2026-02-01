@@ -147,8 +147,8 @@
 
 ### Implementation for User Story 5
 
-- [ ] T051 [US5] Create src/components/settings/LocationHistoryEditModal.tsx - location history edit popup with name, amount, category fields
-- [ ] T052 [US5] Create src/app/(authenticated)/settings/locationHistories/page.tsx - location history settings page with list, swipe-to-delete, edit functionality
+- [X] T051 [US5] Create src/components/settings/LocationHistoryEditModal.tsx - location history edit popup with name, amount, category fields
+- [X] T052 [US5] Create src/app/(authenticated)/settings/locationHistories/page.tsx - location history settings page with list, swipe-to-delete, edit functionality
 
 **Checkpoint**: User Story 5 complete - users can view, edit, and delete location histories
 

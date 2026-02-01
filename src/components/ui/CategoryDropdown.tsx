@@ -28,7 +28,7 @@ export const CategoryDropdown = forwardRef<HTMLSelectElement, CategoryDropdownPr
       categories,
       value,
       onChange,
-      placeholder = "Select a category",
+      placeholder,
       className = "",
       error,
       label,

@@ -51,7 +51,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             </svg>
           </div>
           {label && (
-            <span className="text-sm font-medium text-gray-700 select-none">{label}</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 select-none">{label}</span>
           )}
         </label>
         {error && <p className="mt-1.5 text-sm text-red-500">{error}</p>}

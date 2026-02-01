@@ -582,6 +582,7 @@ export function TransactionForm({
       {/* Category Field */}
       <CategoryDropdown
         label={t("category")}
+        placeholder={t("selectCategory")}
         required
         categories={categories || []}
         value={category}

@@ -46,7 +46,7 @@
     "amount": "Amount",
     "category": "Category",
     "name": "Name",
-    "rememberTransaction": "Remember transaction",
+    "rememberTransaction": "Frequently used transaction",
     "create": "Create Transaction",
     "update": "Update Transaction",
     "selectLocation": "Select nearby location",
