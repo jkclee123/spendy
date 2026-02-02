@@ -63,6 +63,21 @@ function evaluateFormula(formula: string): number | null {
   }
 }
 
+/**
+ * Format a YYYY-MM-DDTHH:mm string into dd/MM/yyyy HH:mm for display
+ */
+function formatDisplayDate(dateStr: string): string {
+  if (!dateStr) return "";
+  try {
+    const [datePart, timePart] = dateStr.split("T");
+    const [year, month, day] = datePart.split("-");
+    const [hours, minutes] = timePart.split(":");
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  } catch {
+    return dateStr;
+  }
+}
+
 interface FormErrors {
   amount?: string;
   name?: string;
@@ -367,7 +382,17 @@ export function TransactionForm({
 
       // Close browser tab if on mobile
       if (isMobile && !isEditMode) {
+        // Try to close the window/tab
         window.close();
+
+        // Fallback: if window.close() fails (common in mobile browsers),
+        // navigate back to the previous page (the app that opened this form)
+        setTimeout(() => {
+          if (!window.closed) {
+            // Go back 2 steps to return to the app (skipping the form page)
+            window.history.go(-2);
+          }
+        }, 100);
       }
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -651,33 +676,36 @@ export function TransactionForm({
 
       {/* Created At Field - Only in edit mode */}
       {isEditMode && (
-        <div className="w-full overflow-hidden">
+        <div className="w-full">
           <label
             htmlFor="createdAt"
             className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
           >
             {t("dateTime")}
           </label>
-          <input
-            type="datetime-local"
-            id="createdAt"
-            value={createdAt}
-            onChange={(e) => setCreatedAt(e.target.value)}
-            disabled={isSubmitting}
-            className={`
-              box-border w-full max-w-full min-w-0 rounded-xl border bg-white py-3 px-3 text-gray-900
-              dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
-              transition-colors duration-200
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-              disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
-              border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600
-              [color-scheme:light] dark:[color-scheme:dark]
-              [-webkit-appearance:none] [appearance:none]
-              [&::-webkit-datetime-edit]:min-w-0
-              [&::-webkit-datetime-edit-fields-wrapper]:min-w-0 [&::-webkit-datetime-edit-fields-wrapper]:overflow-hidden
-            `}
-            style={{ fontSize: "16px" }}
-          />
+          <div className="relative w-full">
+            {/* Display formatted date */}
+            <div
+              className={`
+                w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+                dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+                border-gray-300 dark:border-gray-700
+                flex items-center
+              `}
+            >
+              {formatDisplayDate(createdAt)}
+            </div>
+            {/* Hidden native picker overlay */}
+            <input
+              type="datetime-local"
+              id="createdAt"
+              value={createdAt}
+              onChange={(e) => setCreatedAt(e.target.value)}
+              disabled={isSubmitting}
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0 [color-scheme:light] dark:[color-scheme:dark]"
+              style={{ fontSize: "16px" }}
+            />
+          </div>
         </div>
       )}
 

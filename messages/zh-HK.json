@@ -38,7 +38,7 @@
       "zhTW": "繁體中文"
     },
     "categorySettings": "類別設定",
-    "locationHistorySettings": "位置記錄",
+    "locationHistorySettings": "常用交易",
     "signOut": "登出"
   },
   "categories": {
@@ -49,8 +49,8 @@
     "editCategory": "編輯類別",
     "createCategory": "新增類別",
     "name": "名稱",
-    "emoji": "圖",
-    "orTypeEmoji": "或輸入表情符號",
+    "emoji": "圖示",
+    "orTypeEmoji": "輸入表情符號",
     "categoryName": "類別名稱",
     "swipeToDeactivate": "滑動以停用",
     "dragToReorder": "拖曳以排序",
@@ -69,10 +69,10 @@
     "deactivate": "停用"
   },
   "locations": {
-    "title": "位置記錄",
-    "editLocation": "編輯位置",
+    "title": "常用交易",
+    "editLocation": "編輯",
     "swipeToDelete": "滑動以刪除",
-    "noLocations": "尚未儲存位置"
+    "noLocations": "尚未儲存常用交易"
   },
   "transactions": {
     "title": "交易記錄",

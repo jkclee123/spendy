@@ -143,19 +143,6 @@ export function LocationHistoryEditModal({
           disabled={isLoading}
         />
 
-        {/* Coordinates display (read-only) */}
-        <div className="rounded-lg bg-gray-50 dark:bg-gray-800/50 p-3">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {currentLang === "en" ? "Coordinates" : "座標"}:{" "}
-            <span className="font-mono text-gray-700 dark:text-gray-300">
-              {locationHistory.latitude.toFixed(6)}, {locationHistory.longitude.toFixed(6)}
-            </span>
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {currentLang === "en" ? "Visits" : "造訪次數"}: {locationHistory.count}
-          </p>
-        </div>
-
         {/* Error message */}
         {error && (
           <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400">

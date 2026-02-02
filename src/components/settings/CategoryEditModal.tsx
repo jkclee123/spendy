@@ -13,11 +13,6 @@ interface CategoryEditModalProps {
   onSave: (data: { emoji: string; name: string }) => Promise<void>;
 }
 
-const COMMON_EMOJIS = [
-  "🍗", "🚃", "🛒", "🏠", "💊", "🎬", "👕", "✈️",
-  "☕", "🍕", "🚗", "🏋️", "📚", "💻", "🎮", "🎵",
-  "🍜", "🍺", "🚌", "🏥", "🎓", "💼", "🎨", "🌮",
-];
 
 /**
  * Modal for creating/editing categories
@@ -87,10 +82,6 @@ export function CategoryEditModal({
     }
   };
 
-  const handleEmojiClick = (selectedEmoji: string) => {
-    setEmoji(selectedEmoji);
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -118,26 +109,6 @@ export function CategoryEditModal({
               aria-label={t("emoji")}
             />
           </div>
-
-          {/* Emoji grid */}
-          <div className="grid grid-cols-8 gap-2" role="group" aria-label={t("emoji")}>
-            {COMMON_EMOJIS.map((e) => (
-              <button
-                key={e}
-                type="button"
-                onClick={() => handleEmojiClick(e)}
-                aria-pressed={emoji === e}
-                aria-label={`Select emoji ${e}`}
-                className={`
-                  min-h-[44px] text-2xl rounded-lg transition-colors
-                  hover:bg-gray-100 dark:hover:bg-gray-700
-                  ${emoji === e ? "bg-blue-100 dark:bg-blue-900 ring-2 ring-blue-500" : ""}
-                `}
-              >
-                {e}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Name input */}
@@ -158,13 +129,6 @@ export function CategoryEditModal({
             maxLength={50}
             disabled={isLoading}
           />
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {isEditMode && category
-              ? currentLang === "en"
-                ? t("editingEnglish")
-                : t.raw("editingChinese") || "修改中文名稱"
-              : t("savedBothLanguages")}
-          </p>
         </div>
 
         {/* Error message */}

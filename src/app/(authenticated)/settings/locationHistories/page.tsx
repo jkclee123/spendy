@@ -122,7 +122,7 @@ export default function LocationHistoriesSettingsPage() {
               <ChevronLeft className="h-6 w-6 text-gray-700 dark:text-gray-300" />
             </button>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {lang === "en" ? "Location History" : "位置記錄"}
+              {lang === "en" ? "Location History" : "常用交易"}
             </h1>
           </div>
         </div>
@@ -181,10 +181,6 @@ export default function LocationHistoriesSettingsPage() {
                           {category && (
                             <span>{getLocalizedCategoryName(category)}</span>
                           )}
-                          <span>•</span>
-                          <span>
-                            {lang === "en" ? `${location.count} visits` : `${location.count} 次造訪`}
-                          </span>
                         </div>
                       </div>
                     </div>
