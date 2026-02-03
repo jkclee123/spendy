@@ -9,11 +9,9 @@ import type { TransactionWithCategory } from "@/types";
 import { TransactionCard } from "./TransactionCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useToast } from "@/components/ui/Toast";
-import type { TransactionFiltersState } from "./TransactionFilters";
 
 interface TransactionListProps {
   userId: Id<"users">;
-  filters: TransactionFiltersState;
   onTransactionClick?: (transaction: TransactionWithCategory) => void;
 }
 
@@ -25,7 +23,6 @@ const PAGE_SIZE = 20;
  */
 export function TransactionList({
   userId,
-  filters,
   onTransactionClick,
 }: TransactionListProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -36,12 +33,7 @@ export function TransactionList({
   // Use paginated query with filters
   const { results, status, loadMore } = usePaginatedQuery(
     api.transactions.listByUserPaginated,
-    {
-      userId,
-      category: filters.category as Id<"userCategories"> | undefined,
-      startDate: filters.startDate,
-      endDate: filters.endDate,
-    },
+    { userId },
     { initialNumItems: PAGE_SIZE }
   );
 
@@ -108,7 +100,7 @@ export function TransactionList({
 
   // Empty state
   if (results.length === 0) {
-    return <EmptyState hasFilters={hasActiveFilters(filters)} t={t} />;
+    return <EmptyState t={t} />;
   }
 
   return (
@@ -136,33 +128,17 @@ export function TransactionList({
 }
 
 /**
- * Check if any filters are active
+ * Empty state component when no transactions exist
  */
-function hasActiveFilters(filters: TransactionFiltersState): boolean {
-  return !!(
-    filters.category ||
-    filters.startDate ||
-    filters.endDate
-  );
-}
-
-/**
- * Empty state component
- */
-function EmptyState({ hasFilters, t }: { hasFilters: boolean; t: (key: string) => string }) {
+function EmptyState({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-        <span className="text-2xl">{hasFilters ? "🔍" : "📝"}</span>
+        <span className="text-2xl">📝</span>
       </div>
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-        {hasFilters ? t("list.noMatchingTitle") : t("list.noTransactionsTitle")}
+        {t("list.noTransactionsTitle")}
       </h3>
-      <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
-        {hasFilters
-          ? t("list.noMatchingMessage")
-          : ""}
-      </p>
     </div>
   );
 }

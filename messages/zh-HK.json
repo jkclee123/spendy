@@ -63,7 +63,7 @@
     "activeCategories": "啟用的類別",
     "inactiveCategories": "停用的類別",
     "dragHint": "拖動手柄以重新排序，向左滑動以停用",
-    "inactiveHint": "點擊以編輯並重新啟用，向左滑動以刪除",
+    "inactiveHint": "點擊或向左滑動或重新啟用",
     "noActiveCategories": "尚未有啟用的類別",
     "confirmDelete": "永久刪除 {name}？此操作無法復原。",
     "deactivate": "停用"
@@ -102,14 +102,6 @@
     "creating": "建立中...",
     "saving": "儲存中...",
     "selectCategory": "選擇類別",
-    "filters": {
-      "title": "篩選",
-      "category": "類別",
-      "from": "起始日期",
-      "to": "結束日期",
-      "allCategories": "所有類別",
-      "clearAll": "清除所有篩選"
-    },
     "errors": {
       "amountRequired": "金額為必填",
       "amountInvalid": "金額必須是有效的數字或算式",

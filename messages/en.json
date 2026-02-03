@@ -63,7 +63,7 @@
     "activeCategories": "Active Categories",
     "inactiveCategories": "Inactive Categories",
     "dragHint": "Drag handle to reorder, swipe left to deactivate",
-    "inactiveHint": "Tap to edit and reactivate, swipe left to delete",
+    "inactiveHint": "Tap or swipe left to activate",
     "noActiveCategories": "No active categories yet",
     "confirmDelete": "Permanently delete {name}? This action cannot be undone.",
     "deactivate": "Deactivate"
@@ -102,14 +102,6 @@
     "creating": "Creating...",
     "saving": "Saving...",
     "selectCategory": "Select a category",
-    "filters": {
-      "title": "Filters",
-      "category": "Category",
-      "from": "From",
-      "to": "To",
-      "allCategories": "All categories",
-      "clearAll": "Clear all filters"
-    },
     "errors": {
       "amountRequired": "Amount is required",
       "amountInvalid": "Amount must be a valid number or formula",

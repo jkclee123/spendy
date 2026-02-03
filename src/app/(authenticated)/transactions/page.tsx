@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useQuery } from "convex/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -10,17 +10,12 @@ import { api } from "../../../../convex/_generated/api";
 import { Card, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { TransactionList } from "@/components/transactions/TransactionList";
-import {
-  TransactionFilters,
-  TransactionFiltersState,
-} from "@/components/transactions/TransactionFilters";
 import type { Transaction } from "@/types";
 
 export default function TransactionsPage() {
   const t = useTranslations("transactions");
   const { data: session } = useSession();
   const router = useRouter();
-  const [filters, setFilters] = useState<TransactionFiltersState>({});
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -28,16 +23,7 @@ export default function TransactionsPage() {
     session?.user?.email ? { email: session.user.email } : "skip"
   );
 
-  const handleFiltersChange = useCallback(
-    (newFilters: TransactionFiltersState) => {
-      setFilters(newFilters);
-    },
-    []
-  );
 
-  const handleClearFilters = useCallback(() => {
-    setFilters({});
-  }, []);
 
   const handleTransactionClick = useCallback((transaction: Transaction) => {
     router.push(`/transactions/update/${transaction._id}`);
@@ -87,20 +73,12 @@ export default function TransactionsPage() {
             </Link>
           </div>
 
-          {/* Filters */}
-          <TransactionFilters
-            userId={user._id}
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            onClearFilters={handleClearFilters}
-          />
 
           {/* Transaction List */}
           <Card padding="sm">
             <CardContent className="px-1">
               <TransactionList
                 userId={user._id}
-                filters={filters}
                 onTransactionClick={handleTransactionClick}
               />
             </CardContent>

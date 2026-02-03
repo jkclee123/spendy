@@ -40,7 +40,7 @@ export default function LocationHistoriesSettingsPage() {
 
   // Query categories for the dropdown
   const categories = useQuery(
-    api.userCategories.listActiveByUser,
+    api.userCategories.listByUser,
     user?._id ? { userId: user._id } : "skip"
   );
 
@@ -203,7 +203,9 @@ export default function LocationHistoriesSettingsPage() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           locationHistory={editingLocation}
-          categories={categories || []}
+          categories={(categories || []).filter(
+            (c) => c.isActive || c._id === editingLocation.category
+          )}
           currentLang={lang}
           onSave={handleSave}
         />

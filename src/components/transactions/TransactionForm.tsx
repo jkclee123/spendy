@@ -223,14 +223,7 @@ export function TransactionForm({
     initialName,
   ]);
 
-  // Pre-check "Remember transaction" if latitude and longitude exist in query params
-  useEffect(() => {
-    if (latitude !== undefined && longitude !== undefined) {
-      setRememberTransaction(true);
-    } else {
-      setRememberTransaction(false);
-    }
-  }, [latitude, longitude]);
+
 
   // Get the base mutation hook (following rules of hooks - must be at top level)
   const createTransactionBase = useMutation(api.transactions.createFromWeb);
@@ -714,6 +707,7 @@ export function TransactionForm({
         <div className="pt-2">
           <Checkbox
             id="rememberTransaction"
+            checked={rememberTransaction}
             onChange={(e) => setRememberTransaction(e.target.checked)}
             label={t("rememberTransaction")}
             disabled={isSubmitting}
