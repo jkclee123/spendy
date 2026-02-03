@@ -25,7 +25,6 @@
     "recentSpending": "Recent Spending",
     "totalSpending": "Total spending",
     "noData": "No data for {period}",
-    "noDataMessage": "Charts and insights will appear here once you have some transaction data.",
     "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}"
   },
   "settings": {

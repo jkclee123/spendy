@@ -148,12 +148,7 @@ export default function LocationHistoriesSettingsPage() {
           <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center">
             <MapPin className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
-              {lang === "en" ? "No saved locations yet" : "尚未儲存位置"}
-            </p>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-              {lang === "en"
-                ? "Locations are saved when you create transactions with \"Remember transaction\" enabled"
-                : "啟用「記住此交易」建立交易時會自動儲存位置"}
+              {lang === "en" ? "No saved locations yet" : "尚未儲存常用交易"}
             </p>
           </div>
         ) : (

@@ -107,7 +107,6 @@ export default function SettingsPage() {
           <LanguageSelect
             value={userPreference}
             onChange={handleLanguageChange}
-            label={t("language")}
           />
         </CardContent>
       </Card>
