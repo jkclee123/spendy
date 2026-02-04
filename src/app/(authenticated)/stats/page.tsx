@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "convex/react";
 import { useSession } from "next-auth/react";
 import { api } from "../../../../convex/_generated/api";
+import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
@@ -70,9 +71,8 @@ export default function StatsPage() {
       {isLoading && (
         <Card>
           <CardContent>
-            <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+            <div className="flex min-h-[50vh] items-center justify-center">
               <LoadingSpinner size="lg" />
-              <p className="text-sm text-gray-500">Loading...</p>
             </div>
           </CardContent>
         </Card>

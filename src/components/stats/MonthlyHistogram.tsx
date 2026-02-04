@@ -16,6 +16,8 @@ import { api } from "../../../convex/_generated/api";
 import type { MonthlyAggregation } from "@/types";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "next-intl";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 interface MonthlyHistogramProps {
   userId: Id<"users">;
@@ -173,7 +175,7 @@ export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: Mon
       {/* Loading State */}
       {isLoading && (
         <div className="flex h-64 items-center justify-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+          <LoadingSpinner size="lg" />
         </div>
       )}
 

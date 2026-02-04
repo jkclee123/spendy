@@ -6,7 +6,6 @@
     "create": "Create",
     "edit": "Edit",
     "update": "Update",
-    "loading": "Loading...",
     "saving": "Saving...",
     "deleting": "Deleting...",
     "error": "Error",
@@ -140,7 +139,6 @@
     "deleteConfirmTitle": "Delete Transaction?",
     "deleteConfirmMessage": "This action cannot be undone. The transaction of {amount} will be permanently removed.",
     "list": {
-      "loading": "Loading...",
       "noTransactionsTitle": "No transactions yet",
       "noMatchingTitle": "No matching transactions",
       "noMatchingMessage": "Try adjusting your filters to see more transactions.",

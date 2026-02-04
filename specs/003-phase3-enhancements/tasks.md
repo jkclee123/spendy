@@ -194,6 +194,8 @@ This is a **Next.js web application** with unified structure:
 
 **Checkpoint**: Histogram category filtering complete - users can analyze spending trends by specific category
 
+**Note (2026-02-04)**: Phase 7 implementation verified complete. All "Loading..." strings across the project have been updated to use i18n translations (`common.loading`) for better internationalization support.
+
 ---
 
 ## Phase 8: User Story 6 - Stats Page Internationalization Support (Priority: P3)

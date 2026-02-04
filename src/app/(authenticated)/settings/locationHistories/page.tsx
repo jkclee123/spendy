@@ -6,8 +6,10 @@ import { useQuery, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, MapPin } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
+import { useTranslations } from "next-intl";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
 import { LocationHistoryEditModal } from "@/components/settings/LocationHistoryEditModal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { LocationHistory, UserCategory } from "@/types";
 import type { Id } from "../../../../../convex/_generated/dataModel";
@@ -110,8 +112,19 @@ export default function LocationHistoriesSettingsPage() {
     });
   };
 
+  // Loading state while fetching user or locationHistories
+  const isLoading = user === undefined || locationHistories === undefined;
+
   if (!session) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
   }
 
   return (
@@ -144,13 +157,7 @@ export default function LocationHistoriesSettingsPage() {
         </p>
 
         {/* Location list */}
-        {!locationHistories ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500 dark:text-gray-400">
-              {lang === "en" ? "Loading..." : "載入中..."}
-            </div>
-          </div>
-        ) : locationHistories.length === 0 ? (
+        {locationHistories.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center">
             <MapPin className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
             <p className="text-gray-500 dark:text-gray-400">

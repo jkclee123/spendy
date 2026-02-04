@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { Plus, ChevronLeft } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CategoryEditModal } from "@/components/settings/CategoryEditModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { UserCategory } from "@/types";
@@ -105,8 +106,19 @@ export default function CategorySettingsPage() {
     }
   };
 
+  // Loading state while fetching user or categories
+  const isLoading = user === undefined || categories === undefined;
+
   if (!session) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
   }
 
   return (

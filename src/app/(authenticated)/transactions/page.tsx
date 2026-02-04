@@ -14,6 +14,7 @@ import type { Transaction } from "@/types";
 
 export default function TransactionsPage() {
   const t = useTranslations("transactions");
+  const tCommon = useTranslations("common");
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -38,7 +39,6 @@ export default function TransactionsPage() {
       {isLoading && (
         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
           <LoadingSpinner size="lg" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
         </div>
       )}
 

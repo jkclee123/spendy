@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 interface LoadingSpinnerProps {
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -13,17 +17,14 @@ export function LoadingSpinner({
   size = "md",
   className = "",
 }: LoadingSpinnerProps) {
+  const t = useTranslations("common");
   return (
     <div
-      className={`
-        animate-spin rounded-full border-gray-300 dark:border-gray-600 border-t-blue-500
-        ${sizeStyles[size]}
-        ${className}
-      `}
+      className={`animate-spin rounded-full border-gray-300 dark:border-gray-600 border-t-blue-500 dark:border-t-blue-500 ${sizeStyles[size]} ${className}`}
       role="status"
-      aria-label="Loading"
+      aria-label={t("loading")}
     >
-      <span className="sr-only">Loading...</span>
+      <span className="sr-only">{t("loading")}</span>
     </div>
   );
 }
@@ -32,11 +33,12 @@ interface LoadingPageProps {
   message?: string;
 }
 
-export function LoadingPage({ message = "Loading..." }: LoadingPageProps) {
+export function LoadingPage({ message }: LoadingPageProps) {
+  const t = useTranslations("common");
   return (
     <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
       <LoadingSpinner size="lg" />
-      <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{message ?? t("loading")}</p>
     </div>
   );
 }

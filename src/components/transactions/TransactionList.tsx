@@ -91,9 +91,8 @@ export function TransactionList({
   // Loading state for initial load
   if (status === "LoadingFirstPage") {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <LoadingSpinner size="lg" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">{t("list.loading")}</p>
       </div>
     );
   }

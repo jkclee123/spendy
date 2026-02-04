@@ -8,6 +8,8 @@ import { api } from "../../../convex/_generated/api";
 import type { CategoryAggregation } from "@/types";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslations } from "next-intl";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 interface CategoryPieChartProps {
   userId: Id<"users">;
@@ -35,6 +37,7 @@ const COLORS = [
  */
 export function CategoryPieChart({ userId, className = "" }: CategoryPieChartProps) {
   const { lang } = useLanguage();
+  const t = useTranslations("common");
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth(); // 0-indexed
@@ -249,7 +252,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
       {/* Loading State */}
       {isLoading && (
         <div className="flex h-64 items-center justify-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+          <LoadingSpinner size="lg" />
         </div>
       )}
 
