@@ -28,9 +28,9 @@ This is a **Next.js web application** with unified structure:
 
 **Purpose**: Project initialization and schema preparation
 
-- [ ] T001 Review existing project structure and verify all dependencies are installed
-- [ ] T002 [P] Run ESLint and TypeScript type check to ensure clean baseline
-- [ ] T003 [P] Create test directory structure: `tests/contract/`, `tests/integration/`, `tests/unit/`
+- [X] T001 Review existing project structure and verify all dependencies are installed
+- [X] T002 [P] Run ESLint and TypeScript type check to ensure clean baseline
+- [X] T003 [P] Create test directory structure: `tests/contract/`, `tests/integration/`, `tests/unit/`
 
 ---
 
@@ -42,27 +42,27 @@ This is a **Next.js web application** with unified structure:
 
 ### Schema Changes
 
-- [ ] T004 Update Convex schema in `convex/schema.ts` to add `apiToken: v.string()` field to users table
-- [ ] T005 Update Convex schema in `convex/schema.ts` to add `.index("by_apiToken", ["apiToken"])` to users table
-- [ ] T006 Deploy Convex schema changes with `convex deploy` and verify in dashboard
+- [X] T004 Update Convex schema in `convex/schema.ts` to add `apiToken: v.string()` field to users table
+- [X] T005 Update Convex schema in `convex/schema.ts` to add `.index("by_apiToken", ["apiToken"])` to users table
+- [ ] T006 Deploy Convex schema changes with `convex deploy` and verify in dashboard (MANUAL STEP - requires Convex CLI)
 
 ### Convex Backend - Core Mutations/Queries
 
-- [ ] T007 [P] Add `generateApiToken()` helper function in `convex/users.ts` using `crypto.randomUUID()` or `crypto.randomBytes(32).toString('base64url')` - this single utility will be used by both initial creation and regeneration mutations
-- [ ] T008 [P] Add `getByApiToken` query in `convex/users.ts` with args `{ apiToken: v.string() }`
-- [ ] T009 [P] Add `regenerateApiToken` mutation in `convex/users.ts` with args `{ userId: v.id("users") }` - calls `generateApiToken()` helper to get new token
-- [ ] T010 [P] Update `create` mutation in `convex/users.ts` to call `generateApiToken()` helper when initially creating user (instead of inline UUID generation)
-- [ ] T011 [P] Add `findByName` query in `convex/userCategories.ts` with args `{ userId: v.id("users"), name: v.string() }` for case-sensitive exact match on `en_name`
-- [ ] T012 [P] Add `createFromApi` mutation in `convex/transactions.ts` with args `{ userId, amount, categoryId, name? }`
+- [X] T007 [P] Add `generateApiToken()` helper function in `convex/users.ts` using `crypto.randomUUID()` or `crypto.randomBytes(32).toString('base64url')` - this single utility will be used by both initial creation and regeneration mutations
+- [X] T008 [P] Add `getByApiToken` query in `convex/users.ts` with args `{ apiToken: v.string() }`
+- [X] T009 [P] Add `regenerateApiToken` mutation in `convex/users.ts` with args `{ userId: v.id("users") }` - calls `generateApiToken()` helper to get new token
+- [X] T010 [P] Update `create` mutation in `convex/users.ts` to call `generateApiToken()` helper when initially creating user (instead of inline UUID generation)
+- [X] T011 [P] Add `findByName` query in `convex/userCategories.ts` with args `{ userId: v.id("users"), name: v.string() }` for case-insensitive match on both `en_name` and `zh_name`
+- [X] T012 [P] Add `createFromApi` mutation in `convex/transactions.ts` with args `{ userId, amount, categoryId, name? }`
 
 ### Convex Backend - Update Existing Queries
 
-- [ ] T013 [P] Update all userCategory queries in `convex/userCategories.ts` to use `by_userId` index with `.order("asc")` instead of `by_userId_order`
-- [ ] T014 [P] Update category list queries to order by `createdAt` ascending (oldest first)
+- [X] T013 [P] Update all userCategory queries in `convex/userCategories.ts` to use `by_userId` index with `.order("asc")` instead of `by_userId_order`
+- [X] T014 [P] Update category list queries to order by `createdAt` ascending (oldest first)
 
 ### Type Definitions
 
-- [ ] T015 [P] Add API request/response types in `src/types/index.ts`: `CreateTransactionRequest`, `CreateTransactionResponse`, `ErrorResponse`
+- [X] T015 [P] Add API request/response types in `src/types/index.ts`: `CreateTransactionRequest`, `CreateTransactionResponse`, `ErrorResponse`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

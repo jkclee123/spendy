@@ -39,6 +39,51 @@ export const createFromWeb = mutation({
 });
 
 /**
+ * Create a transaction from the external API
+ * Used by the API endpoint to create transactions programmatically
+ */
+export const createFromApi = mutation({
+  args: {
+    userId: v.id("users"),
+    amount: v.number(),
+    categoryId: v.id("userCategories"),
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Validate amount
+    if (args.amount <= 0) {
+      throw new Error("amount must be a positive number");
+    }
+
+    // Verify user exists
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Verify category exists and belongs to the user
+    const category = await ctx.db.get(args.categoryId);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+    if (category.userId !== args.userId) {
+      throw new Error("Category does not belong to user");
+    }
+
+    // Create the transaction
+    const transactionId = await ctx.db.insert("transactions", {
+      userId: args.userId,
+      name: args.name,
+      amount: args.amount,
+      category: args.categoryId,
+      createdAt: Date.now(),
+    });
+
+    return transactionId;
+  },
+});
+
+/**
  * Get a single transaction by ID
  */
 export const getById = query({

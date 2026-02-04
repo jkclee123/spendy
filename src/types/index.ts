@@ -97,3 +97,21 @@ export interface MonthlyAggregation {
   total: number;
   count: number;
 }
+
+/**
+ * Request payload for creating a transaction via external API
+ */
+export interface CreateTransactionRequest {
+  apiToken: string;
+  amount: number;
+  category: string;
+  name?: string;
+}
+
+/**
+ * Success response for transaction creation via external API
+ */
+export interface CreateTransactionResponse {
+  success: true;
+  transactionId: string;
+}
