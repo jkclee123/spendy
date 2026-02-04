@@ -219,6 +219,8 @@ Located in `.cursor/rules/specify-rules.mdc`:
 - **API token auth**: External API uses token-based auth (not session-based)
 
 ## Active Technologies
+- TypeScript 5.4+ with strict mode enabled + Next.js 14.2+ (App Router), React 18.3+, Convex 1.31+ (serverless database + mutations), next-auth 5.0+ (OAuth), next-intl 4.8+ (i18n), Tailwind CSS 3.4+, recharts 3.7+ (charts), lucide-react (icons) (003-phase3-enhancements)
+- Convex serverless database with real-time subscriptions (003-phase3-enhancements)
 
 - TypeScript 5.4+, Node.js 18+ + Next.js 14.2+, React 18.3+, Convex 1.31+, next-intl 3.x (new), Tailwind CSS 3.4+ (002-phase2-enhancements)
 - Convex (serverless database) (002-phase2-enhancements)
