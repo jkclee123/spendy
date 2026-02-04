@@ -8,6 +8,7 @@ import { ChevronLeft, MapPin } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
 import { LocationHistoryEditModal } from "@/components/settings/LocationHistoryEditModal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { LocationHistory, UserCategory } from "@/types";
 import type { Id } from "../../../../../convex/_generated/dataModel";
@@ -38,8 +39,14 @@ export default function LocationHistoriesSettingsPage() {
     user?._id ? { userId: user._id } : "skip"
   );
 
-  // Query categories for the dropdown
-  const categories = useQuery(
+  // Query active categories for the dropdown (ordered by createdAt)
+  const activeCategories = useQuery(
+    api.userCategories.listActiveByUser,
+    user?._id ? { userId: user._id } : "skip"
+  );
+
+  // Query all categories (for display purposes)
+  const allCategories = useQuery(
     api.userCategories.listByUser,
     user?._id ? { userId: user._id } : "skip"
   );
@@ -84,8 +91,8 @@ export default function LocationHistoriesSettingsPage() {
   };
 
   const getCategoryInfo = (categoryId: Id<"userCategories"> | undefined): UserCategory | undefined => {
-    if (!categoryId || !categories) return undefined;
-    return categories.find((c) => c._id === categoryId);
+    if (!categoryId || !allCategories) return undefined;
+    return allCategories.find((c) => c._id === categoryId);
   };
 
   const getLocalizedCategoryName = (category: UserCategory | undefined): string => {
@@ -104,8 +111,19 @@ export default function LocationHistoriesSettingsPage() {
     });
   };
 
+  // Loading state while fetching user or locationHistories
+  const isLoading = user === undefined || locationHistories === undefined;
+
   if (!session) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
   }
 
   return (
@@ -138,13 +156,7 @@ export default function LocationHistoriesSettingsPage() {
         </p>
 
         {/* Location list */}
-        {!locationHistories ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-gray-500 dark:text-gray-400">
-              {lang === "en" ? "Loading..." : "載入中..."}
-            </div>
-          </div>
-        ) : locationHistories.length === 0 ? (
+        {locationHistories.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center">
             <MapPin className="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
@@ -198,9 +210,16 @@ export default function LocationHistoriesSettingsPage() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           locationHistory={editingLocation}
-          categories={(categories || []).filter(
-            (c) => c.isActive || c._id === editingLocation.category
-          )}
+          categories={
+            // Use active categories (ordered by createdAt), plus the selected category if it's inactive
+            (activeCategories || []).concat(
+              editingLocation.category && allCategories
+                ? allCategories.filter(
+                    (c) => c._id === editingLocation.category && !c.isActive
+                  )
+                : []
+            )
+          }
           currentLang={lang}
           onSave={handleSave}
         />

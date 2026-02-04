@@ -7,9 +7,11 @@ export default defineSchema({
     email: v.string(),
     image: v.optional(v.string()),
     lang: v.optional(v.string()),
+    apiToken: v.optional(v.string()),
     createdAt: v.number(),
   })
-    .index("by_email", ["email"]),
+    .index("by_email", ["email"])
+    .index("by_apiToken", ["apiToken"]),
 
   userCategories: defineTable({
     userId: v.id("users"),

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
+import type { Id } from "./_generated/dataModel";
 
 /**
  * Create a transaction from the web interface
@@ -31,6 +32,51 @@ export const createFromWeb = mutation({
       name: args.name,
       amount: args.amount,
       category: args.category,
+      createdAt: Date.now(),
+    });
+
+    return transactionId;
+  },
+});
+
+/**
+ * Create a transaction from the external API
+ * Used by the API endpoint to create transactions programmatically
+ */
+export const createFromApi = mutation({
+  args: {
+    userId: v.id("users"),
+    amount: v.number(),
+    categoryId: v.id("userCategories"),
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    // Validate amount
+    if (args.amount <= 0) {
+      throw new Error("amount must be a positive number");
+    }
+
+    // Verify user exists
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Verify category exists and belongs to the user
+    const category = await ctx.db.get(args.categoryId);
+    if (!category) {
+      throw new Error("Category not found");
+    }
+    if (category.userId !== args.userId) {
+      throw new Error("Category does not belong to user");
+    }
+
+    // Create the transaction
+    const transactionId = await ctx.db.insert("transactions", {
+      userId: args.userId,
+      name: args.name,
+      amount: args.amount,
+      category: args.categoryId,
       createdAt: Date.now(),
     });
 
@@ -260,13 +306,116 @@ export const aggregateByCategory = query({
 });
 
 /**
+ * Aggregate transactions by category for a user within a specific month range
+ * Returns category totals with enriched category data (emoji, en_name, zh_name) for pie chart visualization
+ * Used for month navigation in stats page
+ */
+export const aggregateByCategoryForMonth = query({
+  args: {
+    userId: v.id("users"),
+    startDate: v.number(),
+    endDate: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    // Filter by date range
+    const filteredTransactions = transactions.filter(
+      (t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate
+    );
+
+    // Aggregate by category with enriched category data
+    const categoryMap = new Map<
+      string,
+      { total: number; count: number; categoryId: string | null; emoji?: string; en_name?: string; zh_name?: string }
+    >();
+
+    for (const transaction of filteredTransactions) {
+      const categoryId = transaction.category || null;
+      const categoryKey = categoryId || "Uncategorized";
+      const existing = categoryMap.get(categoryKey) || {
+        total: 0,
+        count: 0,
+        categoryId,
+      };
+
+      categoryMap.set(categoryKey, {
+        ...existing,
+        total: existing.total + transaction.amount,
+        count: existing.count + 1,
+      });
+    }
+
+    // Enrich with category data
+    const enrichedResults = await Promise.all(
+      Array.from(categoryMap.entries()).map(async ([categoryKey, data]) => {
+        if (data.categoryId) {
+          const categoryData = await ctx.db.get(data.categoryId as Id<"userCategories">);
+          if (categoryData) {
+            return {
+              category: categoryKey,
+              categoryId: data.categoryId,
+              emoji: categoryData.emoji,
+              en_name: categoryData.en_name,
+              zh_name: categoryData.zh_name,
+              total: data.total,
+              count: data.count,
+            };
+          }
+        }
+        // Uncategorized transactions
+        return {
+          category: categoryKey,
+          categoryId: null,
+          emoji: undefined,
+          en_name: undefined,
+          zh_name: undefined,
+          total: data.total,
+          count: data.count,
+        };
+      })
+    );
+
+    return enrichedResults;
+  },
+});
+
+/**
+ * Get the earliest transaction date for a user
+ * Used to determine available months for month navigation dropdown
+ */
+export const getEarliestTransactionDate = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .order("asc")
+      .first();
+
+    if (!transactions) {
+      return null;
+    }
+
+    return transactions.createdAt;
+  },
+});
+
+/**
  * Aggregate transactions by month for a user
  * Returns monthly totals for histogram visualization
+ * Optionally filters by categoryId if provided
  */
 export const aggregateByMonth = query({
   args: {
     userId: v.id("users"),
     monthsBack: v.number(), // Number of months to look back
+    categoryId: v.optional(v.id("userCategories")), // Optional category filter
   },
   handler: async (ctx, args) => {
     // Calculate the start date (beginning of N months ago)
@@ -283,9 +432,16 @@ export const aggregateByMonth = query({
       .collect();
 
     // Filter to transactions within the time range
-    const filteredTransactions = transactions.filter(
+    let filteredTransactions = transactions.filter(
       (t) => t.createdAt >= startDate
     );
+
+    // Filter by categoryId if provided
+    if (args.categoryId !== undefined) {
+      filteredTransactions = filteredTransactions.filter(
+        (t) => t.category === args.categoryId
+      );
+    }
 
     // Aggregate by month
     const monthMap = new Map<string, { total: number; count: number }>();

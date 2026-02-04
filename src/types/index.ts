@@ -87,6 +87,10 @@ export interface CategoryAggregation {
   category: string;
   total: number;
   count: number;
+  categoryId?: string | null;
+  emoji?: string;
+  en_name?: string;
+  zh_name?: string;
 }
 
 /**
@@ -96,4 +100,22 @@ export interface MonthlyAggregation {
   month: string; // Format: "YYYY-MM"
   total: number;
   count: number;
+}
+
+/**
+ * Request payload for creating a transaction via external API
+ */
+export interface CreateTransactionRequest {
+  apiToken: string;
+  amount: number;
+  category: string;
+  name?: string;
+}
+
+/**
+ * Success response for transaction creation via external API
+ */
+export interface CreateTransactionResponse {
+  success: true;
+  transactionId: string;
 }

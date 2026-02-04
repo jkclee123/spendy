@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
 /**
- * Get all categories for a user, ordered by active status then order
+ * Get all categories for a user, ordered by active status then createdAt
  */
 export const listByUser = query({
   args: {
@@ -12,20 +12,21 @@ export const listByUser = query({
     const categories = await ctx.db
       .query("userCategories")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .order("asc")
       .collect();
 
-    // Sort: active categories first (by order ASC), then inactive (by order ASC)
+    // Sort: active categories first (by createdAt ASC), then inactive (by createdAt ASC)
     return categories.sort((a, b) => {
       if (a.isActive !== b.isActive) {
         return a.isActive ? -1 : 1;
       }
-      return a.order - b.order;
+      return a.createdAt - b.createdAt;
     });
   },
 });
 
 /**
- * Get only active categories for a user, ordered by order field
+ * Get only active categories for a user, ordered by createdAt ascending
  */
 export const listActiveByUser = query({
   args: {
@@ -39,8 +40,8 @@ export const listActiveByUser = query({
       )
       .collect();
 
-    // Sort by order field
-    return categories.sort((a, b) => a.order - b.order);
+    // Sort by createdAt ascending (oldest first)
+    return categories.sort((a, b) => a.createdAt - b.createdAt);
   },
 });
 
@@ -243,5 +244,50 @@ export const hardDelete = mutation({
     }
 
     await ctx.db.delete(args.categoryId);
+  },
+});
+
+/**
+ * Find a category by name for a user using case-insensitive matching
+ * 
+ * Performs case-insensitive search across both `en_name` and `zh_name` fields.
+ * If multiple categories match (e.g., user has both "Food" in en_name and "food" in zh_name),
+ * returns the category with the earliest `createdAt` timestamp for deterministic behavior.
+ * 
+ * Used by API endpoint to match category names from external API requests.
+ * Example: "FOOD", "food", "Food" all match a category with en_name "Food"
+ * 
+ * @param args.userId - The user ID to search categories for
+ * @param args.name - The category name to search for (case-insensitive)
+ * @returns The matching category or null if no match found
+ */
+export const findByName = query({
+  args: {
+    userId: v.id("users"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Get all categories for the user
+    const categories = await ctx.db
+      .query("userCategories")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    // Case-insensitive search across both en_name and zh_name fields
+    // Return the category with earliest createdAt if multiple matches
+    const matchingCategories = categories.filter(
+      (cat) =>
+        (cat.en_name && cat.en_name.toLowerCase() === args.name.toLowerCase()) ||
+        (cat.zh_name && cat.zh_name.toLowerCase() === args.name.toLowerCase())
+    );
+
+    if (matchingCategories.length === 0) {
+      return null;
+    }
+
+    // Return the category with the earliest createdAt (oldest category wins)
+    return matchingCategories.reduce((oldest, current) =>
+      current.createdAt < oldest.createdAt ? current : oldest
+    );
   },
 });

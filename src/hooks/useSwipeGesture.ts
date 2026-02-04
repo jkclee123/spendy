@@ -4,7 +4,6 @@ import { useState, useCallback, useRef } from "react";
 
 interface SwipeGestureConfig {
   onSwipeLeft?: () => void;
-  onSwipeRight?: () => void;
   threshold?: number;
   disabled?: boolean;
 }
@@ -35,7 +34,7 @@ const SWIPE_START_THRESHOLD = 10;
  * @returns Object containing offset, isSwiping state, and event handlers
  */
 export function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn {
-  const { onSwipeLeft, onSwipeRight, threshold = 80, disabled = false } = config;
+  const { onSwipeLeft, threshold = 80, disabled = false } = config;
 
   const [offset, setOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
@@ -64,8 +63,8 @@ export function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn 
         hasSwipedRef.current = true;
       }
 
-      // Allow swiping in both directions with limits
-      const newOffset = Math.max(-150, Math.min(150, diff));
+      // Only allow left swipe (negative offset), clamp right swipe to 0
+      const newOffset = Math.max(-150, Math.min(0, diff));
       currentOffset.current = newOffset;
       setOffset(newOffset);
     },
@@ -78,17 +77,15 @@ export function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn 
     setIsSwiping(false);
     touchStartX.current = null;
 
-    // Check if swipe threshold was met
+    // Check if swipe threshold was met (left-swipe only)
     if (currentOffset.current <= -threshold && onSwipeLeft) {
       onSwipeLeft();
-    } else if (currentOffset.current >= threshold && onSwipeRight) {
-      onSwipeRight();
     }
 
     // Reset position
     setOffset(0);
     currentOffset.current = 0;
-  }, [disabled, threshold, onSwipeLeft, onSwipeRight]);
+  }, [disabled, threshold, onSwipeLeft]);
 
   // Touch event handlers
   const handleTouchStart = useCallback(

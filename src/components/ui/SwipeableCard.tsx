@@ -5,26 +5,19 @@ import { Trash2, CheckCircle } from "lucide-react";
 
 interface SwipeableCardProps {
   children: React.ReactNode;
-  // Legacy single action props (for backward compatibility)
+  // Single action props (left-swipe only)
   onSwipeAction?: () => void;
   actionLabel?: string;
   actionColor?: "red" | "yellow" | "blue";
-  // New bidirectional swipe props
-  onSwipeLeftAction?: () => void;
-  onSwipeRightAction?: () => void;
-  leftActionLabel?: string;
-  rightActionLabel?: string;
-  leftActionColor?: "red" | "yellow" | "blue";
-  rightActionColor?: "red" | "yellow" | "blue";
   onClick?: () => void;
   disabled?: boolean;
 }
 
 /**
  * Reusable card component with swipe-to-action gesture
- * - Swipe left reveals left action button
- * - Swipe right reveals right action button
+ * - Swipe left reveals action button
  * - Swipe past threshold triggers onSwipeAction
+ * - Right-swipe is disabled (no effect)
  * - Extracted from TransactionCard logic
  */
 export function SwipeableCard({
@@ -32,23 +25,11 @@ export function SwipeableCard({
   onSwipeAction,
   actionLabel = "Delete",
   actionColor = "red",
-  onSwipeLeftAction,
-  onSwipeRightAction,
-  leftActionLabel = "Delete",
-  rightActionLabel = "Activate",
-  leftActionColor = "red",
-  rightActionColor = "blue",
   onClick,
   disabled = false,
 }: SwipeableCardProps) {
-  // Support both legacy single action and new bidirectional actions
-  const finalOnSwipeLeft = onSwipeLeftAction || onSwipeAction;
-  const finalLeftActionLabel = onSwipeLeftAction ? leftActionLabel : actionLabel;
-  const finalLeftActionColor = onSwipeLeftAction ? leftActionColor : actionColor;
-
   const { offset, isSwiping, hasSwiped, resetHasSwiped, handlers } = useSwipeGesture({
-    onSwipeLeft: finalOnSwipeLeft,
-    onSwipeRight: onSwipeRightAction,
+    onSwipeLeft: onSwipeAction,
     threshold: 80,
     disabled,
   });
@@ -60,9 +41,7 @@ export function SwipeableCard({
   };
 
   const isLeftActionVisible = offset <= -40;
-  const isRightActionVisible = offset >= 40;
   const leftActionOpacity = Math.min(1, Math.abs(offset) / 40);
-  const rightActionOpacity = Math.min(1, Math.abs(offset) / 40);
 
   const handleClick = () => {
     // Prevent click if we just performed a swipe
@@ -83,13 +62,10 @@ export function SwipeableCard({
     }
   };
 
-  // Build accessible description for swipe actions
-  const swipeDescription = [
-    finalOnSwipeLeft ? `Swipe left to ${finalLeftActionLabel.toLowerCase()}` : "",
-    onSwipeRightAction ? `Swipe right to ${rightActionLabel.toLowerCase()}` : "",
-  ]
-    .filter(Boolean)
-    .join(". ");
+  // Build accessible description for swipe action
+  const swipeDescription = onSwipeAction
+    ? `Swipe left to ${actionLabel.toLowerCase()}`
+    : undefined;
 
   return (
     <div 
@@ -97,11 +73,11 @@ export function SwipeableCard({
       aria-label={swipeDescription || undefined}
     >
       {/* Left action background layer (swipe left reveals right side) */}
-      {finalOnSwipeLeft && (
+      {onSwipeAction && (
         <div
           className={`
             absolute inset-0 flex items-center justify-end rounded-xl
-            ${colorClasses[finalLeftActionColor]} px-4 transition-opacity duration-200
+            ${colorClasses[actionColor]} px-4 transition-opacity duration-200
             ${isLeftActionVisible ? "opacity-100" : "opacity-0"}
           `}
           aria-hidden="true"
@@ -110,32 +86,12 @@ export function SwipeableCard({
             className="flex items-center gap-2 text-white"
             style={{ opacity: leftActionOpacity }}
           >
-            {finalLeftActionColor === "blue" ? (
+            {actionColor === "blue" ? (
               <CheckCircle className="h-6 w-6" aria-hidden="true" />
             ) : (
               <Trash2 className="h-6 w-6" aria-hidden="true" />
             )}
-            <span className="font-medium">{finalLeftActionLabel}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Right action background layer (swipe right reveals left side) */}
-      {onSwipeRightAction && (
-        <div
-          className={`
-            absolute inset-0 flex items-center justify-start rounded-xl
-            ${colorClasses[rightActionColor]} px-4 transition-opacity duration-200
-            ${isRightActionVisible ? "opacity-100" : "opacity-0"}
-          `}
-          aria-hidden="true"
-        >
-          <div
-            className="flex items-center gap-2 text-white"
-            style={{ opacity: rightActionOpacity }}
-          >
-            <CheckCircle className="h-6 w-6" aria-hidden="true" />
-            <span className="font-medium">{rightActionLabel}</span>
+            <span className="font-medium">{actionLabel}</span>
           </div>
         </div>
       )}

@@ -6,9 +6,9 @@
     "create": "Create",
     "edit": "Edit",
     "update": "Update",
-    "loading": "Loading...",
     "saving": "Saving...",
     "deleting": "Deleting...",
+    "loading": "Loading...",
     "error": "Error",
     "success": "Success"
   },
@@ -25,7 +25,17 @@
     "recentSpending": "Recent Spending",
     "totalSpending": "Total spending",
     "noData": "No data for {period}",
-    "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}"
+    "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}",
+    "categoryFilter": {
+      "all": "All Categories"
+    },
+    "monthNavigation": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "selectMonth": "Select month"
+    },
+    "noDataForMonth": "No data for {month}",
+    "uncategorized": "Uncategorized"
   },
   "settings": {
     "title": "Settings",
@@ -38,7 +48,28 @@
     },
     "categorySettings": "Category Settings",
     "locationHistorySettings": "Location History",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "apiToken": {
+      "title": "API Token",
+      "description": "Use this token to create transactions via the external API",
+      "showToken": "Show Token",
+      "hideToken": "Hide Token",
+      "copyToken": "Copy Token",
+      "regenerateToken": "Regenerate Token",
+      "regenerateConfirmTitle": "Regenerate API Token?",
+      "regenerateConfirmMessage": "This will invalidate your current token. Any integrations using the old token will stop working. Continue?",
+      "regenerateSuccess": "API token regenerated successfully",
+      "regenerateError": "Failed to regenerate API token",
+      "copySuccess": "Token copied to clipboard",
+      "copyError": "Failed to copy token",
+      "usageInstructions": "Usage Instructions",
+      "endpoint": "Endpoint",
+      "method": "Method",
+      "headers": "Headers",
+      "exampleRequest": "Example Request",
+      "exampleResponse": "Example Response",
+      "rateLimit": "Rate Limit: 60 requests per minute"
+    }
   },
   "categories": {
     "title": "Categories",
@@ -119,7 +150,6 @@
     "deleteConfirmTitle": "Delete Transaction?",
     "deleteConfirmMessage": "This action cannot be undone. The transaction of {amount} will be permanently removed.",
     "list": {
-      "loading": "Loading...",
       "noTransactionsTitle": "No transactions yet",
       "noMatchingTitle": "No matching transactions",
       "noMatchingMessage": "Try adjusting your filters to see more transactions.",

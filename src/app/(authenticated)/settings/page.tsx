@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { LanguageSelect } from "@/components/settings/LanguageSelect";
+import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/components/ui/Toast";
 
@@ -43,7 +44,7 @@ export default function SettingsPage() {
   // Loading state while fetching user
   if (user === undefined) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -110,6 +111,9 @@ export default function SettingsPage() {
           />
         </CardContent>
       </Card>
+
+      {/* API Token */}
+      {user && <ApiTokenDisplay userId={user._id} />}
 
       {/* Management Links */}
       <Card>

@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: Spendy External Transactions API
+  version: 1.0.0
+  description: |
+    External API for creating transactions in Spendy without web session authentication.
+    
+    Use cases:
+    - Mobile app integrations
+    - IoT device spending tracking
+    - Automation scripts (Zapier, IFTTT)
+    - Voice assistant integrations
+    
+    Authentication: API token (obtained from settings page)
+    Rate Limit: 60 requests per minute per token
+
+servers:
+  - url: https://spendy.example.com/api
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Local development server
+
+paths:
+  /transactions/create:
+    post:
+      summary: Create a new transaction
+      description: |
+        Creates a spending transaction for the authenticated user.
+        
+        If the specified category doesn't exist, it will be automatically created
+        with a default emoji (❓) and the provided category name.
+        
+        Rate limit: 60 requests per minute per API token.
+      
+      operationId: createTransaction
+      
+      tags:
+        - Transactions
+      
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+            examples:
+              basic:
+                summary: Basic transaction
+                value:
+                  apiToken: "a7f9e2d1c4b3f8e5d2a1c9b7e4f3d8a6c5b2e9f1"
+                  amount: 45.50
+                  category: "Food"
+              withName:
+                summary: Transaction with description
+                value:
+                  apiToken: "a7f9e2d1c4b3f8e5d2a1c9b7e4f3d8a6c5b2e9f1"
+                  amount: 120.00
+                  category: "Transport"
+                  name: "Uber to airport"
+              newCategory:
+                summary: Auto-create new category
+                value:
+                  apiToken: "a7f9e2d1c4b3f8e5d2a1c9b7e4f3d8a6c5b2e9f1"
+                  amount: 89.99
+                  category: "Home Improvement"
+                  name: "Paint supplies"
+      
+      responses:
+        '201':
+          description: Transaction created successfully
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests per window
+              schema:
+                type: integer
+                example: 60
+            X-RateLimit-Remaining:
+              description: Remaining requests in current window
+              schema:
+                type: integer
+                example: 59
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+                example: 1707048120000
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTransactionSuccessResponse'
+              examples:
+                success:
+                  summary: Successful creation
+                  value:
+                    success: true
+                    transactionId: "j5k2l8m9n3o4p6q7"
+                    message: "Transaction created successfully"
+        
+        '400':
+          description: Bad Request - Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingAmount:
+                  summary: Missing amount field
+                  value:
+                    error: "Validation failed"
+                    message: "amount is required and must be a positive number"
+                negativeAmount:
+                  summary: Negative amount
+                  value:
+                    error: "Validation failed"
+                    message: "amount must be a positive number (greater than 0)"
+                missingCategory:
+                  summary: Missing category
+                  value:
+                    error: "Validation failed"
+                    message: "category is required and must be a non-empty string"
+                invalidType:
+                  summary: Invalid data type
+                  value:
+                    error: "Validation failed"
+                    message: "amount must be a number, received string"
+        
+        '401':
+          description: Unauthorized - Invalid or missing API token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingToken:
+                  summary: Missing API token
+                  value:
+                    error: "Authentication failed"
+                    message: "apiToken is required"
+                invalidToken:
+                  summary: Invalid API token
+                  value:
+                    error: "Authentication failed"
+                    message: "Invalid or expired API token"
+        
+        '429':
+          description: Too Many Requests - Rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests per window
+              schema:
+                type: integer
+                example: 60
+            X-RateLimit-Remaining:
+              description: Remaining requests (will be 0)
+              schema:
+                type: integer
+                example: 0
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+                example: 1707048180000
+            Retry-After:
+              description: Seconds until rate limit resets
+              schema:
+                type: integer
+                example: 45
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                rateLimitExceeded:
+                  summary: Rate limit exceeded
+                  value:
+                    error: "Rate limit exceeded"
+                    message: "Too many requests. Limit: 60 requests per minute. Try again in 45 seconds."
+        
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                serverError:
+                  summary: Server error
+                  value:
+                    error: "Internal server error"
+                    message: "An unexpected error occurred. Please try again later."
+
+components:
+  schemas:
+    CreateTransactionRequest:
+      type: object
+      required:
+        - apiToken
+        - amount
+        - category
+      properties:
+        apiToken:
+          type: string
+          description: |
+            API authentication token obtained from the Spendy settings page.
+            Format: 32-byte random value encoded as base64url (~43 characters).
+          minLength: 32
+          maxLength: 64
+          example: "a7f9e2d1c4b3f8e5d2a1c9b7e4f3d8a6c5b2e9f1"
+        amount:
+          type: number
+          format: float
+          description: |
+            Transaction amount in the user's currency (no currency code required).
+            Must be a positive number greater than 0.
+          minimum: 0.01
+          example: 45.50
+        category:
+          type: string
+          description: |
+            Category name (case-sensitive, exact match).
+            
+            If the category doesn't exist for the user, it will be automatically
+            created with:
+            - English name: The provided string
+            - Emoji: ❓ (default label emoji)
+            - Status: Active
+            
+            Users can edit the category name and emoji later via the settings UI.
+          minLength: 1
+          maxLength: 100
+          example: "Food"
+        name:
+          type: string
+          description: |
+            Optional transaction description or note.
+            Useful for providing context (e.g., "Lunch at Cafe", "Uber to airport").
+          maxLength: 200
+          example: "Lunch at Cafe"
+    
+    CreateTransactionSuccessResponse:
+      type: object
+      required:
+        - success
+        - transactionId
+      properties:
+        success:
+          type: boolean
+          description: Always true for successful responses
+          example: true
+        transactionId:
+          type: string
+          description: |
+            Unique identifier for the created transaction.
+            Can be used for tracking or debugging purposes.
+          example: "j5k2l8m9n3o4p6q7"
+        message:
+          type: string
+          description: Human-readable success message
+          example: "Transaction created successfully"
+    
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error type (machine-readable)
+          enum:
+            - "Validation failed"
+            - "Authentication failed"
+            - "Rate limit exceeded"
+            - "Internal server error"
+          example: "Authentication failed"
+        message:
+          type: string
+          description: Human-readable error description with actionable guidance
+          example: "Invalid or expired API token"
+
+  securitySchemes:
+    ApiTokenAuth:
+      type: apiKey
+      in: body
+      name: apiToken
+      description: |
+        API token authentication.
+        
+        The token is included in the request body (not as a header).
+        Obtain your API token from the Spendy settings page.
+
+security:
+  - ApiTokenAuth: []
+
+tags:
+  - name: Transactions
+    description: Transaction creation endpoints

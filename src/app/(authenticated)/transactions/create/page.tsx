@@ -42,7 +42,7 @@ export default function NewTransactionPage() {
   // Loading state while fetching user
   if (user === undefined) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex min-h-[50vh] items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
