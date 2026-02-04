@@ -78,23 +78,23 @@ This is a **Next.js web application** with unified structure:
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T016 [P] [US1] Create contract test file `tests/contract/api-transactions-create.test.ts` with test cases for: valid request (201), missing apiToken (401), invalid apiToken (401), missing amount (400), negative amount (400), missing category (400), rate limit (429), category auto-creation (201)
-- [ ] T017 [P] [US1] Create integration test file `tests/integration/api-token.test.ts` with full flow: generate token → copy token → API call succeeds → transaction appears in list
+- [X] T016 [P] [US1] Create contract test file `tests/contract/api-transactions-create.test.ts` with test cases for: valid request (201), missing apiToken (401), invalid apiToken (401), missing amount (400), negative amount (400), missing category (400), rate limit (429), category auto-creation (201)
+- [X] T017 [P] [US1] Create integration test file `tests/integration/api-token.test.ts` with full flow: generate token → copy token → API call succeeds → transaction appears in list
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Create API route directory `src/app/api/transactions/create/`
-- [ ] T019 [US1] Implement POST handler in `src/app/api/transactions/create/route.ts` with request validation (apiToken, amount, category)
-- [ ] T020 [US1] Add rate limiting logic in `src/app/api/transactions/create/route.ts` (60 req/min per token, in-memory Map)
-- [ ] T021 [US1] Implement user authentication via `convex.query(api.users.getByApiToken)` in route handler
-- [ ] T022 [US1] Implement category matching/auto-creation logic using `api.userCategories.findByName` and `api.userCategories.create`
-- [ ] T023 [US1] Implement transaction creation using `api.transactions.createFromApi` in route handler
-- [ ] T024 [US1] Add error handling for all error cases (401, 400, 429, 500) with descriptive messages
-- [ ] T025 [US1] Add rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset) to responses
-- [ ] T026 [US1] Create `src/components/settings/ApiTokenDisplay.tsx` component with show/hide toggle, copy button, regenerate confirmation
-- [ ] T027 [US1] Add ApiTokenDisplay component to settings page in `src/app/(authenticated)/settings/page.tsx`
-- [ ] T028 [US1] Ensure API token is generated for existing users (call `regenerateApiToken` on settings page load if token missing)
-- [ ] T029 [US1] Add usage instructions section to ApiTokenDisplay component explaining endpoint URL and payload format
+- [X] T018 [US1] Create API route directory `src/app/api/transactions/create/`
+- [X] T019 [US1] Implement POST handler in `src/app/api/transactions/create/route.ts` with request validation (apiToken, amount, category)
+- [X] T020 [US1] Add rate limiting logic in `src/app/api/transactions/create/route.ts` (60 req/min per token, in-memory Map)
+- [X] T021 [US1] Implement user authentication via `convex.query(api.users.getByApiToken)` in route handler
+- [X] T022 [US1] Implement category matching/auto-creation logic using `api.userCategories.findByName` and `api.userCategories.create`
+- [X] T023 [US1] Implement transaction creation using `api.transactions.createFromApi` in route handler
+- [X] T024 [US1] Add error handling for all error cases (401, 400, 429, 500) with descriptive messages
+- [X] T025 [US1] Add rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset) to responses
+- [X] T026 [US1] Create `src/components/settings/ApiTokenDisplay.tsx` component with show/hide toggle, copy button, regenerate confirmation
+- [X] T027 [US1] Add ApiTokenDisplay component to settings page in `src/app/(authenticated)/settings/page.tsx`
+- [X] T028 [US1] Ensure API token is generated for existing users (call `regenerateApiToken` on settings page load if token missing)
+- [X] T029 [US1] Add usage instructions section to ApiTokenDisplay component explaining endpoint URL and payload format
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can generate tokens, make API calls, and see transactions created
 

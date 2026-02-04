@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { LanguageSelect } from "@/components/settings/LanguageSelect";
+import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/components/ui/Toast";
 
@@ -110,6 +111,9 @@ export default function SettingsPage() {
           />
         </CardContent>
       </Card>
+
+      {/* API Token */}
+      {user && <ApiTokenDisplay userId={user._id} />}
 
       {/* Management Links */}
       <Card>

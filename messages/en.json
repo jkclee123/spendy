@@ -38,7 +38,28 @@
     },
     "categorySettings": "Category Settings",
     "locationHistorySettings": "Location History",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "apiToken": {
+      "title": "API Token",
+      "description": "Use this token to create transactions via the external API",
+      "showToken": "Show Token",
+      "hideToken": "Hide Token",
+      "copyToken": "Copy Token",
+      "regenerateToken": "Regenerate Token",
+      "regenerateConfirmTitle": "Regenerate API Token?",
+      "regenerateConfirmMessage": "This will invalidate your current token. Any integrations using the old token will stop working. Continue?",
+      "regenerateSuccess": "API token regenerated successfully",
+      "regenerateError": "Failed to regenerate API token",
+      "copySuccess": "Token copied to clipboard",
+      "copyError": "Failed to copy token",
+      "usageInstructions": "Usage Instructions",
+      "endpoint": "Endpoint",
+      "method": "Method",
+      "headers": "Headers",
+      "exampleRequest": "Example Request",
+      "exampleResponse": "Example Response",
+      "rateLimit": "Rate Limit: 60 requests per minute"
+    }
   },
   "categories": {
     "title": "Categories",
