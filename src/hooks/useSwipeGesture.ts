@@ -63,8 +63,8 @@ export function useSwipeGesture(config: SwipeGestureConfig): SwipeGestureReturn 
         hasSwipedRef.current = true;
       }
 
-      // Allow swiping in both directions with limits
-      const newOffset = Math.max(-150, Math.min(150, diff));
+      // Only allow left swipe (negative offset), clamp right swipe to 0
+      const newOffset = Math.max(-150, Math.min(0, diff));
       currentOffset.current = newOffset;
       setOffset(newOffset);
     },

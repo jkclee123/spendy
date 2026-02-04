@@ -141,6 +141,40 @@ describe("useSwipeGesture", () => {
       expect(onSwipeLeft).not.toHaveBeenCalled();
     });
 
+    it("should keep offset at 0 during right swipe movement", () => {
+      const { result } = renderHook(() =>
+        useSwipeGesture({
+          onSwipeLeft: vi.fn(),
+          threshold: 80,
+        })
+      );
+
+      // Simulate touch start
+      act(() => {
+        result.current.handlers.onTouchStart({
+          touches: [{ clientX: 100 }],
+        } as unknown as React.TouchEvent);
+      });
+
+      // Simulate touch move (swipe right)
+      act(() => {
+        result.current.handlers.onTouchMove({
+          touches: [{ clientX: 200 }], // 100px right
+        } as unknown as React.TouchEvent);
+      });
+
+      // Offset should stay at 0 during right swipe (no visual movement)
+      expect(result.current.offset).toBe(0);
+
+      // Simulate touch end
+      act(() => {
+        result.current.handlers.onTouchEnd();
+      });
+
+      // Offset should remain at 0
+      expect(result.current.offset).toBe(0);
+    });
+
     it("should reset offset to 0 after right-swipe without triggering action", () => {
       const { result } = renderHook(() =>
         useSwipeGesture({
@@ -163,15 +197,15 @@ describe("useSwipeGesture", () => {
         } as unknown as React.TouchEvent);
       });
 
-      // Offset should be positive during right swipe
-      expect(result.current.offset).toBeGreaterThan(0);
+      // Offset should stay at 0 (no visual movement)
+      expect(result.current.offset).toBe(0);
 
       // Simulate touch end
       act(() => {
         result.current.handlers.onTouchEnd();
       });
 
-      // Offset should reset to 0
+      // Offset should remain at 0
       expect(result.current.offset).toBe(0);
     });
   });
@@ -265,12 +299,17 @@ describe("useSwipeGesture", () => {
         } as React.MouseEvent);
       });
 
+      // Offset should stay at 0 during right mouse drag (no visual movement)
+      expect(result.current.offset).toBe(0);
+
       // Simulate mouse up
       act(() => {
         result.current.handlers.onMouseUp();
       });
 
       expect(onSwipeLeft).not.toHaveBeenCalled();
+      // Offset should remain at 0
+      expect(result.current.offset).toBe(0);
     });
   });
 });
