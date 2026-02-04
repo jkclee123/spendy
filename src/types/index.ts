@@ -87,6 +87,10 @@ export interface CategoryAggregation {
   category: string;
   total: number;
   count: number;
+  categoryId?: string | null;
+  emoji?: string;
+  en_name?: string;
+  zh_name?: string;
 }
 
 /**

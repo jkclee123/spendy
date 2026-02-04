@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
+import type { Id } from "./_generated/dataModel";
 
 /**
  * Create a transaction from the web interface
@@ -301,6 +302,107 @@ export const aggregateByCategory = query({
       total: data.total,
       count: data.count,
     }));
+  },
+});
+
+/**
+ * Aggregate transactions by category for a user within a specific month range
+ * Returns category totals with enriched category data (emoji, en_name, zh_name) for pie chart visualization
+ * Used for month navigation in stats page
+ */
+export const aggregateByCategoryForMonth = query({
+  args: {
+    userId: v.id("users"),
+    startDate: v.number(),
+    endDate: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    // Filter by date range
+    const filteredTransactions = transactions.filter(
+      (t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate
+    );
+
+    // Aggregate by category with enriched category data
+    const categoryMap = new Map<
+      string,
+      { total: number; count: number; categoryId: string | null; emoji?: string; en_name?: string; zh_name?: string }
+    >();
+
+    for (const transaction of filteredTransactions) {
+      const categoryId = transaction.category || null;
+      const categoryKey = categoryId || "Uncategorized";
+      const existing = categoryMap.get(categoryKey) || {
+        total: 0,
+        count: 0,
+        categoryId,
+      };
+
+      categoryMap.set(categoryKey, {
+        ...existing,
+        total: existing.total + transaction.amount,
+        count: existing.count + 1,
+      });
+    }
+
+    // Enrich with category data
+    const enrichedResults = await Promise.all(
+      Array.from(categoryMap.entries()).map(async ([categoryKey, data]) => {
+        if (data.categoryId) {
+          const categoryData = await ctx.db.get(data.categoryId as Id<"userCategories">);
+          if (categoryData) {
+            return {
+              category: categoryKey,
+              categoryId: data.categoryId,
+              emoji: categoryData.emoji,
+              en_name: categoryData.en_name,
+              zh_name: categoryData.zh_name,
+              total: data.total,
+              count: data.count,
+            };
+          }
+        }
+        // Uncategorized transactions
+        return {
+          category: categoryKey,
+          categoryId: null,
+          emoji: undefined,
+          en_name: undefined,
+          zh_name: undefined,
+          total: data.total,
+          count: data.count,
+        };
+      })
+    );
+
+    return enrichedResults;
+  },
+});
+
+/**
+ * Get the earliest transaction date for a user
+ * Used to determine available months for month navigation dropdown
+ */
+export const getEarliestTransactionDate = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const transactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
+      .order("asc")
+      .first();
+
+    if (!transactions) {
+      return null;
+    }
+
+    return transactions.createdAt;
   },
 });
 

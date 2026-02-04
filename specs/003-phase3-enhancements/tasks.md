@@ -153,22 +153,22 @@ This is a **Next.js web application** with unified structure:
 
 ### Tests for User Story 4
 
-- [ ] T043 [P] [US4] Create integration test file `tests/integration/stats-navigation.test.ts` for month navigation: arrow clicks, dropdown selection, data updates
+- [X] T043 [P] [US4] Create integration test file `tests/integration/stats-navigation.test.ts` for month navigation: arrow clicks, dropdown selection, data updates
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] Add Convex query `aggregateByCategoryForMonth` in `convex/transactions.ts` with args `{ userId, startDate, endDate }` to filter by month range
-- [ ] T045 [US4] Add month state to `src/components/stats/CategoryPieChart.tsx`: `{ year: number, month: number }`
-- [ ] T046 [US4] Add month navigation controls JSX in CategoryPieChart: left arrow, clickable "MM/yyyy" label, right arrow (with 44px min touch targets)
-- [ ] T047 [US4] Implement `goToPreviousMonth()` handler in CategoryPieChart to decrement month state
-- [ ] T048 [US4] Implement `goToNextMonth()` handler in CategoryPieChart to increment month (disabled if current month)
-- [ ] T049 [US4] Implement month dropdown component that appears when clicking "MM/yyyy" label
-- [ ] T050 [US4] Populate month dropdown with available months (earliest transaction to current month)
-- [ ] T051 [US4] Update Convex query call in CategoryPieChart to use `aggregateByCategoryForMonth` with calculated startDate/endDate from selected month
-- [ ] T052 [US4] Add loading state for chart data updates
-- [ ] T053 [US4] Add empty state handling for months with no transactions (display "$0 spending")
-- [ ] T054 [US4] Ensure category labels use userCategory emoji + name (respecting user language preference)
-- [ ] T055 [US4] Add aria-labels to navigation arrows for accessibility
+- [X] T044 [US4] Add Convex query `aggregateByCategoryForMonth` in `convex/transactions.ts` with args `{ userId, startDate, endDate }` to filter by month range
+- [X] T045 [US4] Add month state to `src/components/stats/CategoryPieChart.tsx`: `{ year: number, month: number }`
+- [X] T046 [US4] Add month navigation controls JSX in CategoryPieChart: left arrow, clickable "MM/yyyy" label, right arrow (with 44px min touch targets)
+- [X] T047 [US4] Implement `goToPreviousMonth()` handler in CategoryPieChart to decrement month state
+- [X] T048 [US4] Implement `goToNextMonth()` handler in CategoryPieChart to increment month (disabled if current month)
+- [X] T049 [US4] Implement month dropdown component that appears when clicking "MM/yyyy" label
+- [X] T050 [US4] Populate month dropdown with available months (earliest transaction to current month)
+- [X] T051 [US4] Update Convex query call in CategoryPieChart to use `aggregateByCategoryForMonth` with calculated startDate/endDate from selected month
+- [X] T052 [US4] Add loading state for chart data updates
+- [X] T053 [US4] Add empty state handling for months with no transactions (display "$0 spending")
+- [X] T054 [US4] Ensure category labels use userCategory emoji + name (respecting user language preference)
+- [X] T055 [US4] Add aria-labels to navigation arrows for accessibility
 
 **Checkpoint**: Pie chart month navigation complete - users can explore historical spending by month
 
