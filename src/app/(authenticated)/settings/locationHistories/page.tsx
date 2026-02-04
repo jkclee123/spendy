@@ -6,7 +6,6 @@ import { useQuery, useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, MapPin } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
-import { useTranslations } from "next-intl";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
 import { LocationHistoryEditModal } from "@/components/settings/LocationHistoryEditModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";

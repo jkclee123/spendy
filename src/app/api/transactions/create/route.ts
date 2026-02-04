@@ -138,7 +138,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!category) {
-      // Auto-create category with default emoji
+      // Auto-create category with default emoji (❓ - question mark emoji)
+      // This default emoji is used when a category name is provided via API that doesn't match
+      // any existing category. Users can later edit the category to change the emoji.
       const categoryId = await convex.mutation(api.userCategories.create, {
         userId: user._id,
         emoji: "❓",

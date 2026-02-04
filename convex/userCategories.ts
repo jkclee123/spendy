@@ -248,8 +248,18 @@ export const hardDelete = mutation({
 });
 
 /**
- * Find a category by name for a user (case-sensitive exact match on en_name)
- * Used by API endpoint to match category names
+ * Find a category by name for a user using case-insensitive matching
+ * 
+ * Performs case-insensitive search across both `en_name` and `zh_name` fields.
+ * If multiple categories match (e.g., user has both "Food" in en_name and "food" in zh_name),
+ * returns the category with the earliest `createdAt` timestamp for deterministic behavior.
+ * 
+ * Used by API endpoint to match category names from external API requests.
+ * Example: "FOOD", "food", "Food" all match a category with en_name "Food"
+ * 
+ * @param args.userId - The user ID to search categories for
+ * @param args.name - The category name to search for (case-insensitive)
+ * @returns The matching category or null if no match found
  */
 export const findByName = query({
   args: {

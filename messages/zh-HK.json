@@ -8,6 +8,7 @@
     "update": "更新",
     "saving": "儲存中...",
     "deleting": "刪除中...",
+    "loading": "載入中...",
     "error": "錯誤",
     "success": "成功"
   },
@@ -24,7 +25,17 @@
     "recentSpending": "近期消費",
     "totalSpending": "總消費",
     "noData": "{period}沒有資料",
-    "transactions": "{count, plural, =1 {1 筆交易} other {# 筆交易}}"
+    "transactions": "{count, plural, =1 {1 筆交易} other {# 筆交易}}",
+    "categoryFilter": {
+      "all": "所有類別"
+    },
+    "monthNavigation": {
+      "previousMonth": "上一個月",
+      "nextMonth": "下一個月",
+      "selectMonth": "選擇月份"
+    },
+    "noDataForMonth": "{month}沒有資料",
+    "uncategorized": "未分類"
   },
   "settings": {
     "title": "設定",

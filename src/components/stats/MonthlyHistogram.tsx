@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useQuery } from "convex/react";
 import {
   BarChart,
@@ -32,6 +32,7 @@ interface MonthlyHistogramProps {
  */
 export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: MonthlyHistogramProps) {
   const { lang } = useLanguage();
+  const t = useTranslations("stats");
   const [selectedCategoryId, setSelectedCategoryId] = useState<Id<"userCategories"> | null>(null);
 
   // Fetch active categories for dropdown
@@ -47,17 +48,6 @@ export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: Mon
           categoryId: selectedCategoryId !== null ? selectedCategoryId : undefined,
         }
       : "skip"
-  );
-
-  // Get localized category name
-  const getCategoryLabel = useCallback(
-    (categoryId: Id<"userCategories">): string => {
-      const category = categories?.find((cat) => cat._id === categoryId);
-      if (!category) return "";
-      const name = lang === "zh-HK" ? category.zh_name || category.en_name : category.en_name || category.zh_name;
-      return `${category.emoji} ${name || "Unnamed"}`;
-    },
-    [categories, lang]
   );
 
   // Handle category change
@@ -118,7 +108,7 @@ export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: Mon
           <p className="font-medium text-gray-900 dark:text-gray-100">{item.fullLabel}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">{formatCurrency(item.total)}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {item.count} transaction{item.count !== 1 ? "s" : ""}
+            {t("transactions", { count: item.count })}
           </p>
         </div>
       );
@@ -143,11 +133,6 @@ export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: Mon
   // Loading state
   const isLoading = monthlyData === undefined || categories === undefined;
 
-  // Get selected category for display
-  const selectedCategory = selectedCategoryId
-    ? categories?.find((cat) => cat._id === selectedCategoryId)
-    : null;
-
   return (
     <div className={`w-full ${className}`}>
       {/* Category Filter Dropdown */}
@@ -158,9 +143,9 @@ export function MonthlyHistogram({ userId, monthsBack = 6, className = "" }: Mon
           onChange={handleCategoryChange}
           disabled={isLoading}
           className="min-h-[44px] flex-1 appearance-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-          aria-label="Filter by category"
+          aria-label={t("categoryFilter.all")}
         >
-          <option value="">All Categories</option>
+          <option value="">{t("categoryFilter.all")}</option>
           {categories?.map((category) => {
             const name = lang === "zh-HK" ? category.zh_name || category.en_name : category.en_name || category.zh_name;
             return (

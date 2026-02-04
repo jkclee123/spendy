@@ -8,6 +8,7 @@
     "update": "Update",
     "saving": "Saving...",
     "deleting": "Deleting...",
+    "loading": "Loading...",
     "error": "Error",
     "success": "Success"
   },
@@ -24,7 +25,17 @@
     "recentSpending": "Recent Spending",
     "totalSpending": "Total spending",
     "noData": "No data for {period}",
-    "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}"
+    "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}",
+    "categoryFilter": {
+      "all": "All Categories"
+    },
+    "monthNavigation": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "selectMonth": "Select month"
+    },
+    "noDataForMonth": "No data for {month}",
+    "uncategorized": "Uncategorized"
   },
   "settings": {
     "title": "Settings",

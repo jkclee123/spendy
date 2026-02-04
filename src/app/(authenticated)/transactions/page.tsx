@@ -14,7 +14,6 @@ import type { Transaction } from "@/types";
 
 export default function TransactionsPage() {
   const t = useTranslations("transactions");
-  const tCommon = useTranslations("common");
   const { data: session } = useSession();
   const router = useRouter();
 

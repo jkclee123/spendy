@@ -37,7 +37,7 @@ const COLORS = [
  */
 export function CategoryPieChart({ userId, className = "" }: CategoryPieChartProps) {
   const { lang } = useLanguage();
-  const t = useTranslations("common");
+  const t = useTranslations("stats");
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth(); // 0-indexed
@@ -135,11 +135,11 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
     (item: CategoryAggregation): string => {
       if (item.emoji && (item.en_name || item.zh_name)) {
         const name = lang === "zh-HK" ? item.zh_name || item.en_name : item.en_name || item.zh_name;
-        return `${item.emoji} ${name || "Uncategorized"}`;
+        return `${item.emoji} ${name || t("uncategorized")}`;
       }
-      return item.category === "Uncategorized" ? "Uncategorized" : item.category;
+      return item.category === "Uncategorized" ? t("uncategorized") : item.category;
     },
-    [lang]
+    [lang, t]
   );
 
   // Format data for chart with localized labels
@@ -181,7 +181,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
         <div className="rounded-lg bg-white dark:bg-gray-800 p-3 shadow-lg border border-gray-200 dark:border-gray-700">
           <p className="font-medium text-gray-900 dark:text-gray-100">{item.category}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {formatCurrency(item.total)} ({item.count} transaction{item.count !== 1 ? "s" : ""})
+            {formatCurrency(item.total)} ({t("transactions", { count: item.count })})
           </p>
         </div>
       );
@@ -219,7 +219,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
           type="button"
           onClick={goToPreviousMonth}
           className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-          aria-label="Previous month"
+          aria-label={t("monthNavigation.previousMonth")}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -228,7 +228,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
           value={`${selectedMonth.year}-${selectedMonth.month}`}
           onChange={handleMonthChange}
           className="min-h-[44px] appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-          aria-label="Select month"
+          aria-label={t("monthNavigation.selectMonth")}
         >
           {availableMonths.map((month) => (
             <option key={`${month.year}-${month.month}`} value={`${month.year}-${month.month}`}>
@@ -242,7 +242,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
           onClick={goToNextMonth}
           disabled={isCurrentMonth}
           className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:hover:bg-gray-800"
-          aria-label="Next month"
+          aria-label={t("monthNavigation.nextMonth")}
           aria-disabled={isCurrentMonth}
         >
           <ChevronRight className="h-5 w-5" />
@@ -259,8 +259,12 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
       {/* Empty State */}
       {isEmpty && (
         <div className="flex h-64 flex-col items-center justify-center">
-          <p className="text-lg font-medium text-gray-900 dark:text-gray-100">No data for {selectedMonthLabel}</p>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Total spending: {formatCurrency(0)}</p>
+          <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            {t("noDataForMonth", { month: selectedMonthLabel })}
+          </p>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            {t("totalSpending")}: {formatCurrency(0)}
+          </p>
         </div>
       )}
 
@@ -307,7 +311,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
           {/* Summary */}
           <div className="mt-4 text-center">
             <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalAmount)}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total spending</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalSpending")}</p>
           </div>
         </>
       )}
