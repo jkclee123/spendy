@@ -30,10 +30,11 @@ External systems (mobile apps, IoT devices, automation scripts) need to create t
 **Acceptance Scenarios**:
 
 1. **Given** a user has generated an API token, **When** they send a POST request to `/api/transactions/create` with valid `amount`, `category`, `name`, and `apiToken`, **Then** a new transaction record is created and associated with their account
-2. **Given** a user sends a POST request with a category name that doesn't exist in their userCategories, **When** the API processes the request, **Then** a new userCategory is automatically created with a default emoji (🏷️) and the transaction is created with this category
+2. **Given** a user sends a POST request with a category name that doesn't exist in their userCategories (e.g., `category: "Transport"`), **When** the API processes the request, **Then** a new userCategory is automatically created with `en_name: "Transport"`, `zh_name: "Transport"`, default emoji (❓), and the transaction is created with this category
 3. **Given** a user sends a POST request with an invalid or missing `apiToken`, **When** the API validates the request, **Then** the API returns an authentication error (401) and no transaction is created
 4. **Given** a user sends a POST request with invalid data (missing `amount`, negative `amount`, or invalid data types), **When** the API validates the request, **Then** the API returns a validation error (400) with specific error details
-5. **Given** a user is viewing their settings page, **When** they access the API token section, **Then** they can view their current API token and copy it for use in external systems
+5. **Given** a user has an existing category with `en_name: "Food"` and `zh_name: "食物"`, **When** they send a POST request with `category: "FOOD"` or `category: "food"` or `category: "食物"`, **Then** the API matches the existing category case-insensitively and creates a transaction linked to that category (no duplicate category is created)
+6. **Given** a user is viewing their settings page, **When** they access the API token section, **Then** they can view their current API token and copy it for use in external systems
 
 ---
 
@@ -151,6 +152,7 @@ The stats page should focus on monthly and custom month-selection views rather t
 - How does the histogram display when a selected category has sparse or no data for the visible time range?
 - What happens if a user creates a category via API with an empty or whitespace-only category name?
 - How does the system handle concurrent API requests trying to create the same non-existent category simultaneously?
+- What happens if case-insensitive matching returns multiple categories (e.g., user has both `en_name: "Food"` in category A and `zh_name: "food"` in category B)? (System returns the category with earliest `createdAt` timestamp for deterministic behavior)
 
 ## Requirements *(mandatory)*
 
@@ -170,19 +172,19 @@ The stats page should focus on monthly and custom month-selection views rather t
 - **FR-007**: The API endpoint MUST return a 401 error with a descriptive message if the `apiToken` is invalid or missing
 - **FR-008**: The API endpoint MUST validate that `amount` is a positive number and `category` is a non-empty string
 - **FR-009**: The API endpoint MUST return a 400 error with specific validation details if required fields are missing or invalid
-- **FR-010**: The API endpoint MUST query for an existing userCategory matching both the user and the `category` name string
-- **FR-011**: If no matching userCategory exists, the API MUST automatically create a new userCategory with the provided `category` name, a default emoji (🏷️), and `isActive: true`
+- **FR-010**: The API endpoint MUST query for an existing userCategory matching the user and the `category` name string by performing a case-insensitive search against both `en_name` and `zh_name` fields (returning a match if either field matches). If multiple categories match, the system MUST return the category with the earliest `createdAt` timestamp. Implementation note: Case-insensitive matching should be performed in application code after fetching all user categories, using JavaScript `.toLowerCase()` comparison
+- **FR-011**: If no matching userCategory exists, the API MUST automatically create a new userCategory with both `en_name` and `zh_name` set to the provided `category` string value, a default emoji (❓), and `isActive: true`
 - **FR-012**: The API endpoint MUST create a new transaction record associated with the authenticated user, linking to the found or newly created userCategory
 - **FR-013**: The API endpoint MUST return a 201 status code with the created transaction details on success
 - **FR-014**: The API endpoint MUST handle and return appropriate error responses for database failures or server errors (500)
 
 **Swipe Gesture Simplification:**
 
-- **FR-015**: System MUST disable swipe-to-right gesture on transaction list items
+- **FR-015**: System MUST disable swipe-to-right gesture on transaction list items; the item MUST remain stationary when a right-swipe is attempted
 - **FR-016**: System MUST preserve swipe-to-left gesture for deleting transactions
-- **FR-017**: System MUST disable swipe-to-right gesture on userCategory list items
+- **FR-017**: System MUST disable swipe-to-right gesture on userCategory list items; the item MUST remain stationary when a right-swipe is attempted
 - **FR-018**: System MUST preserve swipe-to-left gesture for deactivating userCategories
-- **FR-019**: System MUST disable swipe-to-right gesture on locationHistories list items
+- **FR-019**: System MUST disable swipe-to-right gesture on locationHistories list items; the item MUST remain stationary when a right-swipe is attempted
 - **FR-020**: System MUST preserve swipe-to-left gesture for deleting location histories
 - **FR-021**: Swipe gesture components MUST not display right-swipe action backgrounds or labels
 
@@ -228,6 +230,10 @@ The stats page should focus on monthly and custom month-selection views rather t
 - **FR-047**: System MUST remove any associated state management for week/year time period selection
 - **FR-048**: The histogram MUST display a reasonable default time range without requiring time period selection from buttons
 
+**Documentation:**
+
+- **FR-049**: The specification (spec.md), implementation plan (plan.md), and task list (tasks.md) MUST be updated to document the case-insensitive category name matching behavior for the API endpoint, including examples of matching logic across `en_name` and `zh_name` fields
+
 ### Key Entities
 
 - **User**: Represents an authenticated user account
@@ -271,17 +277,32 @@ The stats page should focus on monthly and custom month-selection views rather t
 - **SC-012**: Stats page displays in the user's selected language with 100% of text localized correctly
 - **SC-013**: Drag-and-drop reordering functionality is completely removed from category management UI
 - **SC-014**: Week/month/year toggle buttons are removed from stats page, simplifying the interface
-- **SC-015**: Automatically created categories via API have the default emoji (🏷️) and are immediately usable for future transactions
+- **SC-015**: Automatically created categories via API have the default emoji (❓) and are immediately usable for future transactions
+- **SC-016**: API category lookup correctly matches case-insensitive input against both `en_name` and `zh_name` fields 100% of the time, preventing duplicate category creation for variations in case (e.g., "Food", "food", "FOOD" all match the same category)
+
+## Clarifications
+
+### Session 2026-02-04
+
+- Q: How should the UI respond to a disabled right-swipe gesture? → A: The item remains stationary; the gesture is completely ignored.
+- Q: Are generateApiToken, generateInitialApiToken and regenerateApiToken the same? Can they be grouped into one? → A: Yes, consolidate into single `generateApiToken()` utility function that both `create` and `regenerateApiToken` mutations call. Token generation logic (crypto.randomBytes or UUID) is identical; only the timing and context differ.
+- Q: When a user submits a category name via the API (e.g., "FOOD" or "食物"), which field(s) should the system match against? → A: Search both `en_name` AND `zh_name` fields case-insensitively, returning a match if either field matches
+- Q: When automatically creating a new category via the API, how should the system populate `en_name` and `zh_name` fields from the single `category` input string? → A: Set both `en_name` and `zh_name` to the same value from the `category` input string
+- Q: What specific documentation needs to be updated for the case-insensitive category name search feature? → A: tasks.md, specs.md, plan.md
+- Q: When the API performs case-insensitive matching and multiple categories could potentially match, what should the system's behavior be? → A: Return the category with the earliest `createdAt` timestamp (oldest category wins)
+- Q: For the case-insensitive search implementation in Convex queries, should the matching be performed at the database level or in application code? → A: Filter in application code after fetching all user categories from the database
 
 ## Assumptions
 
-- The API token will be generated server-side (implementation detail to be determined during planning)
-- The default emoji for auto-created categories is 🏷️ (generic label emoji)
+- The API token will be generated server-side using a single `generateApiToken()` utility function that both initial creation and regeneration will call
+- The API token format is cryptographically secure UUID v4 (minimum 32 characters)
+- The default emoji for auto-created categories is ❓ (generic label emoji)
 - Month navigation in the pie chart is limited to months where transaction data exists (empty months may be shown as zero data)
 - The histogram default time range is determined by implementation (likely last 3-6 months based on existing pattern)
 - API token display component structure from commit e6a6a180f7926e4e02ec7981f1e25fd21c308da8 can be reused with minimal modifications
 - Existing internationalization infrastructure (next-intl) can be extended to cover stats page content
-- Category name matching for API requests is case-sensitive and exact-match (no fuzzy matching)
+- Category name matching for API requests is case-insensitive, searches both `en_name` and `zh_name` fields, and uses exact-match (no fuzzy matching or partial substring matching). When multiple categories match, the oldest category (by `createdAt`) is selected for deterministic behavior
+- Case-insensitive category matching is performed in application code after fetching user categories from Convex, rather than using database-level filtering, due to Convex's query limitations and typical low category counts per user (<100)
 - The right arrow in pie chart month navigation becomes disabled or no-op when already at the current month
 - Month dropdown in pie chart shows all months from the earliest transaction date to the current month
 - Removing the `order` field from schema is a schema migration that will be handled during implementation

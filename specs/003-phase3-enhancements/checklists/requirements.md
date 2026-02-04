@@ -64,7 +64,7 @@ The specification is comprehensive and well-structured. Key strengths:
 1. **Clear prioritization**: User stories are prioritized P1-P3 with justification for each priority level
 2. **Independent testability**: Each user story can be tested and deployed independently
 3. **Comprehensive edge cases**: Covers authentication failures, concurrent requests, empty states, and data validation
-4. **Detailed assumptions**: Documents reasonable defaults (e.g., default emoji 🏷️, case-sensitive matching)
+4. **Detailed assumptions**: Documents reasonable defaults (e.g., default emoji ❓, case-sensitive matching)
 5. **Well-defined entities**: Clear data model with relationships between User, UserCategory, Transaction, LocationHistory, and API Token
 
 Ready to proceed with `/speckit.clarify` or `/speckit.plan`.

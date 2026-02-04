@@ -29,15 +29,45 @@ This document consolidates research findings for the Phase 3 Enhancements featur
 3. **Hash-based tokens**: Requires storing plaintext values to verify, security risk
 
 **Implementation Pattern**:
+
+This single utility function is used in TWO contexts:
+1. **Initial token generation** - Called during user creation (OAuth login)
+2. **Token regeneration** - Called when user explicitly requests a new token from settings
+
 ```typescript
 import { randomBytes } from "crypto";
 
+/**
+ * Generate a cryptographically secure API token
+ * Used by both initial creation (user.create mutation) and regeneration (user.regenerateApiToken mutation)
+ */
 function generateApiToken(): string {
   return randomBytes(32)
     .toString("base64url")
     .replace(/[^a-zA-Z0-9]/g, ""); // Remove any non-alphanumeric chars for safety
 }
+
+// Usage in create mutation:
+export const create = mutation({
+  handler: async (ctx, args) => {
+    const apiToken = generateApiToken(); // ← single utility
+    return await ctx.db.insert("users", { ...args, apiToken });
+  },
+});
+
+// Usage in regenerate mutation:
+export const regenerateApiToken = mutation({
+  handler: async (ctx, args) => {
+    const newToken = generateApiToken(); // ← same utility
+    await ctx.db.patch(args.userId, { apiToken: newToken });
+  },
+});
 ```
+
+**Benefits of consolidation**:
+- **DRY principle**: Token generation logic exists in one place
+- **Consistency**: All tokens guaranteed to use same format and security standards
+- **Maintainability**: Changes to token format only require updating one function
 
 **Storage**: Tokens will be stored directly in Convex users table, indexed for fast lookup. No hashing required since tokens have sufficient entropy and are transmitted securely over HTTPS.
 
@@ -100,7 +130,7 @@ const existingCategory = await ctx.db
 **Auto-creation behavior**: If no match found, create new category with:
 - `en_name`: Exact string from API request
 - `zh_name`: Empty or same as en_name (user can edit later)
-- `emoji`: Default 🏷️ (label emoji)
+- `emoji`: Default ❓ (label emoji)
 - `isActive`: true
 - `createdAt`: Current timestamp
 
@@ -110,7 +140,7 @@ const existingCategory = await ctx.db
 
 **Question**: What emoji should be used as the default for categories created via API?
 
-**Decision**: Use 🏷️ (label emoji, U+1F3F7) as the default emoji.
+**Decision**: Use ❓ (label emoji, U+1F3F7) as the default emoji.
 
 **Rationale**:
 - **Semantic meaning**: The label emoji represents tagging/categorization, fitting for generic categories
@@ -375,7 +405,7 @@ function isRateLimited(apiToken: string): boolean {
 | API Token Generation | `crypto.randomBytes(32)` + base64url | Cryptographically secure, 256-bit entropy, URL-safe |
 | API Implementation | Next.js API Route | Flexibility, middleware support, consistent with codebase |
 | Category Matching | Case-sensitive exact match on `en_name` | Predictable, no ambiguity, simple to implement |
-| Default Emoji | 🏷️ (label) | Semantic, neutral, widely supported |
+| Default Emoji | ❓ (label) | Semantic, neutral, widely supported |
 | Month Navigation | Allow all months, show empty state | Consistent UX, clear feedback |
 | Histogram Time Range | Last 6 months (rolling) | Sufficient context, mobile-friendly, performance |
 | Swipe Gesture Removal | Modify hook + component + consumers | Defense in depth, clear intent, clean API |

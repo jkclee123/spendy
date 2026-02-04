@@ -94,7 +94,7 @@ This document defines the data model changes and entity relationships for Phase 
   - Matching: Case-sensitive exact match
   - Auto-creation: Set to API request `category` string if category doesn't exist
 - `emoji`:
-  - Default for API-created categories: "🏷️" (label emoji)
+  - Default for API-created categories: "❓" (label emoji)
   - User-editable: Can be changed via settings UI
 
 **Validation Rules**:
@@ -106,7 +106,7 @@ This document defines the data model changes and entity relationships for Phase 
 
 **State Transitions**:
 - On creation: `order` can be set to any value (ignored), `createdAt` is current time
-- On API category auto-creation: `en_name` = API category string, `emoji` = "🏷️", `isActive` = true
+- On API category auto-creation: `en_name` = API category string, `emoji` = "❓", `isActive` = true
 - On deactivation: `isActive` = false (swipe-left on active category)
 - On activation: `isActive` = true (swipe-left on inactive category)
 
@@ -214,7 +214,7 @@ This document defines the data model changes and entity relationships for Phase 
     | If category null → Create new category
     |
     v
-[Convex: userCategories.create(userId, en_name, emoji="🏷️")]
+[Convex: userCategories.create(userId, en_name, emoji="❓")]
     |
     | Returns: categoryId
     |
@@ -323,8 +323,9 @@ This document defines the data model changes and entity relationships for Phase 
 ### Key Convex Queries/Mutations
 
 **Users**:
+- `generateApiToken()`: Utility function to generate cryptographically secure tokens (NEW - shared by both initial creation and regeneration)
 - `users.getByApiToken(apiToken: string)`: Find user by API token (NEW)
-- `users.regenerateApiToken(userId: Id<"users">)`: Generate new token (NEW)
+- `users.regenerateApiToken(userId: Id<"users">)`: Regenerate token by calling `generateApiToken()` utility (NEW)
 - `users.getByEmail(email: string)`: Existing, used for OAuth login
 
 **UserCategories**:

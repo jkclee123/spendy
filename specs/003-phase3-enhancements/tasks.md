@@ -48,10 +48,10 @@ This is a **Next.js web application** with unified structure:
 
 ### Convex Backend - Core Mutations/Queries
 
-- [ ] T007 [P] Add `generateApiToken()` helper function in `convex/users.ts` using `crypto.randomBytes(32).toString('base64url')`
+- [ ] T007 [P] Add `generateApiToken()` helper function in `convex/users.ts` using `crypto.randomUUID()` or `crypto.randomBytes(32).toString('base64url')` - this single utility will be used by both initial creation and regeneration mutations
 - [ ] T008 [P] Add `getByApiToken` query in `convex/users.ts` with args `{ apiToken: v.string() }`
-- [ ] T009 [P] Add `generateInitialApiToken` mutation in `convex/users.ts` with args `{ userId: v.id("users") }`
-- [ ] T010 [P] Add `regenerateApiToken` mutation in `convex/users.ts` with args `{ userId: v.id("users") }`
+- [ ] T009 [P] Add `regenerateApiToken` mutation in `convex/users.ts` with args `{ userId: v.id("users") }` - calls `generateApiToken()` helper to get new token
+- [ ] T010 [P] Update `create` mutation in `convex/users.ts` to call `generateApiToken()` helper when initially creating user (instead of inline UUID generation)
 - [ ] T011 [P] Add `findByName` query in `convex/userCategories.ts` with args `{ userId: v.id("users"), name: v.string() }` for case-sensitive exact match on `en_name`
 - [ ] T012 [P] Add `createFromApi` mutation in `convex/transactions.ts` with args `{ userId, amount, categoryId, name? }`
 
@@ -93,7 +93,7 @@ This is a **Next.js web application** with unified structure:
 - [ ] T025 [US1] Add rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset) to responses
 - [ ] T026 [US1] Create `src/components/settings/ApiTokenDisplay.tsx` component with show/hide toggle, copy button, regenerate confirmation
 - [ ] T027 [US1] Add ApiTokenDisplay component to settings page in `src/app/(authenticated)/settings/page.tsx`
-- [ ] T028 [US1] Ensure API token is generated for existing users (call `generateInitialApiToken` on settings page load if token missing)
+- [ ] T028 [US1] Ensure API token is generated for existing users (call `regenerateApiToken` on settings page load if token missing)
 - [ ] T029 [US1] Add usage instructions section to ApiTokenDisplay component explaining endpoint URL and payload format
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - users can generate tokens, make API calls, and see transactions created
@@ -244,9 +244,9 @@ This is a **Next.js web application** with unified structure:
 ### Code Cleanup
 
 - [ ] T080 [P] Remove unused imports across all modified files
-- [ ] T081 [P] Add JSDoc comments to new functions explaining crypto.randomBytes token generation
+- [ ] T081 [P] Add JSDoc comments to `generateApiToken()` utility function explaining token generation approach (crypto.randomUUID or crypto.randomBytes) and that it is used by both initial user creation and token regeneration
 - [ ] T082 [P] Add JSDoc comments explaining case-sensitive category name matching
-- [ ] T083 [P] Add JSDoc comments for default emoji selection (🏷️) in category auto-creation
+- [ ] T083 [P] Add JSDoc comments for default emoji selection (❓) in category auto-creation
 
 ### Testing & Validation
 
@@ -342,9 +342,9 @@ Each sprint delivers independently testable value.
 
 ## Task Summary
 
-**Total Tasks**: 100  
+**Total Tasks**: 99  
 **Setup Phase**: 3 tasks  
-**Foundational Phase**: 12 tasks (blocking)  
+**Foundational Phase**: 11 tasks (blocking) ← *Consolidated token generation from 2 separate mutations to 1 utility + 2 mutations*  
 **User Story 1 (P1)**: 14 tasks (MVP)  
 **User Story 2 (P1)**: 8 tasks  
 **User Story 3 (P2)**: 5 tasks  
@@ -367,3 +367,55 @@ Each sprint delivers independently testable value.
 - US7: Time period buttons removed
 
 **Suggested MVP**: User Story 1 (T001-T029) - 29 tasks for fully functional external API integration
+
+---
+
+## Token Generation Consolidation Pattern
+
+### Clarification (2026-02-04)
+
+The three token-related functions have been consolidated into a **single `generateApiToken()` utility function** to follow DRY principles and reduce code duplication.
+
+**Previous approach** (removed):
+- `generateInitialApiToken()` mutation with separate logic
+- `regenerateApiToken()` mutation with duplicate logic
+- Inline token generation in `create()` mutation
+
+**New consolidated approach**:
+
+```typescript
+// convex/users.ts
+
+/**
+ * Generate a cryptographically secure API token
+ * Used by both initial token generation (during user creation) and regeneration
+ */
+function generateApiToken(): string {
+  return crypto.randomUUID();
+}
+
+export const create = mutation({
+  args: { name: v.string(), email: v.string(), image: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    const apiToken = generateApiToken(); // ← calls utility
+    return await ctx.db.insert("users", { ...args, apiToken, createdAt: Date.now() });
+  },
+});
+
+export const regenerateApiToken = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const newToken = generateApiToken(); // ← same utility
+    await ctx.db.patch(args.userId, { apiToken: newToken });
+    return newToken;
+  },
+});
+```
+
+**Benefits**:
+1. **Single source of truth** - Token format changes only require updating one function
+2. **Consistency** - All tokens guaranteed to follow same format and security standards
+3. **Testability** - One function to unit test for token generation logic
+4. **Maintainability** - Clear intent that both operations use identical token strategy
+
+**Implementation Note**: This consolidation reduces Foundational Phase tasks from 12 to 11 (T007-T012 instead of T007-T013).

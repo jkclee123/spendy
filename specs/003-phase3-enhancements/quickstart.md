@@ -8,6 +8,16 @@
 
 This guide provides step-by-step instructions for implementing Phase 3 Enhancements. Follow the sections in order to ensure proper integration and testing.
 
+## Key Design Decision: Token Generation Consolidation
+
+**Important clarification (2026-02-04)**: The three token-related functions have been consolidated into a **single `generateApiToken()` utility function** for DRY principles and consistency.
+
+- **Single source of truth**: One function generates all API tokens (both for initial creation and regeneration)
+- **Shared utility**: Both the `create()` user mutation and `regenerateApiToken()` mutation call `generateApiToken()`
+- **No duplicate `generateInitialApiToken()` mutation**: Initial token is generated during user creation; regeneration uses the same utility
+
+This eliminates code duplication and ensures all tokens follow identical security standards.
+
 ## Prerequisites
 
 - [ ] Development environment set up (Node.js 18+, Bun/npm)
@@ -96,29 +106,8 @@ export const getByApiToken = query({
 });
 
 /**
- * Generate initial API token for a user (if missing)
- */
-export const generateInitialApiToken = mutation({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    const user = await ctx.db.get(args.userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    
-    if (user.apiToken && user.apiToken.length > 0) {
-      // Already has a token, don't regenerate
-      return user.apiToken;
-    }
-    
-    const newToken = generateApiToken();
-    await ctx.db.patch(args.userId, { apiToken: newToken });
-    return newToken;
-  },
-});
-
-/**
- * Regenerate API token for a user
+ * Regenerate API token for a user (also called during initial creation if user lacks token)
+ * Uses the shared generateApiToken() utility function
  */
 export const regenerateApiToken = mutation({
   args: { userId: v.id("users") },
@@ -128,11 +117,17 @@ export const regenerateApiToken = mutation({
       throw new Error("User not found");
     }
     
+    // Generate new token (same utility used for initial creation)
     const newToken = generateApiToken();
     await ctx.db.patch(args.userId, { apiToken: newToken });
     return newToken;
   },
 });
+
+/**
+ * Note: Initial token generation happens during user creation in the create() mutation
+ * which also calls the shared generateApiToken() utility function
+ */
 ```
 
 **Test**:
@@ -325,7 +320,7 @@ export async function POST(request: NextRequest) {
       // Auto-create category
       const categoryId = await convex.mutation(api.userCategories.create, {
         userId: user._id,
-        emoji: "🏷️",
+        emoji: "❓",
         en_name: category,
         zh_name: category, // Use same name for Chinese by default
         isActive: true,
@@ -695,7 +690,7 @@ If issues arise:
 
 **API Token Format**: 32-byte base64url (~43 characters)  
 **Rate Limit**: 60 requests/minute per token  
-**Default Category Emoji**: 🏷️  
+**Default Category Emoji**: ❓  
 **Histogram Time Range**: Last 6 months  
 **Category Ordering**: By `createdAt` ASC  
 **Swipe Gestures**: Left-only (right disabled)  

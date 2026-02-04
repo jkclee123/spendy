@@ -234,10 +234,10 @@ This feature actually **reduces** complexity by:
 - **Status**: PASS
 - **Assessment**: Feature reduces overall complexity
   - Code removal: Drag-and-drop handlers, time period state, right-swipe logic
-  - Simple patterns: crypto.randomBytes() for token generation, exact string matching for categories
+  - Simple patterns: Single `generateApiToken()` utility for both initial and regenerated tokens, exact string matching for categories
   - Clear documentation: Research decisions, API contracts, quickstart guide
   - Minimal dependencies: No new packages required
-- **Technical debt reduction**: Deprecates unused `order` field
+- **Technical debt reduction**: Deprecates unused `order` field, consolidates duplicate token generation logic
 
 ### Performance Budget Re-Check ✅
 

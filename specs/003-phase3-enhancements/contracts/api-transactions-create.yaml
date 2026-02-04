@@ -28,7 +28,7 @@ paths:
         Creates a spending transaction for the authenticated user.
         
         If the specified category doesn't exist, it will be automatically created
-        with a default emoji (🏷️) and the provided category name.
+        with a default emoji (❓) and the provided category name.
         
         Rate limit: 60 requests per minute per API token.
       
@@ -222,7 +222,7 @@ components:
             If the category doesn't exist for the user, it will be automatically
             created with:
             - English name: The provided string
-            - Emoji: 🏷️ (default label emoji)
+            - Emoji: ❓ (default label emoji)
             - Status: Active
             
             Users can edit the category name and emoji later via the settings UI.
