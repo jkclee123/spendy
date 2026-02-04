@@ -24,22 +24,8 @@ export default function StatsPage() {
     session?.user?.email ? { email: session.user.email } : "skip"
   );
 
-  // Fetch monthly aggregation data - real-time via Convex subscription
-  const monthlyData = useQuery(
-    api.transactions.aggregateByMonth,
-    user?._id
-      ? {
-          userId: user._id,
-          monthsBack: timePeriod === "year" ? 12 : timePeriod === "month" ? 3 : 1,
-        }
-      : "skip"
-  );
-
   // Loading state
-  const isLoading = user === undefined || monthlyData === undefined;
-
-  // Check if there's any data to display
-  const hasMonthlyData = monthlyData && monthlyData.length > 0;
+  const isLoading = user === undefined;
 
   // Time period button styles - min 44px touch target for mobile
   const periodButtonClass = (period: TimePeriod) =>
@@ -105,15 +91,18 @@ export default function StatsPage() {
       )}
 
       {/* Monthly Histogram */}
-      {!isLoading && hasMonthlyData && (
+      {!isLoading && user?._id && (
         <Card>
           <CardHeader>
             <CardTitle>
               {timePeriod === "year" ? "Monthly Spending (12 months)" : "Recent Spending"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-80">
-            <MonthlyHistogram data={monthlyData} />
+          <CardContent>
+            <MonthlyHistogram
+              userId={user._id}
+              monthsBack={timePeriod === "year" ? 12 : timePeriod === "month" ? 3 : 1}
+            />
           </CardContent>
         </Card>
       )}

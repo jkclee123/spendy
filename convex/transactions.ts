@@ -409,11 +409,13 @@ export const getEarliestTransactionDate = query({
 /**
  * Aggregate transactions by month for a user
  * Returns monthly totals for histogram visualization
+ * Optionally filters by categoryId if provided
  */
 export const aggregateByMonth = query({
   args: {
     userId: v.id("users"),
     monthsBack: v.number(), // Number of months to look back
+    categoryId: v.optional(v.id("userCategories")), // Optional category filter
   },
   handler: async (ctx, args) => {
     // Calculate the start date (beginning of N months ago)
@@ -430,9 +432,16 @@ export const aggregateByMonth = query({
       .collect();
 
     // Filter to transactions within the time range
-    const filteredTransactions = transactions.filter(
+    let filteredTransactions = transactions.filter(
       (t) => t.createdAt >= startDate
     );
+
+    // Filter by categoryId if provided
+    if (args.categoryId !== undefined) {
+      filteredTransactions = filteredTransactions.filter(
+        (t) => t.category === args.categoryId
+      );
+    }
 
     // Aggregate by month
     const monthMap = new Map<string, { total: number; count: number }>();

@@ -182,15 +182,15 @@ This is a **Next.js web application** with unified structure:
 
 ### Implementation for User Story 5
 
-- [ ] T056 [US5] Update `aggregateByMonth` query in `convex/transactions.ts` to accept optional `categoryId` parameter
-- [ ] T057 [US5] Add category filter logic to `aggregateByMonth` query to filter transactions by categoryId if provided
-- [ ] T058 [US5] Add category state to `src/components/stats/MonthlyHistogram.tsx`: `selectedCategoryId: Id<"userCategories"> | null`
-- [ ] T059 [US5] Add category dropdown JSX to top left of histogram card with "All" option + user's active categories
-- [ ] T060 [US5] Fetch active userCategories for dropdown using existing Convex query
-- [ ] T061 [US5] Implement `handleCategoryChange` handler to update selectedCategoryId state
-- [ ] T062 [US5] Update Convex query call to pass `categoryId: selectedCategoryId` parameter
-- [ ] T063 [US5] Add visual indicator showing which category is filtered (update card title or add badge)
-- [ ] T064 [US5] Add aria-label to category dropdown for accessibility
+- [X] T056 [US5] Update `aggregateByMonth` query in `convex/transactions.ts` to accept optional `categoryId` parameter
+- [X] T057 [US5] Add category filter logic to `aggregateByMonth` query to filter transactions by categoryId if provided
+- [X] T058 [US5] Add category state to `src/components/stats/MonthlyHistogram.tsx`: `selectedCategoryId: Id<"userCategories"> | null`
+- [X] T059 [US5] Add category dropdown JSX to top left of histogram card with "All" option + user's active categories
+- [X] T060 [US5] Fetch active userCategories for dropdown using existing Convex query
+- [X] T061 [US5] Implement `handleCategoryChange` handler to update selectedCategoryId state
+- [X] T062 [US5] Update Convex query call to pass `categoryId: selectedCategoryId` parameter
+- [X] T063 [US5] Add visual indicator showing which category is filtered (update card title or add badge)
+- [X] T064 [US5] Add aria-label to category dropdown for accessibility
 
 **Checkpoint**: Histogram category filtering complete - users can analyze spending trends by specific category
 
