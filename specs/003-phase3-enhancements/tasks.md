@@ -108,17 +108,17 @@ This is a **Next.js web application** with unified structure:
 
 ### Tests for User Story 2
 
-- [ ] T030 [P] [US2] Create unit test file `tests/unit/swipe-gestures.test.ts` to verify right-swipe has no effect and left-swipe triggers actions
+- [X] T030 [P] [US2] Create unit test file `tests/unit/swipe-gestures.test.ts` to verify right-swipe has no effect and left-swipe triggers actions
 
 ### Implementation for User Story 2
 
-- [ ] T031 [P] [US2] Update `src/hooks/useSwipeGesture.ts` to remove `onSwipeRight` from config interface
-- [ ] T032 [P] [US2] Update `src/hooks/useSwipeGesture.ts` to remove right-swipe detection logic in `handleTouchEnd`
-- [ ] T033 [P] [US2] Update `src/components/ui/SwipeableCard.tsx` to remove `onSwipeRightAction`, `rightActionLabel`, `rightActionColor` props
-- [ ] T034 [P] [US2] Update `src/components/ui/SwipeableCard.tsx` to remove right action background rendering
-- [ ] T035 [P] [US2] Update `src/components/transactions/TransactionCard.tsx` to remove any `onSwipeRightAction` prop usage
-- [ ] T036 [P] [US2] Update `src/app/(authenticated)/settings/userCategory/page.tsx` to remove any `onSwipeRightAction` prop usage
-- [ ] T037 [P] [US2] Update `src/app/(authenticated)/settings/locationHistories/page.tsx` to remove any `onSwipeRightAction` prop usage
+- [X] T031 [P] [US2] Update `src/hooks/useSwipeGesture.ts` to remove `onSwipeRight` from config interface
+- [X] T032 [P] [US2] Update `src/hooks/useSwipeGesture.ts` to remove right-swipe detection logic in `handleTouchEnd`
+- [X] T033 [P] [US2] Update `src/components/ui/SwipeableCard.tsx` to remove `onSwipeRightAction`, `rightActionLabel`, `rightActionColor` props
+- [X] T034 [P] [US2] Update `src/components/ui/SwipeableCard.tsx` to remove right action background rendering
+- [X] T035 [P] [US2] Update `src/components/transactions/TransactionCard.tsx` to remove any `onSwipeRightAction` prop usage
+- [X] T036 [P] [US2] Update `src/app/(authenticated)/settings/userCategory/page.tsx` to remove any `onSwipeRightAction` prop usage
+- [X] T037 [P] [US2] Update `src/app/(authenticated)/settings/locationHistories/page.tsx` to remove any `onSwipeRightAction` prop usage
 
 **Checkpoint**: Swipe gestures simplified - right-swipe disabled across all lists
 
