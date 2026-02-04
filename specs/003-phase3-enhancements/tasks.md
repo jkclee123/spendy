@@ -132,14 +132,14 @@ This is a **Next.js web application** with unified structure:
 
 ### Tests for User Story 3
 
-- [ ] T038 [P] [US3] Create unit test file `tests/unit/category-ordering.test.ts` to verify categories ordered by createdAt ascending
+- [X] T038 [P] [US3] Create unit test file `tests/unit/category-ordering.test.ts` to verify categories ordered by createdAt ascending
 
 ### Implementation for User Story 3
 
-- [ ] T039 [P] [US3] Remove drag handle UI elements from `src/app/(authenticated)/settings/userCategory/page.tsx`
-- [ ] T040 [P] [US3] Remove drag event handlers (`onDragStart`, `onDragOver`, `onDrop`) from category management page
-- [ ] T041 [P] [US3] Remove any reorder mutation calls from `src/app/(authenticated)/settings/userCategory/page.tsx`
-- [ ] T042 [P] [US3] Verify category dropdowns in transaction forms display categories in createdAt order
+- [X] T039 [P] [US3] Remove drag handle UI elements from `src/app/(authenticated)/settings/userCategory/page.tsx`
+- [X] T040 [P] [US3] Remove drag event handlers (`onDragStart`, `onDragOver`, `onDrop`) from category management page
+- [X] T041 [P] [US3] Remove any reorder mutation calls from `src/app/(authenticated)/settings/userCategory/page.tsx`
+- [X] T042 [P] [US3] Verify category dropdowns in transaction forms display categories in createdAt order
 
 **Checkpoint**: Category management simplified - no drag-and-drop, predictable ordering by creation date
 

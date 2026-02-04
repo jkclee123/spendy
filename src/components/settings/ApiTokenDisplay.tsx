@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { useTranslations } from "next-intl";
-import { Eye, EyeOff, Copy, RefreshCw, Info } from "lucide-react";
+import { Eye, EyeOff, Copy, RefreshCw } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -79,10 +79,14 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
   }
 
   const apiToken = user.apiToken || "";
-  const baseUrl =
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "https://spendy.example.com";
+
+  // Show first 5 characters when token is hidden
+  const VISIBLE_CHARS = 5;
+  const getDisplayToken = () => {
+    if (!apiToken) return "Generating...";
+    if (isTokenVisible) return apiToken;
+    return apiToken.slice(0, VISIBLE_CHARS) + "*".repeat(apiToken.length - VISIBLE_CHARS);
+  };
 
   return (
     <>
@@ -98,22 +102,8 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
           {/* Token Display */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <code
-                className={`flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm font-mono break-all ${
-                  isTokenVisible ? "text-gray-900 dark:text-gray-100" : "text-transparent select-none"
-                }`}
-                style={
-                  !isTokenVisible
-                    ? {
-                        backgroundImage:
-                          "repeating-linear-gradient(45deg, #e5e7eb 0px, #e5e7eb 10px, transparent 10px, transparent 20px)",
-                        WebkitTextFillColor: "transparent",
-                        WebkitBackgroundClip: "text",
-                      }
-                    : undefined
-                }
-              >
-                {apiToken || "Generating..."}
+              <code className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm font-mono break-all text-gray-900 dark:text-gray-100">
+                {getDisplayToken()}
               </code>
               <Button
                 variant="outline"
@@ -149,72 +139,6 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
               <RefreshCw className="h-4 w-4 mr-2" />
               {t("regenerateToken")}
             </Button>
-          </div>
-
-          {/* Usage Instructions */}
-          <div className="mt-6 space-y-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 p-4">
-            <div className="flex items-center gap-2">
-              <Info className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100">
-                {t("usageInstructions")}
-              </h4>
-            </div>
-
-            <div className="space-y-2 text-sm">
-              <div>
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t("endpoint")}:
-                </span>{" "}
-                <code className="ml-2 rounded bg-gray-200 dark:bg-gray-800 px-2 py-1">
-                  {baseUrl}/api/transactions/create
-                </code>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t("method")}:
-                </span>{" "}
-                <code className="ml-2 rounded bg-gray-200 dark:bg-gray-800 px-2 py-1">
-                  POST
-                </code>
-              </div>
-              <div>
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t("headers")}:
-                </span>{" "}
-                <code className="ml-2 rounded bg-gray-200 dark:bg-gray-800 px-2 py-1">
-                  Content-Type: application/json
-                </code>
-              </div>
-              <div className="pt-2">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t("exampleRequest")}:
-                </span>
-                <pre className="mt-1 rounded bg-gray-200 dark:bg-gray-800 p-2 text-xs overflow-x-auto">
-                  {`curl -X POST ${baseUrl}/api/transactions/create \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "apiToken": "YOUR_TOKEN_HERE",
-    "amount": 45.50,
-    "category": "Food",
-    "name": "Lunch at Cafe"
-  }'`}
-                </pre>
-              </div>
-              <div className="pt-2">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t("exampleResponse")}:
-                </span>
-                <pre className="mt-1 rounded bg-gray-200 dark:bg-gray-800 p-2 text-xs overflow-x-auto">
-                  {`{
-  "success": true,
-  "transactionId": "j5k2l8m9n3o4p6q7"
-}`}
-                </pre>
-              </div>
-              <div className="pt-2 text-xs text-gray-600 dark:text-gray-400">
-                {t("rateLimit")}
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

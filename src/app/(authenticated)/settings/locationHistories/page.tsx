@@ -38,8 +38,14 @@ export default function LocationHistoriesSettingsPage() {
     user?._id ? { userId: user._id } : "skip"
   );
 
-  // Query categories for the dropdown
-  const categories = useQuery(
+  // Query active categories for the dropdown (ordered by createdAt)
+  const activeCategories = useQuery(
+    api.userCategories.listActiveByUser,
+    user?._id ? { userId: user._id } : "skip"
+  );
+
+  // Query all categories (for display purposes)
+  const allCategories = useQuery(
     api.userCategories.listByUser,
     user?._id ? { userId: user._id } : "skip"
   );
@@ -84,8 +90,8 @@ export default function LocationHistoriesSettingsPage() {
   };
 
   const getCategoryInfo = (categoryId: Id<"userCategories"> | undefined): UserCategory | undefined => {
-    if (!categoryId || !categories) return undefined;
-    return categories.find((c) => c._id === categoryId);
+    if (!categoryId || !allCategories) return undefined;
+    return allCategories.find((c) => c._id === categoryId);
   };
 
   const getLocalizedCategoryName = (category: UserCategory | undefined): string => {
@@ -198,9 +204,16 @@ export default function LocationHistoriesSettingsPage() {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           locationHistory={editingLocation}
-          categories={(categories || []).filter(
-            (c) => c.isActive || c._id === editingLocation.category
-          )}
+          categories={
+            // Use active categories (ordered by createdAt), plus the selected category if it's inactive
+            (activeCategories || []).concat(
+              editingLocation.category && allCategories
+                ? allCategories.filter(
+                    (c) => c._id === editingLocation.category && !c.isActive
+                  )
+                : []
+            )
+          }
           currentLang={lang}
           onSave={handleSave}
         />

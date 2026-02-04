@@ -8,20 +8,17 @@ import { useTranslations } from "next-intl";
 import { Plus, ChevronLeft } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import { SwipeableCard } from "@/components/ui/SwipeableCard";
-import { DraggableList } from "@/components/ui/DraggableList";
 import { CategoryEditModal } from "@/components/settings/CategoryEditModal";
 import { useLanguage } from "@/hooks/useLanguage";
 import type { UserCategory } from "@/types";
 
 /**
  * Category management page
- * - Lists active categories (top section)
- * - Lists inactive categories (bottom section)
- * - Swipe left to delete
- * - Drag handle to reorder (active only)
+ * - Lists active categories (top section) ordered by createdAt
+ * - Lists inactive categories (bottom section) ordered by createdAt
+ * - Swipe left to delete/deactivate
  * - Create button opens CategoryEditModal
  * - Tap category opens CategoryEditModal
- * - Auto-saves on reorder
  */
 export default function CategorySettingsPage() {
   const { data: session } = useSession();
@@ -49,7 +46,6 @@ export default function CategorySettingsPage() {
   const updateCategory = useMutation(api.userCategories.update);
   const deactivateCategory = useMutation(api.userCategories.remove);
   const activateCategory = useMutation(api.userCategories.activate);
-  const reorderCategories = useMutation(api.userCategories.reorder);
 
   const activeCategories = categories?.filter((c) => c.isActive) || [];
   const inactiveCategories = categories?.filter((c) => !c.isActive) || [];
@@ -101,14 +97,6 @@ export default function CategorySettingsPage() {
     await activateCategory({ categoryId: category._id });
   };
 
-  const handleReorder = async (newOrder: UserCategory[]) => {
-    const updates = newOrder.map((category, index) => ({
-      categoryId: category._id,
-      order: index,
-    }));
-    await reorderCategories({ updates });
-  };
-
   const getLocalizedName = (category: UserCategory): string => {
     if (lang === "en") {
       return category.en_name || category.zh_name || "Unnamed";
@@ -157,9 +145,6 @@ export default function CategorySettingsPage() {
             <h2 id="active-categories-heading" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {t("activeCategories")}
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {t("dragHint")}
-            </p>
           </div>
 
           {activeCategories.length === 0 ? (
@@ -169,11 +154,10 @@ export default function CategorySettingsPage() {
               </p>
             </div>
           ) : (
-            <DraggableList
-              items={activeCategories}
-              keyExtractor={(item) => item._id}
-              renderItem={(category) => (
+            <div className="space-y-2">
+              {activeCategories.map((category) => (
                 <SwipeableCard
+                  key={category._id}
                   onSwipeAction={() => handleDeactivate(category)}
                   actionLabel={t("deactivate")}
                   actionColor="yellow"
@@ -186,9 +170,8 @@ export default function CategorySettingsPage() {
                     </span>
                   </div>
                 </SwipeableCard>
-              )}
-              onReorder={handleReorder}
-            />
+              ))}
+            </div>
           )}
         </section>
 
