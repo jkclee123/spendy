@@ -58,7 +58,7 @@
     "categorySettings": "類別設定",
     "signOut": "登出",
     "apiToken": {
-      "title": "用戶端密鑰",
+      "title": "API 密鑰",
       "description": "使用此密鑰透過 API 建立記錄",
       "showToken": "顯示密鑰",
       "hideToken": "隱藏密鑰",
@@ -77,6 +77,13 @@
       "exampleRequest": "範例請求",
       "exampleResponse": "範例回應",
       "rateLimit": "速率限制：每分鐘 60 個請求"
+    },
+    "iosShortcut": {
+      "title": "iOS API 捷徑",
+      "description": "下載此 iOS 捷徑，使用 API 密鑰從 iPhone 快速新增記錄",
+      "downloadButton": "下載 iOS 捷徑",
+      "downloadSuccess": "下載已開始",
+      "downloadError": "下載失敗"
     }
   },
   "categories": {

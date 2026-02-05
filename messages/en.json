@@ -77,6 +77,13 @@
       "exampleRequest": "Example Request",
       "exampleResponse": "Example Response",
       "rateLimit": "Rate Limit: 60 requests per minute"
+    },
+    "iosShortcut": {
+      "title": "iOS API Shortcut",
+      "description": "Download this iOS Shortcut to quickly add transactions from your iPhone using the API token",
+      "downloadButton": "Download iOS Shortcut",
+      "downloadSuccess": "Download started successfully",
+      "downloadError": "Failed to start download"
     }
   },
   "categories": {

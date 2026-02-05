@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as transactions from "../transactions.js";
 import type * as userCategories from "../userCategories.js";
@@ -16,6 +17,7 @@ import type * as users from "../users.js";
 import type { ApiFromModules, FilterApi, FunctionReference } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  files: typeof files;
   http: typeof http;
   transactions: typeof transactions;
   userCategories: typeof userCategories;

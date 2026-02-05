@@ -12,15 +12,14 @@ import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { LanguageSelect } from "@/components/settings/LanguageSelect";
 import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
+import { IosShortcutDownload } from "@/components/settings/IosShortcutDownload";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useToast } from "@/components/ui/Toast";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
   const t = useTranslations("settings");
   const tCommon = useTranslations("common");
   const { userPreference, setUserPreference } = useLanguage();
-  const { showToast } = useToast();
 
   // Get the user from Convex by email
   const user = useQuery(
@@ -35,10 +34,7 @@ export default function SettingsPage() {
   const handleLanguageChange = async (lang: "system" | "en" | "zh-HK") => {
     try {
       await setUserPreference(lang);
-      showToast(tCommon("success"), "success");
-    } catch {
-      showToast(tCommon("error"), "error");
-    }
+    } catch {}
   };
 
   // Loading state while fetching user
@@ -107,15 +103,12 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* API Token */}
-      {user && <ApiTokenDisplay userId={user._id} />}
-
       {/* Management Links */}
       <Card>
         <CardContent className="p-0">
           <Link
             href="/settings/userCategory"
-            className="flex min-h-[44px] items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="flex min-h-[44px] items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors hover:border-gray-400 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
           >
             <div className="flex items-center gap-3">
               <Tags className="h-5 w-5 text-gray-500 dark:text-gray-400" />
@@ -125,6 +118,12 @@ export default function SettingsPage() {
           </Link>
         </CardContent>
       </Card>
+
+      {/* API Token */}
+      {user && <ApiTokenDisplay userId={user._id} />}
+
+      {/* iOS Shortcut Download */}
+      <IosShortcutDownload />
 
       {/* Sign Out */}
       <Card>

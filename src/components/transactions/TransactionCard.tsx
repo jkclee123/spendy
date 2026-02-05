@@ -91,13 +91,7 @@ export function TransactionCard({ transaction, onClick, onDelete }: TransactionC
 
       {/* Right side: Amount */}
       <div className="flex flex-col items-end">
-        <span
-          className={`text-lg font-semibold ${
-            transaction.type === "expense"
-              ? "text-red-500 dark:text-red-400"
-              : "text-green-500 dark:text-green-400"
-          }`}
-        >
+        <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {transaction.type === "expense" ? "-" : "+"}
           {formattedAmount}
         </span>
