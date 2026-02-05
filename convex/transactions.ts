@@ -130,7 +130,7 @@ export const listByUserPaginated = query({
   },
   handler: async (ctx, args) => {
     // Start with base query
-    let query = ctx.db
+    const query = ctx.db
       .query("transactions")
       .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
       .order("desc");
@@ -206,9 +206,7 @@ export const getByUserAndDateRange = query({
       .collect();
 
     // Filter by date range in application code
-    return transactions.filter(
-      (t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate
-    );
+    return transactions.filter((t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate);
   },
 });
 
@@ -329,14 +327,21 @@ export const aggregateByCategoryForMonth = query({
       .collect();
 
     // Filter by date range
-    const filteredTransactions = transactions.filter(
-      (t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate
-    );
+    const filteredTransactions = transactions
+      .filter((t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate)
+      .filter((t) => t.type === "expense");
 
     // Aggregate by category with enriched category data
     const categoryMap = new Map<
       string,
-      { total: number; count: number; categoryId: string | null; emoji?: string; en_name?: string; zh_name?: string }
+      {
+        total: number;
+        count: number;
+        categoryId: string | null;
+        emoji?: string;
+        en_name?: string;
+        zh_name?: string;
+      }
     >();
 
     for (const transaction of filteredTransactions) {
@@ -438,15 +443,11 @@ export const aggregateByMonth = query({
       .collect();
 
     // Filter to transactions within the time range
-    let filteredTransactions = transactions.filter(
-      (t) => t.createdAt >= startDate
-    );
+    let filteredTransactions = transactions.filter((t) => t.createdAt >= startDate);
 
     // Filter by categoryId if provided
     if (args.categoryId !== undefined) {
-      filteredTransactions = filteredTransactions.filter(
-        (t) => t.category === args.categoryId
-      );
+      filteredTransactions = filteredTransactions.filter((t) => t.category === args.categoryId);
     }
 
     // Aggregate by month
@@ -472,5 +473,3 @@ export const aggregateByMonth = query({
       .sort((a, b) => a.month.localeCompare(b.month));
   },
 });
-
-

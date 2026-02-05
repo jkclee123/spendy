@@ -31,7 +31,7 @@ const COLORS = [
 ];
 
 /**
- * Pie chart component for displaying spending by category with month navigation
+ * Pie chart component for displaying Expenses ratio with month navigation
  * Uses recharts for responsive, accessible visualization
  * Features month navigation with arrows and dropdown
  */
@@ -51,7 +51,15 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
   // Calculate date range for selected month
   const dateRange = useMemo(() => {
     const startDate = new Date(selectedMonth.year, selectedMonth.month, 1).getTime();
-    const endDate = new Date(selectedMonth.year, selectedMonth.month + 1, 0, 23, 59, 59, 999).getTime();
+    const endDate = new Date(
+      selectedMonth.year,
+      selectedMonth.month + 1,
+      0,
+      23,
+      59,
+      59,
+      999
+    ).getTime();
     return { startDate, endDate };
   }, [selectedMonth]);
 
@@ -68,7 +76,10 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
   );
 
   // Fetch earliest transaction date to determine available months
-  const earliestTransactionDate = useQuery(api.transactions.getEarliestTransactionDate, userId ? { userId } : "skip");
+  const earliestTransactionDate = useQuery(
+    api.transactions.getEarliestTransactionDate,
+    userId ? { userId } : "skip"
+  );
 
   // Generate available months (from earliest transaction to current month)
   const availableMonths = useMemo(() => {
@@ -272,7 +283,13 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
       {!isLoading && !isEmpty && (
         <>
           <div className="h-64 sm:h-80">
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} aspect={undefined}>
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              minWidth={0}
+              minHeight={0}
+              aspect={undefined}
+            >
               <PieChart>
                 <Pie
                   data={sortedData}
@@ -310,7 +327,9 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
 
           {/* Summary */}
           <div className="mt-4 text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalAmount)}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              {formatCurrency(totalAmount)}
+            </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalSpending")}</p>
           </div>
         </>
