@@ -105,8 +105,10 @@
     "noLocations": "尚未儲存常用交易"
   },
   "transactions": {
-    "title": "交易記錄",
+    "title": "收支記錄",
     "newTransaction": "新增記錄",
+    "expense": "支出",
+    "income": "收入",
     "amount": "金額",
     "category": "類別",
     "name": "名稱",
@@ -118,7 +120,7 @@
     "selectLocation": "選擇附近位置",
     "clearLocation": "清除位置",
     "unnamedLocation": "未命名位置",
-    "noTransactions": "尚未有交易記錄",
+    "noTransactions": "尚未有記錄",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "例如：午餐",
     "dateTime": "日期與時間",

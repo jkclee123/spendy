@@ -34,7 +34,11 @@ function evaluateFormula(formula: string): number | null {
   }
 
   // Check for invalid patterns (multiple operators in a row, etc.)
-  if (/[\+\*\/]{2,}/.test(normalized) || /[\+\-\*\/]$/.test(normalized) || /^[\*\/]/.test(normalized)) {
+  if (
+    /[\+\*\/]{2,}/.test(normalized) ||
+    /[\+\-\*\/]$/.test(normalized) ||
+    /^[\*\/]/.test(normalized)
+  ) {
     return null;
   }
 
@@ -119,10 +123,7 @@ export function TransactionForm({
   const isEditMode = !!initialData;
 
   // Fetch user categories
-  const categories = useQuery(
-    api.userCategories.listActiveByUser,
-    userId ? { userId } : "skip"
-  );
+  const categories = useQuery(api.userCategories.listActiveByUser, userId ? { userId } : "skip");
 
   // Query nearby locations when GPS coordinates are available
   const { locations: nearbyLocations, isLoading: isLoadingLocations } = useNearbyLocations(
@@ -131,6 +132,7 @@ export function TransactionForm({
     longitude
   );
 
+  const [type, setType] = useState<"expense" | "income">(initialData?.type ?? "expense");
   const [amount, setAmount] = useState(
     initialData
       ? initialData.amount.toString()
@@ -138,9 +140,7 @@ export function TransactionForm({
         ? initialAmount.toString()
         : ""
   );
-  const [name, setName] = useState(
-    initialData?.name ?? initialName ?? ""
-  );
+  const [name, setName] = useState(initialData?.name ?? initialName ?? "");
   const [category, setCategory] = useState<Id<"userCategories"> | undefined>(
     initialData?.category ?? initialCategory
   );
@@ -148,14 +148,22 @@ export function TransactionForm({
   const [errors, setErrors] = useState<FormErrors>({});
   const [rememberTransaction, setRememberTransaction] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
-  const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(undefined);
+  const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(
+    undefined
+  );
   const [hasUserInteractedWithLocation, setHasUserInteractedWithLocation] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-select closest location when nearby locations become available
   // Only auto-select if user hasn't manually interacted with the dropdown
   useEffect(() => {
-    if (!isEditMode && nearbyLocations && nearbyLocations.length > 0 && selectedLocationId === undefined && !hasUserInteractedWithLocation) {
+    if (
+      !isEditMode &&
+      nearbyLocations &&
+      nearbyLocations.length > 0 &&
+      selectedLocationId === undefined &&
+      !hasUserInteractedWithLocation
+    ) {
       const closestLocation = nearbyLocations[0];
       setSelectedLocationId(closestLocation._id);
       // Pre-fill form with closest location's data
@@ -172,28 +180,32 @@ export function TransactionForm({
   }, [nearbyLocations, isEditMode, selectedLocationId, hasUserInteractedWithLocation]);
 
   // Handle location selection change - pre-fill form with selected location data
-  const handleLocationChange = useCallback((locationId: Id<"locationHistories"> | undefined) => {
-    setHasUserInteractedWithLocation(true);
-    setSelectedLocationId(locationId);
-    if (locationId && nearbyLocations) {
-      const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
-      if (selectedLocation) {
-        if (selectedLocation.amount !== undefined) {
-          setAmount(selectedLocation.amount.toString());
-        }
-        if (selectedLocation.name) {
-          setName(selectedLocation.name);
-        }
-        if (selectedLocation.category) {
-          setCategory(selectedLocation.category);
+  const handleLocationChange = useCallback(
+    (locationId: Id<"locationHistories"> | undefined) => {
+      setHasUserInteractedWithLocation(true);
+      setSelectedLocationId(locationId);
+      if (locationId && nearbyLocations) {
+        const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
+        if (selectedLocation) {
+          if (selectedLocation.amount !== undefined) {
+            setAmount(selectedLocation.amount.toString());
+          }
+          if (selectedLocation.name) {
+            setName(selectedLocation.name);
+          }
+          if (selectedLocation.category) {
+            setCategory(selectedLocation.category);
+          }
         }
       }
-    }
-  }, [nearbyLocations]);
+    },
+    [nearbyLocations]
+  );
 
   // Reset form when initial values change
   useEffect(() => {
     if (initialData) {
+      setType(initialData.type);
       setAmount(initialData.amount.toString());
       setName(initialData.name || "");
       setCategory(initialData.category);
@@ -216,14 +228,7 @@ export function TransactionForm({
       setHasUserInteractedWithLocation(false); // Allow auto-select on fresh form
     }
     setErrors({});
-  }, [
-    initialData,
-    initialAmount,
-    initialCategory,
-    initialName,
-  ]);
-
-
+  }, [initialData, initialAmount, initialCategory, initialName]);
 
   // Get the base mutation hook (following rules of hooks - must be at top level)
   const createTransactionBase = useMutation(api.transactions.createFromWeb);
@@ -242,6 +247,7 @@ export function TransactionForm({
         name: args.name,
         amount: args.amount,
         category: args.category,
+        type: args.type,
         createdAt: Date.now(),
       };
 
@@ -251,11 +257,10 @@ export function TransactionForm({
       });
 
       if (existingTransactions !== undefined) {
-        localStore.setQuery(
-          api.transactions.listByUser,
-          { userId: args.userId },
-          [optimisticTransaction, ...existingTransactions]
-        );
+        localStore.setQuery(api.transactions.listByUser, { userId: args.userId }, [
+          optimisticTransaction,
+          ...existingTransactions,
+        ]);
       }
     });
   }, [createTransactionBase]);
@@ -284,14 +289,14 @@ export function TransactionForm({
       }
     }
 
-    // Category validation
-    if (!category) {
+    // Category validation - only required for expense transactions
+    if (type === "expense" && !category) {
       newErrors.category = t("errors.categoryRequired");
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [amount, category, t]);
+  }, [amount, category, t, type]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -346,6 +351,7 @@ export function TransactionForm({
           amount: evaluatedAmount,
           name: name,
           category: category,
+          type: type,
         });
 
         // Update or create location history if checkbox is checked and coordinates exist
@@ -414,16 +420,66 @@ export function TransactionForm({
         </div>
       )}
 
+      {/* Type Selector - Expense/Income Toggle */}
+      <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
+        <button
+          type="button"
+          onClick={() => {
+            setType("expense");
+            if (errors.category) {
+              setErrors((prev) => ({ ...prev, category: undefined }));
+            }
+          }}
+          disabled={isSubmitting}
+          className={`
+            flex-1 py-2.5 text-sm font-medium transition-colors duration-200
+            ${
+              type === "expense"
+                ? "bg-blue-500 text-white"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }
+            disabled:cursor-not-allowed disabled:opacity-50
+          `}
+        >
+          {t("expense")}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setType("income");
+            if (errors.category) {
+              setErrors((prev) => ({ ...prev, category: undefined }));
+            }
+          }}
+          disabled={isSubmitting}
+          className={`
+            flex-1 py-2.5 text-sm font-medium transition-colors duration-200
+            ${
+              type === "income"
+                ? "bg-blue-500 text-white"
+                : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+            }
+            disabled:cursor-not-allowed disabled:opacity-50
+          `}
+        >
+          {t("income")}
+        </button>
+      </div>
+
       {/* Location History Dropdown - Only show when GPS coordinates exist and not in edit mode */}
-      {!isEditMode && latitude !== undefined && longitude !== undefined && nearbyLocations && nearbyLocations.length > 0 && (
-        <LocationHistoryDropdown
-          locations={nearbyLocations}
-          value={selectedLocationId}
-          onChange={handleLocationChange}
-          disabled={isSubmitting || isLoadingLocations}
-          label={t("selectLocation")}
-        />
-      )}
+      {!isEditMode &&
+        latitude !== undefined &&
+        longitude !== undefined &&
+        nearbyLocations &&
+        nearbyLocations.length > 0 && (
+          <LocationHistoryDropdown
+            locations={nearbyLocations}
+            value={selectedLocationId}
+            onChange={handleLocationChange}
+            disabled={isSubmitting || isLoadingLocations}
+            label={t("selectLocation")}
+          />
+        )}
 
       {/* Amount Field */}
       <div>
@@ -458,9 +514,10 @@ export function TransactionForm({
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
               disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
-              ${errors.amount
-                ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
+              ${
+                errors.amount
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
               }
             `}
           />
@@ -589,7 +646,7 @@ export function TransactionForm({
                     input.setSelectionRange(result.toString().length, result.toString().length);
                   }, 0);
                 }
-               } else {
+              } else {
                 // Invalid formula - show error instead of clearing
                 setErrors((prev) => ({ ...prev, amount: t("errors.amountInvalid") }));
                 const input = amountInputRef.current;
@@ -611,23 +668,25 @@ export function TransactionForm({
         )}
       </div>
 
-      {/* Category Field */}
-      <CategoryDropdown
-        label={t("category")}
-        placeholder={t("selectCategory")}
-        required
-        categories={categories || []}
-        value={category}
-        onChange={(newCategory) => {
-          setCategory(newCategory);
-          if (errors.category) {
-            setErrors((prev) => ({ ...prev, category: undefined }));
-          }
-        }}
-        currentLang={lang}
-        disabled={isSubmitting}
-        error={errors.category}
-      />
+      {/* Category Field - Only for expense transactions */}
+      {type === "expense" && (
+        <CategoryDropdown
+          label={t("category")}
+          placeholder={t("selectCategory")}
+          required
+          categories={categories || []}
+          value={category}
+          onChange={(newCategory) => {
+            setCategory(newCategory);
+            if (errors.category) {
+              setErrors((prev) => ({ ...prev, category: undefined }));
+            }
+          }}
+          currentLang={lang}
+          disabled={isSubmitting}
+          error={errors.category}
+        />
+      )}
 
       {/* Name Field */}
       <div>
@@ -656,9 +715,10 @@ export function TransactionForm({
             transition-colors duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-900 disabled:text-gray-500
-            ${errors.name
-              ? "border-red-500 focus:ring-red-500"
-              : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
+            ${
+              errors.name
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600"
             }
           `}
         />

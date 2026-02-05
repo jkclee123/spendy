@@ -107,6 +107,8 @@
   "transactions": {
     "title": "Transactions",
     "newTransaction": "New Transaction",
+    "expense": "Expense",
+    "income": "Income",
     "amount": "Amount",
     "category": "Category",
     "name": "Name",
