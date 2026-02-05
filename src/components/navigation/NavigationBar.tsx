@@ -34,17 +34,18 @@ function NavLink({ item, isActive }: NavLinkProps) {
       className={`
         flex min-h-[44px] min-w-[44px] flex-col items-center justify-start gap-1 px-4 pt-1
         transition-colors
-        ${isActive
-          ? "text-blue-500 dark:text-blue-400"
-          : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+        ${
+          isActive
+            ? "text-blue-500 dark:text-blue-400"
+            : "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
         }
       `}
       aria-current={isActive ? "page" : undefined}
     >
       <Icon
         className="h-6 w-6"
-        strokeWidth={isColorOnly ? 2 : (isActive ? 2.5 : 2)}
-        fill={isColorOnly ? "none" : (isActive ? "currentColor" : "none")}
+        strokeWidth={isColorOnly ? 2 : isActive ? 2.5 : 2}
+        fill={isColorOnly ? "none" : isActive ? "currentColor" : "none"}
       />
     </Link>
   );
@@ -57,7 +58,7 @@ export function NavigationBar() {
     <>
       {/* Mobile Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm md:hidden">
-      <div className="flex h-[4rem] items-start justify-around pt-3">
+        <div className="flex h-[4.5rem] items-start justify-around pt-3">
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return <NavLink key={item.href} item={item} isActive={isActive} />;
