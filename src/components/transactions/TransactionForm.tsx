@@ -1,20 +1,16 @@
 "use client";
 
-import { useState, FormEvent, useCallback, useEffect, useMemo, useRef } from "react";
-import { useMutation } from "convex/react";
+import { useState, FormEvent, useCallback, useEffect, useMemo } from "react";
+import { useMutation, useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { Transaction } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { CategoryDropdown } from "@/components/ui/CategoryDropdown";
-import { LocationHistoryDropdown } from "@/components/transactions/LocationHistoryDropdown";
-import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/Toast";
-import { Checkbox } from "@/components/ui/Checkbox";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useQuery } from "convex/react";
-import { useNearbyLocations } from "@/hooks/useNearbyLocations";
 
 /**
  * Safely evaluate a mathematical expression string
@@ -92,12 +88,6 @@ interface FormErrors {
 interface TransactionFormProps {
   userId: Id<"users">;
   initialData?: Transaction;
-  latitude?: number;
-  longitude?: number;
-  initialAmount?: number;
-  initialCategory?: Id<"userCategories">;
-  initialName?: string;
-  isMobile?: boolean;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -105,12 +95,6 @@ interface TransactionFormProps {
 export function TransactionForm({
   userId,
   initialData,
-  latitude,
-  longitude,
-  initialAmount,
-  initialCategory,
-  initialName,
-  isMobile,
   onSuccess,
   onCancel,
 }: TransactionFormProps) {
@@ -125,82 +109,13 @@ export function TransactionForm({
   // Fetch user categories
   const categories = useQuery(api.userCategories.listActiveByUser, userId ? { userId } : "skip");
 
-  // Query nearby locations when GPS coordinates are available
-  const { locations: nearbyLocations, isLoading: isLoadingLocations } = useNearbyLocations(
-    userId,
-    latitude,
-    longitude
-  );
-
   const [type, setType] = useState<"expense" | "income">(initialData?.type ?? "expense");
-  const [amount, setAmount] = useState(
-    initialData
-      ? initialData.amount.toString()
-      : initialAmount !== undefined
-        ? initialAmount.toString()
-        : ""
-  );
-  const [name, setName] = useState(initialData?.name ?? initialName ?? "");
-  const [category, setCategory] = useState<Id<"userCategories"> | undefined>(
-    initialData?.category ?? initialCategory
-  );
+  const [amount, setAmount] = useState(initialData ? initialData.amount.toString() : "");
+  const [name, setName] = useState(initialData?.name ?? "");
+  const [category, setCategory] = useState<Id<"userCategories"> | undefined>(initialData?.category);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [rememberTransaction, setRememberTransaction] = useState(false);
   const [createdAt, setCreatedAt] = useState<string>("");
-  const [selectedLocationId, setSelectedLocationId] = useState<Id<"locationHistories"> | undefined>(
-    undefined
-  );
-  const [hasUserInteractedWithLocation, setHasUserInteractedWithLocation] = useState(false);
-  const amountInputRef = useRef<HTMLInputElement>(null);
-
-  // Auto-select closest location when nearby locations become available
-  // Only auto-select if user hasn't manually interacted with the dropdown
-  useEffect(() => {
-    if (
-      !isEditMode &&
-      nearbyLocations &&
-      nearbyLocations.length > 0 &&
-      selectedLocationId === undefined &&
-      !hasUserInteractedWithLocation
-    ) {
-      const closestLocation = nearbyLocations[0];
-      setSelectedLocationId(closestLocation._id);
-      // Pre-fill form with closest location's data
-      if (closestLocation.amount !== undefined) {
-        setAmount(closestLocation.amount.toString());
-      }
-      if (closestLocation.name) {
-        setName(closestLocation.name);
-      }
-      if (closestLocation.category) {
-        setCategory(closestLocation.category);
-      }
-    }
-  }, [nearbyLocations, isEditMode, selectedLocationId, hasUserInteractedWithLocation]);
-
-  // Handle location selection change - pre-fill form with selected location data
-  const handleLocationChange = useCallback(
-    (locationId: Id<"locationHistories"> | undefined) => {
-      setHasUserInteractedWithLocation(true);
-      setSelectedLocationId(locationId);
-      if (locationId && nearbyLocations) {
-        const selectedLocation = nearbyLocations.find((loc) => loc._id === locationId);
-        if (selectedLocation) {
-          if (selectedLocation.amount !== undefined) {
-            setAmount(selectedLocation.amount.toString());
-          }
-          if (selectedLocation.name) {
-            setName(selectedLocation.name);
-          }
-          if (selectedLocation.category) {
-            setCategory(selectedLocation.category);
-          }
-        }
-      }
-    },
-    [nearbyLocations]
-  );
 
   // Reset form when initial values change
   useEffect(() => {
@@ -217,18 +132,14 @@ export function TransactionForm({
       const hours = date.getHours().toString().padStart(2, "0");
       const minutes = date.getMinutes().toString().padStart(2, "0");
       setCreatedAt(`${year}-${month}-${day}T${hours}:${minutes}`);
-      setSelectedLocationId(undefined);
-      setHasUserInteractedWithLocation(true); // Prevent auto-select in edit mode
     } else {
-      setAmount(initialAmount !== undefined ? initialAmount.toString() : "");
-      setName(initialName ?? "");
-      setCategory(initialCategory);
+      setAmount("");
+      setName("");
+      setCategory(undefined);
       setCreatedAt("");
-      // Don't reset selectedLocationId here - let the auto-select effect handle it
-      setHasUserInteractedWithLocation(false); // Allow auto-select on fresh form
     }
     setErrors({});
-  }, [initialData, initialAmount, initialCategory, initialName]);
+  }, [initialData]);
 
   // Get the base mutation hook (following rules of hooks - must be at top level)
   const createTransactionBase = useMutation(api.transactions.createFromWeb);
@@ -267,9 +178,6 @@ export function TransactionForm({
 
   // Update mutation
   const updateTransaction = useMutation(api.transactions.update);
-
-  // Location history mutation
-  const upsertLocationHistory = useMutation(api.locationHistories.upsertNearby);
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {};
@@ -354,45 +262,15 @@ export function TransactionForm({
           type: type,
         });
 
-        // Update or create location history if checkbox is checked and coordinates exist
-        if (rememberTransaction && latitude !== undefined && longitude !== undefined) {
-          await upsertLocationHistory({
-            userId: userId,
-            latitude: latitude,
-            longitude: longitude,
-            amount: evaluatedAmount,
-            category: category,
-            name: name,
-            selectedLocationId: selectedLocationId,
-          });
-        }
-
         // Reset form
         setAmount("");
         setName("");
         setCategory(undefined);
-        setSelectedLocationId(undefined);
-        setHasUserInteractedWithLocation(false);
 
         showToast(t("successMessages.created"), "success");
       }
 
       onSuccess?.();
-
-      // Close browser tab if on mobile
-      if (isMobile && !isEditMode) {
-        // Try to close the window/tab
-        window.close();
-
-        // Fallback: if window.close() fails (common in mobile browsers),
-        // navigate back to the previous page (the app that opened this form)
-        setTimeout(() => {
-          if (!window.closed) {
-            // Go back 2 steps to return to the app (skipping the form page)
-            window.history.go(-2);
-          }
-        }, 100);
-      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(
@@ -466,21 +344,6 @@ export function TransactionForm({
         </button>
       </div>
 
-      {/* Location History Dropdown - Only show when GPS coordinates exist and not in edit mode */}
-      {!isEditMode &&
-        latitude !== undefined &&
-        longitude !== undefined &&
-        nearbyLocations &&
-        nearbyLocations.length > 0 && (
-          <LocationHistoryDropdown
-            locations={nearbyLocations}
-            value={selectedLocationId}
-            onChange={handleLocationChange}
-            disabled={isSubmitting || isLoadingLocations}
-            label={t("selectLocation")}
-          />
-        )}
-
       {/* Amount Field */}
       <div>
         <label
@@ -494,7 +357,6 @@ export function TransactionForm({
             $
           </span>
           <input
-            ref={amountInputRef}
             type="text"
             id="amount"
             inputMode="decimal"
@@ -548,119 +410,6 @@ export function TransactionForm({
               </svg>
             </button>
           )}
-        </div>
-
-        {/* Calculator Buttons */}
-        <div className="mt-2 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              const input = amountInputRef.current;
-              if (input) {
-                const start = input.selectionStart || amount.length;
-                const newValue = amount.slice(0, start) + "+" + amount.slice(start);
-                setAmount(newValue);
-                input.focus();
-                setTimeout(() => {
-                  input.setSelectionRange(start + 1, start + 1);
-                }, 0);
-              }
-            }}
-            disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label={t("addPlus")}
-          >
-            +
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const input = amountInputRef.current;
-              if (input) {
-                const start = input.selectionStart || amount.length;
-                const newValue = amount.slice(0, start) + "-" + amount.slice(start);
-                setAmount(newValue);
-                input.focus();
-                setTimeout(() => {
-                  input.setSelectionRange(start + 1, start + 1);
-                }, 0);
-              }
-            }}
-            disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label={t("addMinus")}
-          >
-            -
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const input = amountInputRef.current;
-              if (input) {
-                const start = input.selectionStart || amount.length;
-                const newValue = amount.slice(0, start) + "×" + amount.slice(start);
-                setAmount(newValue);
-                input.focus();
-                setTimeout(() => {
-                  input.setSelectionRange(start + 1, start + 1);
-                }, 0);
-              }
-            }}
-            disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label={t("addMultiply")}
-          >
-            ×
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const input = amountInputRef.current;
-              if (input) {
-                const start = input.selectionStart || amount.length;
-                const newValue = amount.slice(0, start) + "÷" + amount.slice(start);
-                setAmount(newValue);
-                input.focus();
-                setTimeout(() => {
-                  input.setSelectionRange(start + 1, start + 1);
-                }, 0);
-              }
-            }}
-            disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-lg font-semibold text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label={t("addDivide")}
-          >
-            ÷
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const result = evaluateFormula(amount);
-              if (result !== null) {
-                setAmount(result.toString());
-                setErrors((prev) => ({ ...prev, amount: undefined }));
-                const input = amountInputRef.current;
-                if (input) {
-                  input.focus();
-                  setTimeout(() => {
-                    input.setSelectionRange(result.toString().length, result.toString().length);
-                  }, 0);
-                }
-              } else {
-                // Invalid formula - show error instead of clearing
-                setErrors((prev) => ({ ...prev, amount: t("errors.amountInvalid") }));
-                const input = amountInputRef.current;
-                if (input) {
-                  input.focus();
-                }
-              }
-            }}
-            disabled={isSubmitting}
-            className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 dark:bg-blue-600 text-lg font-semibold text-white transition-colors hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
-            aria-label={t("evaluateFormula")}
-          >
-            =
-          </button>
         </div>
 
         {errors.amount && (
@@ -759,19 +508,6 @@ export function TransactionForm({
               style={{ fontSize: "16px" }}
             />
           </div>
-        </div>
-      )}
-
-      {/* Remember Transaction Checkbox - Only on create page with coordinates */}
-      {!isEditMode && latitude !== undefined && longitude !== undefined && (
-        <div className="pt-2">
-          <Checkbox
-            id="rememberTransaction"
-            checked={rememberTransaction}
-            onChange={(e) => setRememberTransaction(e.target.checked)}
-            label={t("rememberTransaction")}
-            disabled={isSubmitting}
-          />
         </div>
       )}
 

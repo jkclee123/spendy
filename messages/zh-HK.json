@@ -10,7 +10,16 @@
     "deleting": "刪除中...",
     "loading": "載入中...",
     "error": "錯誤",
-    "success": "成功"
+    "success": "成功",
+    "daysOfWeek": {
+      "0": "星期日",
+      "1": "星期一",
+      "2": "星期二",
+      "3": "星期三",
+      "4": "星期四",
+      "5": "星期五",
+      "6": "星期六"
+    }
   },
   "stats": {
     "title": "統計",
@@ -47,7 +56,6 @@
       "zhTW": "繁體中文"
     },
     "categorySettings": "類別設定",
-    "locationHistorySettings": "常用交易",
     "signOut": "登出",
     "apiToken": {
       "title": "用戶端密鑰",
@@ -98,12 +106,6 @@
     "confirmDelete": "永久刪除 {name}？此操作無法復原。",
     "deactivate": "停用"
   },
-  "locations": {
-    "title": "常用交易",
-    "editLocation": "編輯",
-    "swipeToDelete": "滑動以刪除",
-    "noLocations": "尚未儲存常用交易"
-  },
   "transactions": {
     "title": "收支記錄",
     "newTransaction": "新增記錄",
@@ -113,24 +115,14 @@
     "category": "類別",
     "name": "名稱",
     "uncategorized": "未分類",
-    "rememberTransaction": "常用交易",
     "create": "新增記錄",
     "update": "更新記錄",
     "details": "交易詳情",
-    "selectLocation": "選擇附近位置",
-    "clearLocation": "清除位置",
-    "unnamedLocation": "未命名位置",
     "noTransactions": "尚未有記錄",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "例如：午餐",
     "dateTime": "日期與時間",
     "saveChanges": "儲存變更",
-    "clearAmount": "清除金額",
-    "addPlus": "加上加號",
-    "addMinus": "加上減號",
-    "addMultiply": "加上乘號",
-    "addDivide": "加上除號",
-    "evaluateFormula": "計算結果",
     "creating": "建立中...",
     "saving": "儲存中...",
     "selectCategory": "選擇類別",

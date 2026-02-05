@@ -5,7 +5,7 @@ import { useQuery } from "convex/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Tags, MapPin } from "lucide-react";
+import { ChevronRight, Tags } from "lucide-react";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -57,9 +57,7 @@ export default function SettingsPage() {
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
           <span className="text-2xl">⚠️</span>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-          {tCommon("error")}
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{tCommon("error")}</h3>
         <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
           Please try logging out and logging back in.
         </p>
@@ -105,10 +103,7 @@ export default function SettingsPage() {
           <CardTitle>{t("language")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <LanguageSelect
-            value={userPreference}
-            onChange={handleLanguageChange}
-          />
+          <LanguageSelect value={userPreference} onChange={handleLanguageChange} />
         </CardContent>
       </Card>
 
@@ -125,17 +120,6 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3">
               <Tags className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               <span className="text-gray-900 dark:text-gray-100">{t("categorySettings")}</span>
-            </div>
-            <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-          </Link>
-          <div className="mx-4 border-t border-gray-200 dark:border-gray-700" />
-          <Link
-            href="/settings/locationHistories"
-            className="flex min-h-[44px] items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <MapPin className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-              <span className="text-gray-900 dark:text-gray-100">{t("locationHistorySettings")}</span>
             </div>
             <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
           </Link>

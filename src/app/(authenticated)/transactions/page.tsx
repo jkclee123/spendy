@@ -23,11 +23,12 @@ export default function TransactionsPage() {
     session?.user?.email ? { email: session.user.email } : "skip"
   );
 
-
-
-  const handleTransactionClick = useCallback((transaction: Transaction) => {
-    router.push(`/transactions/update/${transaction._id}`);
-  }, [router]);
+  const handleTransactionClick = useCallback(
+    (transaction: Transaction) => {
+      router.push(`/transactions/update/${transaction._id}`);
+    },
+    [router]
+  );
 
   // Loading state
   const isLoading = user === undefined;
@@ -49,7 +50,9 @@ export default function TransactionsPage() {
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
                 <span className="text-2xl">⚠️</span>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">User not found</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                User not found
+              </h3>
               <p className="mt-2 max-w-sm text-sm text-gray-500 dark:text-gray-400">
                 Please try logging out and logging back in.
               </p>
@@ -72,14 +75,10 @@ export default function TransactionsPage() {
             </Link>
           </div>
 
-
           {/* Transaction List */}
-          <Card padding="sm">
+          <Card padding="sm" className="pt-4">
             <CardContent className="px-1">
-              <TransactionList
-                userId={user._id}
-                onTransactionClick={handleTransactionClick}
-              />
+              <TransactionList userId={user._id} onTransactionClick={handleTransactionClick} />
             </CardContent>
           </Card>
         </>

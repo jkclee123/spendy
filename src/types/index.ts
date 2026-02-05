@@ -53,21 +53,6 @@ export interface TransactionWithCategory extends Transaction {
 }
 
 /**
- * Location history entity for remembering transaction locations
- */
-export interface LocationHistory {
-  _id: Id<"locationHistories">;
-  userId: Id<"users">;
-  latitude: number;
-  longitude: number;
-  amount: number;
-  category?: Id<"userCategories">;
-  name?: string;
-  count: number;
-  createdAt: number;
-}
-
-/**
  * Standard error response format
  */
 export interface ErrorResponse {

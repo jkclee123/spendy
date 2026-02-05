@@ -95,14 +95,12 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
           <CardTitle>{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {t("description")}
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t("description")}</p>
 
           {/* Token Display */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <code className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm font-mono break-all text-gray-900 dark:text-gray-100">
+              <code className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-3 py-2 text-sm font-mono truncate whitespace-nowrap text-gray-900 dark:text-gray-100">
                 {getDisplayToken()}
               </code>
               <Button
@@ -111,11 +109,7 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
                 onClick={() => setIsTokenVisible(!isTokenVisible)}
                 aria-label={isTokenVisible ? t("hideToken") : t("showToken")}
               >
-                {isTokenVisible ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {isTokenVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
               <Button
                 variant="outline"
@@ -151,9 +145,7 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-gray-700 dark:text-gray-300">
-            {t("regenerateConfirmMessage")}
-          </p>
+          <p className="text-gray-700 dark:text-gray-300">{t("regenerateConfirmMessage")}</p>
           <div className="flex gap-3 justify-end">
             <Button
               variant="outline"
@@ -162,11 +154,7 @@ export function ApiTokenDisplay({ userId }: ApiTokenDisplayProps) {
             >
               {tCommon("cancel")}
             </Button>
-            <Button
-              variant="danger"
-              onClick={handleRegenerate}
-              isLoading={isRegenerating}
-            >
+            <Button variant="danger" onClick={handleRegenerate} isLoading={isRegenerating}>
               {t("regenerateToken")}
             </Button>
           </div>

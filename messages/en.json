@@ -10,7 +10,16 @@
     "deleting": "Deleting...",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "daysOfWeek": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
   },
   "stats": {
     "title": "Stats",
@@ -47,7 +56,6 @@
       "zhTW": "繁體中文"
     },
     "categorySettings": "Category Settings",
-    "locationHistorySettings": "Location History",
     "signOut": "Sign Out",
     "apiToken": {
       "title": "API Token",
@@ -98,12 +106,6 @@
     "confirmDelete": "Permanently delete {name}? This action cannot be undone.",
     "deactivate": "Deactivate"
   },
-  "locations": {
-    "title": "Location History",
-    "editLocation": "Edit Location",
-    "swipeToDelete": "Swipe to delete",
-    "noLocations": "No saved locations yet"
-  },
   "transactions": {
     "title": "Transactions",
     "newTransaction": "New Transaction",
@@ -113,24 +115,14 @@
     "category": "Category",
     "name": "Name",
     "uncategorized": "Uncategorized",
-    "rememberTransaction": "Frequently used transaction",
     "create": "Create Transaction",
     "update": "Update Transaction",
     "details": "Transaction Details",
-    "selectLocation": "Select nearby location",
-    "clearLocation": "Clear location",
-    "unnamedLocation": "Unnamed location",
     "noTransactions": "No transactions yet",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "e.g., Lunch at Starbucks",
     "dateTime": "Date & Time",
     "saveChanges": "Save Changes",
-    "clearAmount": "Clear amount",
-    "addPlus": "Add plus operator",
-    "addMinus": "Add minus operator",
-    "addMultiply": "Add multiply operator",
-    "addDivide": "Add divide operator",
-    "evaluateFormula": "Evaluate formula",
     "creating": "Creating...",
     "saving": "Saving...",
     "selectCategory": "Select a category",

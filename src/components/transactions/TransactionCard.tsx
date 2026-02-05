@@ -16,11 +16,7 @@ interface TransactionCardProps {
  * Supports swipe-to-delete from right to left
  * Uses SwipeableCard for consistent swipe behavior
  */
-export function TransactionCard({
-  transaction,
-  onClick,
-  onDelete,
-}: TransactionCardProps) {
+export function TransactionCard({ transaction, onClick, onDelete }: TransactionCardProps) {
   const locale = useLocale();
   const t = useTranslations("transactions");
   const tCommon = useTranslations("common");
@@ -30,8 +26,9 @@ export function TransactionCard({
     currency: "USD",
   }).format(transaction.amount);
 
+  // Format time only (HH:mm)
   const date = new Date(transaction.createdAt);
-  const formattedDate = `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+  const formattedTime = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
 
   // Get category name based on current locale
   const getCategoryName = (): string => {
@@ -46,17 +43,13 @@ export function TransactionCard({
     // Use locale-specific name, fallback to the other language if not available
     if (locale === "zh-HK") {
       return (
-        transaction.categoryData.zh_name ||
-        transaction.categoryData.en_name ||
-        t("uncategorized")
+        transaction.categoryData.zh_name || transaction.categoryData.en_name || t("uncategorized")
       );
     }
 
     // Default to English for 'en' and other locales
     return (
-      transaction.categoryData.en_name ||
-      transaction.categoryData.zh_name ||
-      t("uncategorized")
+      transaction.categoryData.en_name || transaction.categoryData.zh_name || t("uncategorized")
     );
   };
 
@@ -89,20 +82,23 @@ export function TransactionCard({
 
         {/* Transaction details */}
         <div className="flex flex-col">
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {getCategoryName()}
-          </span>
+          <span className="font-medium text-gray-900 dark:text-gray-100">{getCategoryName()}</span>
           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <time dateTime={new Date(transaction.createdAt).toISOString()}>
-              {formattedDate}
-            </time>
+            <time dateTime={new Date(transaction.createdAt).toISOString()}>{formattedTime}</time>
           </div>
         </div>
       </div>
 
       {/* Right side: Amount */}
       <div className="flex flex-col items-end">
-        <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <span
+          className={`text-lg font-semibold ${
+            transaction.type === "expense"
+              ? "text-red-500 dark:text-red-400"
+              : "text-green-500 dark:text-green-400"
+          }`}
+        >
+          {transaction.type === "expense" ? "-" : "+"}
           {formattedAmount}
         </span>
       </div>
@@ -114,11 +110,7 @@ export function TransactionCard({
  * Icon based on transaction category
  * Uses emoji from the UserCategory object
  */
-function CategoryIcon({ 
-  categoryData 
-}: { 
-  categoryData?: { emoji: string } | null 
-}) {
+function CategoryIcon({ categoryData }: { categoryData?: { emoji: string } | null }) {
   const icon = categoryData?.emoji || "💰";
 
   return <span className="text-2xl">{icon}</span>;

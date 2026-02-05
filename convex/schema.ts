@@ -37,17 +37,4 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_userId_createdAt", ["userId", "createdAt"])
     .index("by_userId_category", ["userId", "category"]),
-
-  locationHistories: defineTable({
-    userId: v.id("users"),
-    latitude: v.number(),
-    longitude: v.number(),
-    amount: v.number(),
-    category: v.optional(v.id("userCategories")),
-    name: v.optional(v.string()),
-    count: v.number(),
-    createdAt: v.number(),
-  })
-    .index("by_userId", ["userId"])
-    .index("by_userId_createdAt", ["userId", "createdAt"]),
 });
