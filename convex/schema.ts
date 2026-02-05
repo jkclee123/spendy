@@ -31,6 +31,7 @@ export default defineSchema({
     name: v.optional(v.string()),
     category: v.optional(v.id("userCategories")),
     amount: v.number(),
+    type: v.union(v.literal("expense"), v.literal("income")),
     createdAt: v.number(),
   })
     .index("by_userId", ["userId"])

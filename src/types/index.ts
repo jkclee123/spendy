@@ -35,6 +35,7 @@ export interface Transaction {
   name?: string;
   category?: Id<"userCategories">;
   amount: number;
+  type: "expense" | "income";
   createdAt: number;
 }
 
@@ -110,6 +111,7 @@ export interface CreateTransactionRequest {
   amount: number;
   category: string;
   name?: string;
+  type?: "expense" | "income";
 }
 
 /**

@@ -13,6 +13,7 @@ export const createFromWeb = mutation({
     amount: v.number(),
     name: v.optional(v.string()),
     category: v.optional(v.id("userCategories")),
+    type: v.union(v.literal("expense"), v.literal("income")),
   },
   handler: async (ctx, args) => {
     // Validate amount
@@ -32,6 +33,7 @@ export const createFromWeb = mutation({
       name: args.name,
       amount: args.amount,
       category: args.category,
+      type: args.type,
       createdAt: Date.now(),
     });
 
@@ -72,11 +74,13 @@ export const createFromApi = mutation({
     }
 
     // Create the transaction
+    // Note: API transactions default to "expense" type
     const transactionId = await ctx.db.insert("transactions", {
       userId: args.userId,
       name: args.name,
       amount: args.amount,
       category: args.categoryId,
+      type: "expense",
       createdAt: Date.now(),
     });
 
@@ -217,6 +221,7 @@ export const update = mutation({
     amount: v.optional(v.number()),
     name: v.optional(v.string()),
     category: v.optional(v.id("userCategories")),
+    type: v.optional(v.union(v.literal("expense"), v.literal("income"))),
     createdAt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -238,6 +243,7 @@ export const update = mutation({
     if (updates.amount !== undefined) patchData.amount = updates.amount;
     if (updates.name !== undefined) patchData.name = updates.name;
     if (updates.category !== undefined) patchData.category = updates.category;
+    if (updates.type !== undefined) patchData.type = updates.type;
     if (updates.createdAt !== undefined) patchData.createdAt = updates.createdAt;
 
     await ctx.db.patch(transactionId, patchData);
@@ -466,3 +472,5 @@ export const aggregateByMonth = query({
       .sort((a, b) => a.month.localeCompare(b.month));
   },
 });
+
+
