@@ -178,11 +178,11 @@ export function TransactionList({ userId, onTransactionClick }: TransactionListP
           <div key={dateKey} className="space-y-3">
             {/* Date header with daily total */}
             <div className="flex items-center justify-between border-b border-gray-200 pb-2 dark:border-gray-700">
-              <span className="font-medium text-gray-900 dark:text-gray-100">
+              <span className="font-medium text-gray-900 dark:text-gray-100 ml-2">
                 {formatDateHeader(headerDate, tcommon)}
               </span>
               <span
-                className={`font-semibold ${
+                className={`font-semibold mr-4 ${
                   isNegative
                     ? "text-red-500 dark:text-red-400"
                     : "text-green-500 dark:text-green-400"

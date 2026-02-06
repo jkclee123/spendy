@@ -68,6 +68,7 @@ export function IosShortcutDownload() {
 
         <Button
           variant="outline"
+          size="sm"
           onClick={handleDownload}
           disabled={!downloadUrlData?.url || isDownloading}
           isLoading={isDownloading}

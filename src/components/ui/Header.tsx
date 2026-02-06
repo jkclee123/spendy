@@ -4,10 +4,13 @@ import Link from "next/link";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm">
       <div className="mx-auto flex h-14 max-w-4xl items-center justify-center px-4">
         {/* Logo and Title */}
-        <Link href="/transactions" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <Link
+          href="/transactions"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Spendy</h1>
         </Link>
       </div>
