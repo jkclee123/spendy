@@ -44,7 +44,9 @@
       "selectMonth": "選擇月份"
     },
     "noDataForMonth": "{month}沒有資料",
-    "uncategorized": "未分類"
+    "uncategorized": "未分類",
+    "tbc": "待定",
+    "tbcDescription": "此功能即將推出。"
   },
   "settings": {
     "title": "設定",

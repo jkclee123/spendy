@@ -67,7 +67,9 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t("title")}</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t("title")}</h2>
+      </div>
 
       {/* Profile Card */}
       <Card>

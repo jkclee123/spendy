@@ -44,7 +44,9 @@
       "selectMonth": "Select month"
     },
     "noDataForMonth": "No data for {month}",
-    "uncategorized": "Uncategorized"
+    "uncategorized": "Uncategorized",
+    "tbc": "TBC",
+    "tbcDescription": "This feature is coming soon."
   },
   "settings": {
     "title": "Settings",

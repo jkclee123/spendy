@@ -73,7 +73,7 @@ export default function TransactionsPage() {
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{t("title")}</h2>
             <Link
               href="/transactions/create"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-500 px-4 py-2 text-base font-medium text-white shadow-sm transition-all duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 min-h-[44px]"
+              className="inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 min-h-[36px] whitespace-nowrap bg-blue-500 text-white shadow-sm hover:bg-blue-600"
             >
               + {t("newTransaction")}
             </Link>
