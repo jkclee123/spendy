@@ -14,6 +14,7 @@ import { LanguageSelect } from "@/components/settings/LanguageSelect";
 import { ApiTokenDisplay } from "@/components/settings/ApiTokenDisplay";
 import { IosShortcutDownload } from "@/components/settings/IosShortcutDownload";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -26,6 +27,9 @@ export default function SettingsPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
+
+  // Auto logout if user not found (invalid session)
+  useAutoLogoutOnInvalidUser(user);
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/login" });

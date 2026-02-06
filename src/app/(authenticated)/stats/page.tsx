@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
 import { MonthlyHistogram } from "@/components/stats/MonthlyHistogram";
+import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 
 /**
  * Stats page with spending visualizations
@@ -22,6 +23,9 @@ export default function StatsPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
+
+  // Auto logout if user not found (invalid session)
+  useAutoLogoutOnInvalidUser(user);
 
   // Loading state
   const isLoading = user === undefined;

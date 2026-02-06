@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { api } from "../../../../convex/_generated/api";
+import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 import { Card, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { TransactionList } from "@/components/transactions/TransactionList";
@@ -22,6 +23,9 @@ export default function TransactionsPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
+
+  // Auto logout if user not found (invalid session)
+  useAutoLogoutOnInvalidUser(user);
 
   const handleTransactionClick = useCallback(
     (transaction: Transaction) => {

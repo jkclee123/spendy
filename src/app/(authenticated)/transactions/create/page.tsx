@@ -8,6 +8,7 @@ import { api } from "../../../../../convex/_generated/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 
 export default function NewTransactionPage() {
   const t = useTranslations();
@@ -19,6 +20,9 @@ export default function NewTransactionPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
+
+  // Auto logout if user not found (invalid session)
+  useAutoLogoutOnInvalidUser(user);
 
   // Loading state while fetching user
   if (user === undefined) {

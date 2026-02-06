@@ -11,6 +11,7 @@ import { SwipeableCard } from "@/components/ui/SwipeableCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { CategoryEditModal } from "@/components/settings/CategoryEditModal";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 import type { UserCategory } from "@/types";
 
 /**
@@ -35,6 +36,9 @@ export default function CategorySettingsPage() {
     api.users.getByEmail,
     session?.user?.email ? { email: session.user.email } : "skip"
   );
+
+  // Auto logout if user not found (invalid session)
+  useAutoLogoutOnInvalidUser(user);
 
   // Query categories
   const categories = useQuery(
@@ -134,9 +138,7 @@ export default function CategorySettingsPage() {
             >
               <ChevronLeft className="h-6 w-6 text-gray-700 dark:text-gray-300" />
             </button>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {t("title")}
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("title")}</h1>
           </div>
           <button
             onClick={handleOpenCreate}
@@ -154,16 +156,17 @@ export default function CategorySettingsPage() {
         {/* Active categories */}
         <section aria-labelledby="active-categories-heading">
           <div className="mb-4">
-            <h2 id="active-categories-heading" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h2
+              id="active-categories-heading"
+              className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+            >
               {t("activeCategories")}
             </h2>
           </div>
 
           {activeCategories.length === 0 ? (
             <div className="rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-8 text-center">
-              <p className="text-gray-500 dark:text-gray-400">
-                {t("noActiveCategories")}
-              </p>
+              <p className="text-gray-500 dark:text-gray-400">{t("noActiveCategories")}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -176,7 +179,9 @@ export default function CategorySettingsPage() {
                   onClick={() => handleOpenEdit(category)}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl" aria-hidden="true">{category.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">
+                      {category.emoji}
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
                       {getLocalizedName(category)}
                     </span>
@@ -191,12 +196,13 @@ export default function CategorySettingsPage() {
         {inactiveCategories.length > 0 && (
           <section aria-labelledby="inactive-categories-heading">
             <div className="mb-4">
-              <h2 id="inactive-categories-heading" className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h2
+                id="inactive-categories-heading"
+                className="text-lg font-semibold text-gray-900 dark:text-gray-100"
+              >
                 {t("inactiveCategories")}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {t("inactiveHint")}
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t("inactiveHint")}</p>
             </div>
 
             <div className="space-y-2">
@@ -209,7 +215,9 @@ export default function CategorySettingsPage() {
                   onClick={() => handleActivate(category)}
                 >
                   <div className="flex items-center gap-3 opacity-60">
-                    <span className="text-2xl" aria-hidden="true">{category.emoji}</span>
+                    <span className="text-2xl" aria-hidden="true">
+                      {category.emoji}
+                    </span>
                     <span className="font-medium text-gray-900 dark:text-gray-100">
                       {getLocalizedName(category)}
                     </span>
