@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery } from "convex/react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import type { CategoryAggregation } from "@/types";
@@ -164,15 +164,16 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
     [lang, t]
   );
 
-  // Format data for chart with localized labels
+  // Format data for chart with localized labels and colors
   const chartData = useMemo(() => {
     if (!categoryData) {
       return [];
     }
 
-    return categoryData.map((item) => ({
+    return categoryData.map((item, index) => ({
       ...item,
       category: getCategoryLabel(item),
+      fill: COLORS[index % COLORS.length],
     }));
   }, [categoryData, getCategoryLabel]);
 
@@ -321,15 +322,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
                     );
                   }}
                   labelLine={false}
-                >
-                  {sortedData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${entry.category}`}
-                      fill={COLORS[index % COLORS.length]}
-                      className="outline-none focus:outline-none"
-                    />
-                  ))}
-                </Pie>
+                />
                 <Tooltip
                   content={<CustomTooltip />}
                   wrapperStyle={{ zIndex: 9999, pointerEvents: "none" }}
