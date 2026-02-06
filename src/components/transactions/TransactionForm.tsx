@@ -455,7 +455,7 @@ export function TransactionForm({
               setErrors((prev) => ({ ...prev, name: undefined }));
             }
           }}
-          placeholder={t("namePlaceholder")}
+          placeholder={type === "income" ? t("namePlaceholderIncome") : t("namePlaceholder")}
           disabled={isSubmitting}
           className={`
             w-full min-w-0 rounded-xl border bg-white py-3 px-4 text-base text-gray-900

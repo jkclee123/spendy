@@ -129,6 +129,7 @@
     "noTransactions": "尚未有記錄",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "例如：午餐",
+    "namePlaceholderIncome": "例如：出糧",
     "dateTime": "日期與時間",
     "saveChanges": "儲存變更",
     "creating": "建立中...",

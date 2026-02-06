@@ -129,6 +129,7 @@
     "noTransactions": "No transactions yet",
     "amountPlaceholder": "0.00",
     "namePlaceholder": "e.g., Lunch at Starbucks",
+    "namePlaceholderIncome": "e.g., Salary",
     "dateTime": "Date & Time",
     "saveChanges": "Save Changes",
     "creating": "Creating...",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery } from "convex/react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -46,6 +46,18 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
     year: currentYear,
     month: currentMonth,
   });
+
+  // Dark mode detection using prefers-color-scheme media query
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDarkMode(mediaQuery.matches);
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsDarkMode(e.matches);
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   // Calculate date range for selected month
   const dateRange = useMemo(() => {
@@ -297,7 +309,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
                         x={x}
                         y={y}
                         textAnchor={textAnchor}
-                        fill="white"
+                        fill={isDarkMode ? "white" : "#1f2937"}
                         fontSize={13}
                         fontWeight={600}
                       >
@@ -332,35 +344,43 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
           </div>
 
           {/* Detailed Category List */}
-          <div className="mt-6 space-y-2">
-            {sortedData.map((item) => {
-              const percentage = totalAmount > 0 ? (item.total / totalAmount) * 100 : 0;
-              return (
-                <div
-                  key={item.category}
-                  className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{item.emoji}</span>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {item.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-500 dark:text-gray-500">
-                      {t("transactions", { count: item.count })}
-                    </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {percentage.toFixed(0)}%
-                    </span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 min-w-[4rem] text-right">
-                      {formatCurrency(item.total)}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <table className="mt-6 w-full border-collapse">
+            <tbody>
+              {sortedData.map((item) => {
+                const percentage = totalAmount > 0 ? (item.total / totalAmount) * 100 : 0;
+                return (
+                  <tr
+                    key={item.category}
+                    className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                  >
+                    <td className="py-3 pl-0 pr-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xl">{item.emoji}</span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {item.category}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-2 text-right">
+                      <span className="text-sm text-gray-500 dark:text-gray-500">
+                        {t("transactions", { count: item.count })}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-right w-[60px]">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {percentage.toFixed(0)}%
+                      </span>
+                    </td>
+                    <td className="py-3 pl-2 pr-0 text-right w-[80px]">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {formatCurrency(item.total)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </>
       )}
     </div>
