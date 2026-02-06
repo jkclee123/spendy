@@ -361,19 +361,14 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 px-2 text-right">
-                      <span className="text-sm text-gray-500 dark:text-gray-500">
-                        {t("transactions", { count: item.count })}
+                    <td className="py-3 pl-2 pr-0 text-right w-[60px]">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        {formatCurrency(item.total)}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-right w-[60px]">
+                    <td className="py-3 px-2 text-right w-[80px]">
                       <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {percentage.toFixed(0)}%
-                      </span>
-                    </td>
-                    <td className="py-3 pl-2 pr-0 text-right w-[80px]">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {formatCurrency(item.total)}
                       </span>
                     </td>
                   </tr>
