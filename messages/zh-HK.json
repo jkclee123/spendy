@@ -32,7 +32,7 @@
     "spendingByCategory": "支出比例",
     "monthlySpending": "每月消費（12個月）",
     "recentSpending": "近期消費",
-    "totalSpending": "總消費",
+    "totalExpenses": "總支出",
     "noData": "{period}沒有資料",
     "transactions": "{count, plural, =1 {1 筆記錄} other {# 筆記錄}}",
     "categoryFilter": {

@@ -8,7 +8,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useTranslations } from "next-intl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { CategoryPieChart } from "@/components/stats/CategoryPieChart";
+import { ExpensesRatio } from "@/components/stats/CategoryPieChart";
 import { MonthlyHistogram } from "@/components/stats/MonthlyHistogram";
 import { useAutoLogoutOnInvalidUser } from "@/hooks/useConvexWithAuth";
 
@@ -86,7 +86,7 @@ export default function StatsPage() {
             <CardTitle>{t("spendingByCategory")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <CategoryPieChart userId={user._id} />
+            <ExpensesRatio userId={user._id} />
           </CardContent>
         </Card>
       )}

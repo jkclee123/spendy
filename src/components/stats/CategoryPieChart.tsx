@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "convex/react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import type { CategoryAggregation } from "@/types";
@@ -34,7 +34,7 @@ const COLORS = [
  * Uses recharts for responsive, accessible visualization
  * Features month navigation with arrows and dropdown
  */
-export function CategoryPieChart({ userId, className = "" }: CategoryPieChartProps) {
+export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps) {
   const { lang } = useLanguage();
   const t = useTranslations("stats");
   const now = new Date();
@@ -140,12 +140,12 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
     }
   }, []);
 
-  // Get localized category name
+  // Get localized category name (without emoji)
   const getCategoryLabel = useCallback(
     (item: CategoryAggregation): string => {
-      if (item.emoji && (item.en_name || item.zh_name)) {
+      if (item.en_name || item.zh_name) {
         const name = lang === "zh-HK" ? item.zh_name || item.en_name : item.en_name || item.zh_name;
-        return `${item.emoji} ${name || t("uncategorized")}`;
+        return name || t("uncategorized");
       }
       return item.category === "Uncategorized" ? t("uncategorized") : item.category;
     },
@@ -197,16 +197,6 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
       );
     }
     return null;
-  };
-
-  // Custom legend formatter
-  const renderLegend = (value: string, entry: { payload?: Record<string, unknown> }) => {
-    const total = (entry.payload?.total as number) ?? 0;
-    return (
-      <span className="text-sm text-gray-700 dark:text-gray-300">
-        {value} <span className="text-gray-500 dark:text-gray-400">({formatCurrency(total)})</span>
-      </span>
-    );
   };
 
   // Calculate total for percentage display
@@ -273,7 +263,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
             {t("noDataForMonth", { month: selectedMonthLabel })}
           </p>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            {t("totalSpending")}: {formatCurrency(0)}
+            {t("totalExpenses")}: {formatCurrency(0)}
           </p>
         </div>
       )}
@@ -281,7 +271,7 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
       {/* Chart */}
       {!isLoading && !isEmpty && (
         <>
-          <div className="h-64 sm:h-80">
+          <div className="h-64 sm:h-80 relative">
             <ResponsiveContainer
               width="100%"
               height="100%"
@@ -297,10 +287,23 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
                   cx="50%"
                   cy="50%"
                   outerRadius="70%"
-                  innerRadius="40%"
+                  innerRadius="50%"
                   paddingAngle={2}
-                  label={({ percent = 0 }) => {
-                    return `${(percent * 100).toFixed(0)}%`;
+                  label={({ percent = 0, x, y, textAnchor, payload }) => {
+                    const percentage = (percent * 100).toFixed(0);
+                    if (parseInt(percentage) < 3) return null;
+                    return (
+                      <text
+                        x={x}
+                        y={y}
+                        textAnchor={textAnchor}
+                        fill="white"
+                        fontSize={13}
+                        fontWeight={600}
+                      >
+                        {payload.emoji} {percentage}%
+                      </text>
+                    );
                   }}
                   labelLine={false}
                 >
@@ -312,24 +315,51 @@ export function CategoryPieChart({ userId, className = "" }: CategoryPieChartPro
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
-                <Legend
-                  layout="horizontal"
-                  align="center"
-                  verticalAlign="bottom"
-                  formatter={renderLegend}
-                  wrapperStyle={{ paddingTop: "1rem" }}
+                <Tooltip
+                  content={<CustomTooltip />}
+                  wrapperStyle={{ zIndex: 9999, pointerEvents: "none" }}
                 />
               </PieChart>
             </ResponsiveContainer>
+
+            {/* Total Expenses Label in Center */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalExpenses")}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                {formatCurrency(totalAmount)}
+              </p>
+            </div>
           </div>
 
-          {/* Summary */}
-          <div className="mt-4 text-center">
-            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {formatCurrency(totalAmount)}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalSpending")}</p>
+          {/* Detailed Category List */}
+          <div className="mt-6 space-y-2">
+            {sortedData.map((item) => {
+              const percentage = totalAmount > 0 ? (item.total / totalAmount) * 100 : 0;
+              return (
+                <div
+                  key={item.category}
+                  className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{item.emoji}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {item.category}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-500 dark:text-gray-500">
+                      {t("transactions", { count: item.count })}
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {percentage.toFixed(0)}%
+                    </span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 min-w-[4rem] text-right">
+                      {formatCurrency(item.total)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </>
       )}

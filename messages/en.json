@@ -32,7 +32,7 @@
     "spendingByCategory": "Expenses Ratio",
     "monthlySpending": "Monthly Spending (12 months)",
     "recentSpending": "Recent Spending",
-    "totalSpending": "Total spending",
+    "totalExpenses": "Total Expenses",
     "noData": "No data for {period}",
     "transactions": "{count, plural, =1 {1 transaction} other {# transactions}}",
     "categoryFilter": {
