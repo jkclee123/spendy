@@ -18,16 +18,15 @@ interface CategoryPieChartProps {
 
 // Color palette for categories - visually distinct, accessible colors
 const COLORS = [
-  "#3B82F6", // Blue - Food & Dining
-  "#10B981", // Emerald - Transport
-  "#F59E0B", // Amber - Shopping
-  "#8B5CF6", // Violet - Entertainment
-  "#EF4444", // Red - Bills & Utilities
-  "#EC4899", // Pink - Health
-  "#6B7280", // Gray - Other
+  "#DB5375", // Blush Rose
+  "#FBB13C", // Honey Bronze
+  "#EAC435", // Saffron
+  "#BEEE62", // Green Yellow
+  "#70AE6E", // Tea Green
+  "#C2EABD", // Light Green
   "#06B6D4", // Cyan
-  "#F97316", // Orange
-  "#14B8A6", // Teal
+  "#7C90DB", // Wisteria Blue
+  "#735290", // Vintage Lavender
 ];
 
 /**
