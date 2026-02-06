@@ -1,14 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { POST } from "@/app/api/transactions/create/route";
 import { NextRequest } from "next/server";
-import { ConvexHttpClient } from "convex/browser";
 
-// Mock ConvexHttpClient
+// Create singleton mock instance using vi.hoisted() to ensure it's available during mock setup
+const singletonMockClient = vi.hoisted(() => ({
+  query: vi.fn(),
+  mutation: vi.fn(),
+}));
+
+// Mock ConvexHttpClient - returns the singleton instance
 vi.mock("convex/browser", () => ({
-  ConvexHttpClient: vi.fn().mockImplementation(() => ({
-    query: vi.fn(),
-    mutation: vi.fn(),
-  })),
+  ConvexHttpClient: vi.fn().mockImplementation(function () {
+    return singletonMockClient;
+  }),
 }));
 
 // Mock the Convex API
@@ -29,19 +33,11 @@ vi.mock("@/convex/_generated/api", () => ({
 }));
 
 describe("POST /api/transactions/create", () => {
-  let mockConvexClient: {
-    query: ReturnType<typeof vi.fn>;
-    mutation: ReturnType<typeof vi.fn>;
-  };
+  let mockConvexClient: typeof singletonMockClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const ConvexClient = ConvexHttpClient as unknown as ReturnType<typeof vi.fn>;
-    mockConvexClient = {
-      query: vi.fn(),
-      mutation: vi.fn(),
-    };
-    ConvexClient.mockReturnValue(mockConvexClient);
+    mockConvexClient = singletonMockClient;
   });
 
   const createRequest = (body: Record<string, unknown>) => {
@@ -78,7 +74,7 @@ describe("POST /api/transactions/create", () => {
 
       const request = createRequest({
         apiToken: validToken,
-        amount: 45.50,
+        amount: 45.5,
         category: "Food",
         name: "Lunch",
       });
@@ -97,7 +93,7 @@ describe("POST /api/transactions/create", () => {
   describe("Authentication errors", () => {
     it("should return 401 when apiToken is missing", async () => {
       const request = createRequest({
-        amount: 45.50,
+        amount: 45.5,
         category: "Food",
       });
 
@@ -114,7 +110,7 @@ describe("POST /api/transactions/create", () => {
 
       const request = createRequest({
         apiToken: "invalid-token",
-        amount: 45.50,
+        amount: 45.5,
         category: "Food",
       });
 
@@ -160,7 +156,7 @@ describe("POST /api/transactions/create", () => {
     it("should return 400 when category is missing", async () => {
       const request = createRequest({
         apiToken: "test-token",
-        amount: 45.50,
+        amount: 45.5,
       });
 
       const response = await POST(request);
@@ -174,7 +170,7 @@ describe("POST /api/transactions/create", () => {
     it("should return 400 when category is empty string", async () => {
       const request = createRequest({
         apiToken: "test-token",
-        amount: 45.50,
+        amount: 45.5,
         category: "",
       });
 
@@ -203,7 +199,7 @@ describe("POST /api/transactions/create", () => {
       for (let i = 0; i < 61; i++) {
         const request = createRequest({
           apiToken: validToken,
-          amount: 45.50,
+          amount: 45.5,
           category: "Food",
         });
         lastResponse = await POST(request);
@@ -245,7 +241,7 @@ describe("POST /api/transactions/create", () => {
 
       const request = createRequest({
         apiToken: validToken,
-        amount: 45.50,
+        amount: 45.5,
         category: "New Category",
       });
 
@@ -272,7 +268,7 @@ describe("POST /api/transactions/create", () => {
 
       const request = createRequest({
         apiToken: "test-token",
-        amount: 45.50,
+        amount: 45.5,
         category: "Food",
       });
 

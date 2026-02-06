@@ -61,7 +61,9 @@ function ConvexErrorCatcher({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Set up error handler for the Convex client
+    // eslint-disable-next-line no-console
     const originalConsoleError = console.error;
+    // eslint-disable-next-line no-console
     console.error = (...args: unknown[]) => {
       const errorString = args.join(" ");
 
@@ -85,6 +87,7 @@ function ConvexErrorCatcher({ children }: { children: ReactNode }) {
     };
 
     return () => {
+      // eslint-disable-next-line no-console
       console.error = originalConsoleError;
     };
   }, [setHasAuthError]);
