@@ -201,7 +201,9 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
       const item = payload[0].payload;
       return (
         <div className="rounded-lg bg-white dark:bg-gray-800 p-3 shadow-lg border border-gray-200 dark:border-gray-700">
-          <p className="font-medium text-gray-900 dark:text-gray-100">{item.category}</p>
+          <p className="font-medium text-gray-900 dark:text-gray-100">
+            {item.emoji} {item.category}
+          </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {formatCurrency(item.total)} ({t("transactions", { count: item.count })})
           </p>
@@ -283,7 +285,8 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
       {/* Chart */}
       {!isLoading && !isEmpty && (
         <>
-          <div className="h-64 sm:h-80 relative">
+          {/* <div className="h-64 sm:h-80 relative"> */}
+          <div className="h-64 sm:h-80 relative [&_svg]:outline-none [&_svg]:focus:outline-none [&_*]:outline-none [&_*]:focus:outline-none">
             <ResponsiveContainer
               width="100%"
               height="100%"
