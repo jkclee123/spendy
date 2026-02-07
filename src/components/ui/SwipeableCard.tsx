@@ -63,15 +63,10 @@ export function SwipeableCard({
   };
 
   // Build accessible description for swipe action
-  const swipeDescription = onSwipeAction
-    ? `Swipe left to ${actionLabel.toLowerCase()}`
-    : undefined;
+  const swipeDescription = onSwipeAction ? `Swipe left to ${actionLabel.toLowerCase()}` : undefined;
 
   return (
-    <div 
-      className="relative overflow-hidden"
-      aria-label={swipeDescription || undefined}
-    >
+    <div className="relative overflow-hidden" aria-label={swipeDescription || undefined}>
       {/* Left action background layer (swipe left reveals right side) */}
       {onSwipeAction && (
         <div
@@ -113,7 +108,7 @@ export function SwipeableCard({
           dark:border-gray-700 dark:bg-gray-800
           ${
             onClick && offset === 0
-              ? "cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              ? "cursor-pointer hover:border-gray-400 dark:hover:border-gray-600 hover:shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-offset-2"
               : ""
           }
           ${isSwiping ? "cursor-grabbing" : ""}
