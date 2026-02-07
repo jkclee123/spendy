@@ -18,15 +18,20 @@ interface CategoryPieChartProps {
 
 // Color palette for categories - visually distinct, accessible colors
 const COLORS = [
-  "#DB5375", // Blush Rose
-  "#FBB13C", // Honey Bronze
-  "#EAC435", // Saffron
-  "#BEEE62", // Green Yellow
-  "#70AE6E", // Tea Green
-  "#C2EABD", // Light Green
-  "#06B6D4", // Cyan
-  "#7C90DB", // Wisteria Blue
-  "#735290", // Vintage Lavender
+  "#dc8a78", // Rosewater
+  "#04a5e5", // Sky
+  "#ea76cb", // Pink
+  "#179299", // Teal
+  "#dd7878", // Flamingo
+  "#fe640b", // Peach
+  "#8839ef", // Mauve
+  "#40a02b", // Green
+  "#d20f39", // Red
+  "#1e66f5", // Blue
+  "#df8e1d", // Yellow
+  "#209fb5", // Sapphire
+  "#e64553", // Maroon
+  "#7287fd", // Lavender
 ];
 
 /**
@@ -173,7 +178,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
     return categoryData.map((item, index) => ({
       ...item,
       category: getCategoryLabel(item),
-      fill: COLORS[index % COLORS.length],
+      fill: COLORS[index],
     }));
   }, [categoryData, getCategoryLabel]);
 
