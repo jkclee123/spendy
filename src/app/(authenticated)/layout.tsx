@@ -4,11 +4,7 @@ import { NavigationBar } from "@/components/navigation/NavigationBar";
 import { Header } from "@/components/ui/Header";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
-export default async function AuthenticatedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   if (!session?.user) {
@@ -21,7 +17,7 @@ export default async function AuthenticatedLayout({
       <Header />
 
       {/* Main content area with bottom padding for mobile nav */}
-      <main className="flex-1 pb-20 pt-4 md:pl-20">
+      <main className="flex-1 pb-20 pt-4 md:pl-20 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-4xl px-4">
           <ErrorBoundary>{children}</ErrorBoundary>
         </div>

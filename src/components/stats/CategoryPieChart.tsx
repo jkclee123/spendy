@@ -366,7 +366,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
           {/* Detailed Category List */}
           <table className="mt-6 w-full border-collapse">
             <tbody>
-              {sortedData.map((item) => {
+              {sortedData.map((item, index) => {
                 const percentage = totalAmount > 0 ? (item.total / totalAmount) * 100 : 0;
                 return (
                   <tr
@@ -374,7 +374,10 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
                     className="border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                   >
                     <td className="py-3 pl-0 pr-2">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 ml-4">
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-6">
+                          {index + 1}
+                        </span>
                         <span className="text-xl">{item.emoji}</span>
                         <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           {item.category}
