@@ -63,6 +63,35 @@ function evaluateFormula(formula: string): number | null {
   }
 }
 
+/**
+ * Parse datetime-local string to Date object
+ * Format: YYYY-MM-DDTHH:mm
+ */
+function parseDatetimeLocal(value: string): Date | null {
+  if (!value) return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [, year, month, day, hours, minutes] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes));
+}
+
+/**
+ * Format datetime-local string for display
+ * Returns localized date/time string
+ */
+function formatDatetimeLocal(value: string, locale: string): string {
+  const date = parseDatetimeLocal(value);
+  if (!date) return "";
+  return new Intl.DateTimeFormat(locale === "zh-HK" ? "zh-Hant-HK" : "en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
 interface FormErrors {
   amount?: string;
   name?: string;
@@ -101,6 +130,26 @@ export function TransactionForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [createdAt, setCreatedAt] = useState<string>("");
+  const [isTouchDevice, setIsTouchDevice] = useState(true);
+
+  // Detect touch device for datetime input rendering
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    const update = () => setIsTouchDevice(mq.matches);
+    update();
+    if (mq.addEventListener) {
+      mq.addEventListener("change", update);
+    } else {
+      mq.addListener(update);
+    }
+    return () => {
+      if (mq.removeEventListener) {
+        mq.removeEventListener("change", update);
+      } else {
+        mq.removeListener(update);
+      }
+    };
+  }, []);
 
   // Reset form when initial values change
   useEffect(() => {
@@ -231,7 +280,10 @@ export function TransactionForm({
         };
 
         if (createdAt) {
-          updateData.createdAt = new Date(createdAt).getTime();
+          const parsedDate = parseDatetimeLocal(createdAt);
+          if (parsedDate) {
+            updateData.createdAt = parsedDate.getTime();
+          }
         }
 
         await updateTransaction(updateData);
@@ -470,15 +522,41 @@ export function TransactionForm({
           >
             {t("dateTime")}
           </label>
-          <input
-            type="datetime-local"
-            id="createdAt"
-            value={createdAt}
-            onChange={(e) => setCreatedAt(e.target.value)}
-            disabled={isSubmitting}
-            className="w-full min-h-[44px] rounded-xl border bg-white py-3 px-4 text-base text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-700 [color-scheme:light] dark:[color-scheme:dark]"
-            style={{ fontSize: "16px" }}
-          />
+          {isTouchDevice ? (
+            <div className="relative w-full">
+              {/* Display formatted date for mobile */}
+              <div
+                className={`
+                  w-full min-w-0 min-h-[44px] truncate rounded-xl border bg-white py-3 px-4 text-base text-gray-900
+                  dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
+                  border-gray-300 dark:border-gray-700
+                  flex items-center
+                `}
+              >
+                {formatDatetimeLocal(createdAt, lang)}
+              </div>
+              {/* Hidden native picker overlay for mobile */}
+              <input
+                type="datetime-local"
+                id="createdAt"
+                value={createdAt}
+                onChange={(e) => setCreatedAt(e.target.value)}
+                disabled={isSubmitting}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0 [color-scheme:light] dark:[color-scheme:dark]"
+                style={{ fontSize: "16px" }}
+              />
+            </div>
+          ) : (
+            <input
+              type="datetime-local"
+              id="createdAt"
+              value={createdAt}
+              onChange={(e) => setCreatedAt(e.target.value)}
+              disabled={isSubmitting}
+              className="w-full min-h-[44px] rounded-xl border bg-white py-3 px-4 text-base text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-700 [color-scheme:light] dark:[color-scheme:dark]"
+              style={{ fontSize: "16px" }}
+            />
+          )}
         </div>
       )}
 
