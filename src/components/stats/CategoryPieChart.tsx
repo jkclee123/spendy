@@ -128,22 +128,55 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
     return months.reverse(); // Most recent first
   }, [earliestTransactionDate, currentYear, currentMonth]);
 
-  // Check if selected month is current month
-  const isCurrentMonth = selectedMonth.year === currentYear && selectedMonth.month === currentMonth;
+  // Determine earliest and latest available months from availableMonths array
+  const earliestAvailableMonth = useMemo(() => {
+    if (availableMonths.length === 0) return null;
+    // availableMonths is in reverse order (most recent first), so last is earliest
+    const earliest = availableMonths[availableMonths.length - 1];
+    return { year: earliest.year, month: earliest.month };
+  }, [availableMonths]);
 
-  // Navigate to previous month
+  const latestAvailableMonth = useMemo(() => {
+    if (availableMonths.length === 0) return null;
+    // availableMonths is in reverse order, so first is most recent
+    const latest = availableMonths[0];
+    return { year: latest.year, month: latest.month };
+  }, [availableMonths]);
+
+  // Check if selected month is at the earliest boundary
+  const isAtEarliestMonth = useMemo(() => {
+    if (!earliestAvailableMonth) return false;
+    return (
+      selectedMonth.year === earliestAvailableMonth.year &&
+      selectedMonth.month === earliestAvailableMonth.month
+    );
+  }, [selectedMonth, earliestAvailableMonth]);
+
+  // Check if selected month is at the latest boundary
+  const isAtLatestMonth = useMemo(() => {
+    if (!latestAvailableMonth) return false;
+    return (
+      selectedMonth.year === latestAvailableMonth.year &&
+      selectedMonth.month === latestAvailableMonth.month
+    );
+  }, [selectedMonth, latestAvailableMonth]);
+
+  // Navigate to previous month (disabled if at earliest available month)
   const goToPreviousMonth = useCallback(() => {
+    if (isAtEarliestMonth) {
+      return;
+    }
     setSelectedMonth((prev) => {
       if (prev.month === 0) {
         return { year: prev.year - 1, month: 11 };
       }
       return { year: prev.year, month: prev.month - 1 };
     });
-  }, []);
+  }, [isAtEarliestMonth]);
 
-  // Navigate to next month (disabled if current month)
+  // Navigate to next month (disabled if at latest available month)
   const goToNextMonth = useCallback(() => {
-    if (isCurrentMonth) {
+    if (isAtLatestMonth) {
       return;
     }
     setSelectedMonth((prev) => {
@@ -152,7 +185,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
       }
       return { year: prev.year, month: prev.month + 1 };
     });
-  }, [isCurrentMonth]);
+  }, [isAtLatestMonth]);
 
   // Handle month dropdown change
   const handleMonthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -254,10 +287,10 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
         <button
           type="button"
           onClick={goToPreviousMonth}
-          disabled={isAllTime}
+          disabled={isAllTime || isAtEarliestMonth}
           className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:hover:bg-gray-800"
           aria-label={t("monthNavigation.previousMonth")}
-          aria-disabled={isAllTime}
+          aria-disabled={isAllTime || isAtEarliestMonth}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -279,10 +312,10 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
         <button
           type="button"
           onClick={goToNextMonth}
-          disabled={isAllTime || isCurrentMonth}
+          disabled={isAllTime || isAtLatestMonth}
           className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:hover:bg-gray-800"
           aria-label={t("monthNavigation.nextMonth")}
-          aria-disabled={isAllTime || isCurrentMonth}
+          aria-disabled={isAllTime || isAtLatestMonth}
         >
           <ChevronRight className="h-5 w-5" />
         </button>
