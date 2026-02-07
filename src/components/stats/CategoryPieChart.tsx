@@ -25,14 +25,13 @@ const COLORS = [
   "#df8e1d", // Yellow
   "#40a02b", // Green
   "#179299", // Teal
-  "#04a5e5", // Sky
   "#209fb5", // Sapphire
-  "#1e66f5", // Blue
   "#04a5e5", // Sky
+  "#1e66f5", // Blue
   "#7287fd", // Lavender
-  "#ea76cb", // Pink
   "#dd7878", // Flamingo
   "#dc8a78", // Rosewater
+  "#ea76cb", // Pink
 ];
 
 /**

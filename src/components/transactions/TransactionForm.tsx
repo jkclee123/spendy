@@ -63,21 +63,6 @@ function evaluateFormula(formula: string): number | null {
   }
 }
 
-/**
- * Format a YYYY-MM-DDTHH:mm string into dd/MM/yyyy HH:mm for display
- */
-function formatDisplayDate(dateStr: string): string {
-  if (!dateStr) return "";
-  try {
-    const [datePart, timePart] = dateStr.split("T");
-    const [year, month, day] = datePart.split("-");
-    const [hours, minutes] = timePart.split(":");
-    return `${day}/${month}/${year} ${hours}:${minutes}`;
-  } catch {
-    return dateStr;
-  }
-}
-
 interface FormErrors {
   amount?: string;
   name?: string;
@@ -485,29 +470,15 @@ export function TransactionForm({
           >
             {t("dateTime")}
           </label>
-          <div className="relative w-full">
-            {/* Display formatted date */}
-            <div
-              className={`
-                w-full rounded-xl border bg-white py-3 px-4 text-base text-gray-900
-                dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
-                border-gray-300 dark:border-gray-700
-                flex items-center
-              `}
-            >
-              {formatDisplayDate(createdAt)}
-            </div>
-            {/* Hidden native picker overlay */}
-            <input
-              type="datetime-local"
-              id="createdAt"
-              value={createdAt}
-              onChange={(e) => setCreatedAt(e.target.value)}
-              disabled={isSubmitting}
-              className="absolute inset-0 h-full w-full cursor-pointer opacity-0 [color-scheme:light] dark:[color-scheme:dark]"
-              style={{ fontSize: "16px" }}
-            />
-          </div>
+          <input
+            type="datetime-local"
+            id="createdAt"
+            value={createdAt}
+            onChange={(e) => setCreatedAt(e.target.value)}
+            disabled={isSubmitting}
+            className="w-full min-h-[44px] rounded-xl border bg-white py-3 px-4 text-base text-gray-900 dark:bg-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-700 [color-scheme:light] dark:[color-scheme:dark]"
+            style={{ fontSize: "16px" }}
+          />
         </div>
       )}
 
