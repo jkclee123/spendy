@@ -18,20 +18,21 @@ interface CategoryPieChartProps {
 
 // Color palette for categories - visually distinct, accessible colors
 const COLORS = [
-  "#dc8a78", // Rosewater
-  "#04a5e5", // Sky
-  "#ea76cb", // Pink
-  "#179299", // Teal
-  "#dd7878", // Flamingo
-  "#fe640b", // Peach
   "#8839ef", // Mauve
-  "#40a02b", // Green
   "#d20f39", // Red
-  "#1e66f5", // Blue
-  "#df8e1d", // Yellow
-  "#209fb5", // Sapphire
   "#e64553", // Maroon
+  "#fe640b", // Peach
+  "#df8e1d", // Yellow
+  "#40a02b", // Green
+  "#179299", // Teal
+  "#04a5e5", // Sky
+  "#209fb5", // Sapphire
+  "#1e66f5", // Blue
+  "#04a5e5", // Sky
   "#7287fd", // Lavender
+  "#ea76cb", // Pink
+  "#dd7878", // Flamingo
+  "#dc8a78", // Rosewater
 ];
 
 /**
@@ -47,10 +48,14 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
   const currentMonth = now.getMonth(); // 0-indexed
 
   // Month state: { year, month } where month is 0-indexed (0 = January)
+  // When isAllTime is true, selectedMonth is ignored
   const [selectedMonth, setSelectedMonth] = useState<{ year: number; month: number }>({
     year: currentYear,
     month: currentMonth,
   });
+
+  // Track if "All Time" is selected
+  const [isAllTime, setIsAllTime] = useState(false);
 
   // Dark mode detection using prefers-color-scheme media query
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -79,15 +84,17 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
     return { startDate, endDate };
   }, [selectedMonth]);
 
-  // Fetch category aggregation data for selected month
+  // Fetch category aggregation data for selected month or all time
   const categoryData = useQuery(
-    api.transactions.aggregateByCategoryForMonth,
+    api.transactions.aggregateExpensesByCategory,
     userId
-      ? {
-          userId,
-          startDate: dateRange.startDate,
-          endDate: dateRange.endDate,
-        }
+      ? isAllTime
+        ? { userId }
+        : {
+            userId,
+            startDate: dateRange.startDate,
+            endDate: dateRange.endDate,
+          }
       : "skip"
   );
 
@@ -151,7 +158,10 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
   // Handle month dropdown change
   const handleMonthChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
-    if (value) {
+    if (value === "all-time") {
+      setIsAllTime(true);
+    } else if (value) {
+      setIsAllTime(false);
       const [year, month] = value.split("-").map(Number);
       setSelectedMonth({ year, month });
     }
@@ -175,11 +185,13 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
       return [];
     }
 
-    return categoryData.map((item, index) => ({
-      ...item,
-      category: getCategoryLabel(item),
-      fill: COLORS[index],
-    }));
+    return (categoryData as CategoryAggregation[]).map(
+      (item: CategoryAggregation, index: number) => ({
+        ...item,
+        category: getCategoryLabel(item),
+        fill: COLORS[index],
+      })
+    );
   }, [categoryData, getCategoryLabel]);
 
   // Sort by total descending for consistent color assignment
@@ -228,8 +240,13 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
   // Empty state (no transactions for selected month)
   const isEmpty = !isLoading && sortedData.length === 0;
 
-  // Format selected month label
+  // Format selected month label (not used for all-time)
   const selectedMonthLabel = `${String(selectedMonth.month + 1).padStart(2, "0")}/${selectedMonth.year}`;
+
+  // Determine empty state message
+  const emptyStateMessage = isAllTime
+    ? t("noData", { period: t("monthNavigation.allTime") })
+    : t("noDataForMonth", { month: selectedMonthLabel });
 
   return (
     <div className={`w-full ${className}`}>
@@ -238,18 +255,21 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
         <button
           type="button"
           onClick={goToPreviousMonth}
-          className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          disabled={isAllTime}
+          className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:hover:bg-gray-800"
           aria-label={t("monthNavigation.previousMonth")}
+          aria-disabled={isAllTime}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
 
         <select
-          value={`${selectedMonth.year}-${selectedMonth.month}`}
+          value={isAllTime ? "all-time" : `${selectedMonth.year}-${selectedMonth.month}`}
           onChange={handleMonthChange}
           className="min-h-[44px] appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
           aria-label={t("monthNavigation.selectMonth")}
         >
+          <option value="all-time">{t("monthNavigation.allTime")}</option>
           {availableMonths.map((month) => (
             <option key={`${month.year}-${month.month}`} value={`${month.year}-${month.month}`}>
               {month.label}
@@ -260,10 +280,10 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
         <button
           type="button"
           onClick={goToNextMonth}
-          disabled={isCurrentMonth}
+          disabled={isAllTime || isCurrentMonth}
           className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:hover:bg-gray-800"
           aria-label={t("monthNavigation.nextMonth")}
-          aria-disabled={isCurrentMonth}
+          aria-disabled={isAllTime || isCurrentMonth}
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -280,7 +300,7 @@ export function ExpensesRatio({ userId, className = "" }: CategoryPieChartProps)
       {isEmpty && (
         <div className="flex h-64 flex-col items-center justify-center">
           <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            {t("noDataForMonth", { month: selectedMonthLabel })}
+            {emptyStateMessage}
           </p>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             {t("totalExpenses")}: {formatCurrency(0)}

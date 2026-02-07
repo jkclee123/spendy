@@ -41,7 +41,8 @@
     "monthNavigation": {
       "previousMonth": "Previous month",
       "nextMonth": "Next month",
-      "selectMonth": "Select month"
+      "selectMonth": "Select month",
+      "allTime": "All Time"
     },
     "noDataForMonth": "No data for {month}",
     "uncategorized": "Uncategorized",

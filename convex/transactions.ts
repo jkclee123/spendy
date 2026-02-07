@@ -310,15 +310,16 @@ export const aggregateByCategory = query({
 });
 
 /**
- * Aggregate transactions by category for a user within a specific month range
+ * Aggregate transactions by category for a user within a specific time period
  * Returns category totals with enriched category data (emoji, en_name, zh_name) for pie chart visualization
- * Used for month navigation in stats page
+ * Used for month navigation and all-time views in stats page
+ * When startDate/endDate are not provided, queries all transactions (all-time)
  */
-export const aggregateByCategoryForMonth = query({
+export const aggregateExpensesByCategory = query({
   args: {
     userId: v.id("users"),
-    startDate: v.number(),
-    endDate: v.number(),
+    startDate: v.optional(v.number()),
+    endDate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const transactions = await ctx.db
@@ -326,10 +327,19 @@ export const aggregateByCategoryForMonth = query({
       .withIndex("by_userId_createdAt", (q) => q.eq("userId", args.userId))
       .collect();
 
-    // Filter by date range
-    const filteredTransactions = transactions
-      .filter((t) => t.createdAt >= args.startDate && t.createdAt <= args.endDate)
-      .filter((t) => t.type === "expense");
+    // Filter by date range if provided, otherwise all transactions
+    const startDate = args.startDate;
+    const endDate = args.endDate;
+
+    let filteredTransactions = transactions.filter((t) => t.type === "expense");
+
+    if (startDate !== undefined) {
+      filteredTransactions = filteredTransactions.filter((t) => t.createdAt >= startDate);
+    }
+
+    if (endDate !== undefined) {
+      filteredTransactions = filteredTransactions.filter((t) => t.createdAt <= endDate);
+    }
 
     // Aggregate by category with enriched category data
     const categoryMap = new Map<
@@ -390,7 +400,8 @@ export const aggregateByCategoryForMonth = query({
       })
     );
 
-    return enrichedResults;
+    // Sort by total amount descending
+    return enrichedResults.sort((a, b) => b.total - a.total);
   },
 });
 

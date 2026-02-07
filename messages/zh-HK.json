@@ -41,7 +41,8 @@
     "monthNavigation": {
       "previousMonth": "上一個月",
       "nextMonth": "下一個月",
-      "selectMonth": "選擇月份"
+      "selectMonth": "選擇月份",
+      "allTime": "全時間"
     },
     "noDataForMonth": "{month}沒有資料",
     "uncategorized": "未分類",
